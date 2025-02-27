@@ -1,0 +1,19 @@
+package com.example.good_lodging_service.dto.response.Device;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class DeviceResponse {
+    Long id;
+    Long roomId;
+    String name;
+    String description;
+    String deviceStatus;
+    Integer status;
+}
