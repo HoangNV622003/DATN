@@ -7,7 +7,7 @@ const JwtLogin = () => {
         navigate('/register')
     }
     const handleNavigateToHomePage = ()=>{
-        navigate('/home')
+        navigate('/')
     }
     return (
         <form>

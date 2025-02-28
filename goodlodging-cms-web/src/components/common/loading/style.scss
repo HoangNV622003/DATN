@@ -1,0 +1,34 @@
+// Biến SCSS
+$spinner-size: 50px; // Kích thước vòng tròn
+$spinner-color: #007bff; // Màu của spinner
+$spinner-border: 5px; // Độ dày viền
+
+// Style cho loader
+.loader {
+  width: $spinner-size;
+  height: $spinner-size;
+  border: $spinner-border solid #f3f3f3; // Viền xám nhạt
+  border-top: $spinner-border solid $spinner-color; // Viền trên có màu
+  border-radius: 50%; // Tạo hình tròn
+  animation: spin 1s linear infinite; // Hiệu ứng xoay
+  margin: 0 auto; // Căn giữa
+}
+
+// Keyframes cho hiệu ứng xoay
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); // Bắt đầu từ 0 độ
+  }
+  100% {
+    transform: rotate(360deg); // Xoay hết 1 vòng
+  }
+}
+
+// Optional: Đặt spinner giữa màn hình
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { memo } from 'react';
+import LoadingItem from '../../../components/common/loading/LoadingItem';
 const HomePage = () => {
     const navigate=useNavigate();
     const handleNavigateToLogin=()=>{
@@ -14,4 +15,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default memo(HomePage);
