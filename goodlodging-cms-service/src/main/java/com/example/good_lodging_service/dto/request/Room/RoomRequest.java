@@ -14,8 +14,7 @@ public class RoomRequest {
     Long boardingHouseId;
     String name;
     String description;
-    Float length;
-    Float width;
+    Float area;
     Integer floor;
     List<Long> deviceIds;
 }

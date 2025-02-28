@@ -7,26 +7,18 @@ import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 @Entity
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Room extends AbstractAuditingEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     Long boardingHouseId;
-    String name;
-    String description;
-    Float area;
-    Integer floor;
+    Long userId;
     Integer status;
 }

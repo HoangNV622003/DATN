@@ -16,8 +16,7 @@ public class RoomResponse {
     Long boardingHouseId;
     String name;
     String description;
-    Float length;
-    Float width;
+    Float area;
     Integer floor;
     List<Device> devices;
 }
