@@ -13,22 +13,22 @@ const Header = () => {
   const handleNavigateToLogin = () => {
     navigate("/login");
   };
+
   const isLogin = useState(true);
   return (
     <div className="header">
-      <div className="header__home">
-        <RiHome2Line className="header__icon" aria-label="Trang chủ" />
-        <Link to="/" className="header__title">
-          Trang chủ
+        <Link to="/" className="header__home">
+          <RiHome2Line className="header__icon" aria-label="Trang chủ" />
+            <p className="header__title">Trọ tốt</p>
+          
         </Link>
-      </div>
       <div className="header__buttons">
         <button className="header__button">
           <CiHeart className="header__icon__like" aria-label="Yêu thích" />
           <p>Yêu thích</p>
         </button>
         <button className="header__button">Đăng Tin</button>
-        {isLogin ? (
+        {isLogin? (
           <div className="header__buttons">
             <button className="header__button">
               <AiOutlineMessage className="header__icon__message" />

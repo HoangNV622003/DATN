@@ -2,15 +2,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { memo } from 'react';
 import LoadingItem from '../../../components/common/loading/LoadingItem';
+import { ROUTERS } from '../../../utils/router/Router';
 const HomePage = () => {
     const navigate=useNavigate();
-    const handleNavigateToLogin=()=>{
-        navigate('/login')
-    }
     return (
-        <div>
-            <p>Home page</p>
-            <button onClick={handleNavigateToLogin}>Đăng xuất</button>
+        <div className='container__home'>
+            <div className="container__search__bar">
+                
+            </div>
         </div>
     );
 };

@@ -1,8 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import MasterLayout from "./components/masterLayout/MasterLayout";
 import managementRouter from "./views/ManagementRouters";
-import { ROUTERS } from "./utils/router/Router";
-import JwtLogin from "./views/user/sessions/JwtLogin"
+import sessionRouter from "./views/user/sessions/SessionRouter";
 const renderRouterUser = () => {
   return (
     <Routes>
@@ -18,8 +17,13 @@ const renderRouterUser = () => {
           </MasterLayout>
         }
       />
+      {sessionRouter.map((item, key) => (
+                <Route
+                    key={key}
+                    path={item.path}
+                    element={<div>{item.element}</div>}
+                />))}
 
-      <Route path={ROUTERS.AUTH.LOGIN} element={<JwtLogin/>} ></Route>
     </Routes>
   );
 };

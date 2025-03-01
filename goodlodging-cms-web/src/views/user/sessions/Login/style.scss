@@ -1,0 +1,208 @@
+// style.scss
+.container__login__form,
+.container__register__form {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  
+    .form {
+      background: white;
+      padding: 2rem; // Giảm padding để form nhỏ hơn
+      width: 100%;
+      max-width: 400px; // Thu nhỏ form (trước đây là full width)
+      min-height: auto; // Không chiếm toàn chiều cao
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #ddd; // Thêm đường viền
+      border-radius: 12px; // Bo góc cho viền
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); // Thêm shadow nhẹ
+  
+      h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 600;
+      }
+  
+      .form-fields {
+        width: 100%;
+        max-width: 100%; // Chiếm toàn bộ chiều rộng của form
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+  
+        .form-group {
+          margin-bottom: 1.5rem;
+          width: 100%;
+  
+          input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            box-sizing: border-box;
+  
+            &:focus {
+              border-color: #3498db;
+              outline: none;
+              background: white;
+              box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            }
+  
+            &::placeholder {
+              color: #95a5a6;
+            }
+          }
+  
+          a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            text-align: center; // Căn giữa chữ "Quên mật khẩu"
+            margin-top: 10px;
+            transition: color 0.3s ease;
+  
+            &:hover {
+              color: #2980b9;
+              text-decoration: underline;
+            }
+          }
+        }
+  
+        hr {
+          border: none;
+          border-top: 1px solid #eee;
+          margin: 1.5rem 0;
+          width: 100%;
+        }
+  
+        .submit-btn {
+          width: 100%;
+          padding: 12px;
+          background: #3498db;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-sizing: border-box;
+  
+          &:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+          }
+  
+          &:active {
+            transform: translateY(0);
+          }
+        }
+  
+        .register-btn {
+          width: 100%;
+          padding: 12px;
+          background: #2ecc71;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          margin-top: 1.5rem;
+          transition: all 0.3s ease;
+          box-sizing: border-box;
+  
+          &:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+          }
+  
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+  }
+  
+  // Responsive design
+  @media (max-width: 768px) {
+    .container__login__form {
+      .form {
+        padding: 1.5rem;
+        max-width: 350px;
+  
+        h2 {
+          font-size: 1.8rem;
+        }
+  
+        .form-fields {
+          .form-group {
+            input {
+              padding: 10px 12px;
+              font-size: 0.9rem;
+            }
+          }
+  
+          .submit-btn,
+          .register-btn {
+            padding: 10px;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container__login__form {
+      .form {
+        padding: 1rem;
+        max-width: 300px;
+  
+        h2 {
+          font-size: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+  
+        .form-fields {
+          .form-group {
+            margin-bottom: 1rem;
+  
+            input {
+              padding: 8px 10px;
+            }
+  
+            a {
+              font-size: 0.8rem;
+            }
+          }
+  
+          hr {
+            margin: 1rem 0;
+          }
+  
+          .submit-btn,
+          .register-btn {
+            padding: 8px;
+          }
+        }
+      }
+    }
+  }
