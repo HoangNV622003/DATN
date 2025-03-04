@@ -11,9 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DeviceResponse {
     Long id;
-    Long roomId;
     String name;
     String description;
-    String deviceStatus;
     Integer status;
 }

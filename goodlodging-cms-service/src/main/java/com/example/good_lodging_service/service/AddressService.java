@@ -3,7 +3,7 @@ package com.example.good_lodging_service.service;
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.dto.request.Address.AddressRequest;
-import com.example.good_lodging_service.dto.response.Address.AddressResponse;
+import com.example.good_lodging_service.dto.response.Address.AddressDetailResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.entity.Address;
 import com.example.good_lodging_service.exception.AppException;
@@ -22,40 +22,50 @@ import org.springframework.stereotype.Service;
 public class AddressService {
     AddressRepository addressRepository;
     AddressMapper addressMapper;
-    public AddressResponse createBoardingHouseAddress(AddressRequest addressRequest) {
-        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndStatus(
+    public AddressDetailResponse createAddress(AddressRequest addressRequest) {
+        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatus(
                 addressRequest.getHouseNumber(),
-                addressRequest.getStreet(),
+                addressRequest.getStreetName(),
                 addressRequest.getWardsId(),
                 addressRequest.getDistrictId(),
                 addressRequest.getProvinceId(),
+                addressRequest.getBoardingHouseId(),
                 CommonStatus.ACTIVE.getValue()))
             throw new AppException(ApiResponseCode.ADDRESS_ALREADY_EXISTS);
-        return addressMapper.toAddressResponseDTO(addressRepository.save(addressMapper.toAddress(addressRequest)));
+        Address address = addressMapper.toAddress(addressRequest);
+        address.setStatus(CommonStatus.ACTIVE.getValue());
+        return addressMapper.toAddressResponseDTO(addressRepository.save(address));
     }
 
-    public AddressResponse updateBoardingHouseAddress(Long addressId, AddressRequest addressRequest) {
-        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndStatusAndIdNot(
+    public AddressDetailResponse updateAddress(Long addressId, AddressRequest addressRequest) {
+        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatusAndIdNot(
                 addressRequest.getHouseNumber(),
-                addressRequest.getStreet(),
+                addressRequest.getStreetName(),
                 addressRequest.getWardsId(),
                 addressRequest.getDistrictId(),
                 addressRequest.getProvinceId(),
+                addressRequest.getBoardingHouseId(),
                 CommonStatus.ACTIVE.getValue(),
                 addressId))
             throw new AppException(ApiResponseCode.ADDRESS_ALREADY_EXISTS);
-        return addressMapper.toAddressResponseDTO(addressRepository.save(addressMapper.toAddress(addressRequest)));
+        Address address = addressMapper.toAddress(addressRequest);
+        address.setId(addressId);
+        address.setStatus(CommonStatus.ACTIVE.getValue());
+        return addressMapper.toAddressResponseDTO(addressRepository.save(address));
     }
 
-    public CommonResponse deleteBoardingHouseAddress(Long addressId){
+    public CommonResponse deleteAddress(Long addressId){
         Address address = findById(addressId);
         address.setStatus(CommonStatus.DELETED.getValue());
         addressRepository.save(address);
         return CommonResponse.builder().result(ApiResponseCode.ADDRESS_DELETED_SUCCESSFULLY.getMessage()).build();
     }
 
+    public AddressDetailResponse getAddress(Long addressId) {
+        return addressMapper.toAddressResponseDTO(findById(addressId));
+    }
     public Address findById(Long addressId) {
-        return addressRepository.findById(addressId).orElseThrow(()-> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        return addressRepository.findByIdAndStatus(addressId,CommonStatus.ACTIVE.getValue()).orElseThrow(()-> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
     }
 
 }

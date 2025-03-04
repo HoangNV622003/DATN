@@ -14,9 +14,9 @@ import java.util.List;
 public class RoomResponse {
     Long id;
     Long boardingHouseId;
+    List<String> urlImage;
     String name;
     String description;
     Float area;
     Integer floor;
-    List<Device> devices;
 }

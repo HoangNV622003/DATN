@@ -1,19 +1,17 @@
 package com.example.good_lodging_service.dto.request.BoardingHouse;
 
 import com.example.good_lodging_service.dto.request.Address.AddressRequest;
-import com.example.good_lodging_service.dto.response.Room.RoomResponse;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BoardingHouseRequest {
+public class BoardingHouseUpdateRequest {
     Long userId;
     String name;
     String description;

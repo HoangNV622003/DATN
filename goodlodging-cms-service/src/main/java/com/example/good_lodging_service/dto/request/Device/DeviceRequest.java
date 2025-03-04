@@ -10,9 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DeviceRequest {
-    Long roomId;
     String name;
     String description;
-    String deviceStatus;
     Integer status;
 }

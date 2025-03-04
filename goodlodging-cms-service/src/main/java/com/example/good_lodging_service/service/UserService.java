@@ -3,9 +3,7 @@ package com.example.good_lodging_service.service;
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.Authorities;
 import com.example.good_lodging_service.constants.CommonStatus;
-import com.example.good_lodging_service.constants.KafkaConfigConstants;
 import com.example.good_lodging_service.dto.request.Auth.UpdatePasswordRequest;
-import com.example.good_lodging_service.dto.request.Notification.PushNotificationRequest;
 import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
@@ -13,19 +11,21 @@ import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.Role;
 import com.example.good_lodging_service.entity.User;
 import com.example.good_lodging_service.exception.AppException;
+import com.example.good_lodging_service.mapper.BoardingHouseMapper;
+import com.example.good_lodging_service.mapper.RoomMapper;
 import com.example.good_lodging_service.mapper.UserMapper;
-import com.example.good_lodging_service.repository.RoleRepository;
-import com.example.good_lodging_service.repository.UserRepository;
+import com.example.good_lodging_service.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -35,8 +35,7 @@ public class UserService {
     private final UserMapper userMapper;
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
-    KafkaTemplate<String, Object> kafkaTemplate;
-    private final RoleRepository roleRepository;
+    RoleRepository roleRepository;
 
     public UserResponseDTO createUser(UserCreateRequest request) {
         // find user by username, email, phone

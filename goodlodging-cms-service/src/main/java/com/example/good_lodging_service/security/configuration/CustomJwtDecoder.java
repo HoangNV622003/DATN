@@ -22,8 +22,6 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
-    @Value("${jwt.signerKey}")
-    private String signerKey;
 
     @Autowired
     private AuthenticationService authenticationService;

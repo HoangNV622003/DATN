@@ -14,6 +14,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +47,21 @@ public class SecurityConfig {
                         .jwtAuthenticationConverter(jwtConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
         return http.build();
+
+
+    }
+
+    @Bean
+    public CorsFilter corsFilter(){//import org.springframework.web.filter.CorsFilter;
+        CorsConfiguration corsConfiguration=new CorsConfiguration();
+
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource=new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**",corsConfiguration);
+        return new CorsFilter(urlBasedCorsConfigurationSource);
     }
     @Bean
     JwtAuthenticationConverter jwtConverter() {

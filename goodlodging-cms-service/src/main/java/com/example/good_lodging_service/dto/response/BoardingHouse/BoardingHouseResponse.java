@@ -1,5 +1,6 @@
 package com.example.good_lodging_service.dto.response.BoardingHouse;
 
+import com.example.good_lodging_service.dto.response.Address.AddressResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,11 +17,10 @@ public class BoardingHouseResponse {
     Long id;
     Long userId;
     String name;
+    String description;
     String address;
-    String phone;
-    String email;
     Float electricityPrice;
     Float waterPrice;
-    Boolean hasElevator;
+    String features;
     List<RoomResponse> rooms;
 }

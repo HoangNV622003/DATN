@@ -56,7 +56,22 @@ public enum ApiResponseCode {
     OTP_EXPIRED(4004,"Mã OTP đã hết hạn",HttpStatus.BAD_REQUEST),
 
     //EMAIL PHONE_NUMBER
-    INVALID_REQUEST_EMAIL(5001,"Không được để trống email",HttpStatus.BAD_REQUEST)
+    INVALID_REQUEST_EMAIL(5001,"Không được để trống email",HttpStatus.BAD_REQUEST),
+
+    //BOARDING_HOUSE
+    BOARDING_HOUSE_DELETED_SUCCESSFUL(6001, "Nhà trọ đã được xóa thành công", HttpStatus.OK),
+    BOARDING_HOUSE_ALREADY_EXISTED(6002, "Nhà trọ đã tồn tại, vui lòng chọn tên khác", HttpStatus.BAD_REQUEST),
+    //ADDRESS
+    ADDRESS_NOT_FOUND(7001, "Không tìm thấy địa chỉ", HttpStatus.BAD_REQUEST),
+
+    //ROOM
+    ROOM_ALREADY_EXITED(8001,"Phòng đã tồn tại, vui lòng chọn tên khác", HttpStatus.BAD_REQUEST),
+    ROOM_DELETED_SUCCESSFUL(8002, "Phòng đã được xóa thành công", HttpStatus.OK),
+
+    //DEVICE
+    DEVICE_ALREADY_EXITED(9001, "Thiết bị đã tồn tại", HttpStatus.BAD_REQUEST),
+    DEVICE_DELETED_SUCCESSFUL(9002, "Thiết bị đã được xóa thành công", HttpStatus.OK),
+
     ;
     private final Integer code;
     private final String message;

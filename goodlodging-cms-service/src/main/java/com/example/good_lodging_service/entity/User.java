@@ -35,6 +35,8 @@ public class User extends AbstractAuditingDate implements Serializable {
     String urlAvatar;
     LocalDate birthday;
     Integer status;
+
     @ManyToMany(fetch = FetchType.LAZY)
     Set<Role> roles;
+
 }
