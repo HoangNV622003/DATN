@@ -1,4 +1,4 @@
-package com.example.good_lodging_service.dto.response.Post;
+package com.example.good_lodging_service.dto.response.Profile;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,13 +10,10 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PostResponse {
-    Long id;
-    String title;
-    String imageUrl;
-    Float area;
-    Float roomRent;
-    String address;
-    Long boardingHouseId;
+public class ProfileResponse {
     Long userId;
+    String fullName;
+    String profileImageUrl;
+    String email;
+    String phoneNumber;
 }

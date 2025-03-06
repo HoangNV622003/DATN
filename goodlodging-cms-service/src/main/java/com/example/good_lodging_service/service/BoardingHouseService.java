@@ -2,13 +2,9 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
-import com.example.good_lodging_service.dto.request.Address.AddressRequest;
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseRequest;
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseUpdateRequest;
-import com.example.good_lodging_service.dto.response.Address.AddressPresentation;
-import com.example.good_lodging_service.dto.response.Address.AddressDetailResponse;
-import com.example.good_lodging_service.dto.response.Address.AddressResponse;
-import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseDetailResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.entity.Address;
@@ -39,7 +35,7 @@ public class BoardingHouseService {
     RoomMapper roomMapper;
     RoomRepository roomRepository;
 
-    public BoardingHouseResponse createBoardingHouse(BoardingHouseRequest request) {
+    public BoardingHouseDetailResponse createBoardingHouse(BoardingHouseRequest request) {
         if (boardingHouseRepository.existsByNameAndUserIdAndStatus(request.getName(), request.getUserId(), CommonStatus.ACTIVE.getValue())) {
             throw new AppException(ApiResponseCode.BOARDING_HOUSE_ALREADY_EXISTED);
         }
@@ -52,12 +48,12 @@ public class BoardingHouseService {
     }
 
 
-    public BoardingHouseResponse getDetailBoardingHouse(Long boardingHouseId) {
+    public BoardingHouseDetailResponse getDetailBoardingHouse(Long boardingHouseId) {
         BoardingHouse boardingHouse = findById(boardingHouseId);
 
         List<RoomResponse> rooms = roomRepository.findAllByBoardingHouseIdAndStatus(boardingHouseId, CommonStatus.ACTIVE.getValue())
                 .stream().map(roomMapper::toRoomResponseDTO).toList();
-        BoardingHouseResponse response = boardingHouseMapper.toBoardingHouseResponseDTO(boardingHouse);
+        BoardingHouseDetailResponse response = boardingHouseMapper.toBoardingHouseResponseDTO(boardingHouse);
         response.setRooms(ValueUtils.getOrDefault(rooms, new ArrayList<>()));
 
         Address address = addressRepository.findByBoardingHouseIdAndStatusWithQuery(boardingHouseId, CommonStatus.ACTIVE.getValue());
@@ -65,7 +61,7 @@ public class BoardingHouseService {
         return response;
     }
 
-    public BoardingHouseResponse updateBoardingHouse(Long id, BoardingHouseUpdateRequest request) {
+    public BoardingHouseDetailResponse updateBoardingHouse(Long id, BoardingHouseUpdateRequest request) {
         BoardingHouse boardingHouse = findById(id);
         if (boardingHouseRepository.existsByNameAndUserIdAndStatusAndIdNot(request.getName(), request.getUserId(), CommonStatus.ACTIVE.getValue(), id)) {
             throw new AppException(ApiResponseCode.BOARDING_HOUSE_ALREADY_EXISTED);

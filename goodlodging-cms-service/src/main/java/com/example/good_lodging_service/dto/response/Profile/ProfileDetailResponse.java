@@ -1,9 +1,8 @@
-package com.example.good_lodging_service.dto.response;
+package com.example.good_lodging_service.dto.response.Profile;
 
-import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseDetailResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
-import com.example.good_lodging_service.entity.Room;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProfileResponse {
+public class ProfileDetailResponse {
     UserResponseDTO user;
-    List<BoardingHouseResponse> boardingHouses;
+    List<BoardingHouseDetailResponse> boardingHouses;
     List<RoomResponse> rooms;
 }

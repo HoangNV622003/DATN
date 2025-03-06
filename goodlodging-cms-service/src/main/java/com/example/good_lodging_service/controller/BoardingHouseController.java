@@ -2,7 +2,7 @@ package com.example.good_lodging_service.controller;
 
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseRequest;
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseUpdateRequest;
-import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseDetailResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.service.BoardingHouseService;
 import lombok.AccessLevel;
@@ -20,17 +20,17 @@ import java.util.List;
 public class BoardingHouseController {
     BoardingHouseService boardingHouseService;
     @PostMapping
-    public ResponseEntity<BoardingHouseResponse> createBoardingHouse(@RequestBody BoardingHouseRequest request) {
+    public ResponseEntity<BoardingHouseDetailResponse> createBoardingHouse(@RequestBody BoardingHouseRequest request) {
         return ResponseEntity.ok(boardingHouseService.createBoardingHouse(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardingHouseResponse> updateBoardingHouse(@PathVariable Long id, @RequestBody BoardingHouseUpdateRequest request) {
+    public ResponseEntity<BoardingHouseDetailResponse> updateBoardingHouse(@PathVariable Long id, @RequestBody BoardingHouseUpdateRequest request) {
         return ResponseEntity.ok(boardingHouseService.updateBoardingHouse(id, request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardingHouseResponse> getBoardingHouseById(@PathVariable Long id) {
+    public ResponseEntity<BoardingHouseDetailResponse> getBoardingHouseById(@PathVariable Long id) {
         return ResponseEntity.ok(boardingHouseService.getDetailBoardingHouse(id));
     }
 

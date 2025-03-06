@@ -10,10 +10,6 @@ import java.time.Instant;
 @Getter
 @Setter
 @Builder
-@Table(name = "otp", indexes = {
-        @Index(name = "idx_email", columnList = "email"),
-        @Index(name = "idx_phone_number", columnList = "phoneNumber")
-})
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

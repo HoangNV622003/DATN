@@ -1,5 +1,7 @@
 package com.example.good_lodging_service.dto.response.Post;
 
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
+import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,13 +12,9 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PostResponse {
-    Long id;
+public class PostDetailResponse {
     String title;
     String imageUrl;
-    Float area;
-    Float roomRent;
-    String address;
-    Long boardingHouseId;
-    Long userId;
+    BoardingHouseResponse boardingHouse;
+    ProfileResponse userProfile;
 }

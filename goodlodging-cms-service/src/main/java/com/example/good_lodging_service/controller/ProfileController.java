@@ -1,6 +1,6 @@
 package com.example.good_lodging_service.controller;
 
-import com.example.good_lodging_service.dto.response.ProfileResponse;
+import com.example.good_lodging_service.dto.response.Profile.ProfileDetailResponse;
 import com.example.good_lodging_service.service.ProfileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class ProfileController {
     ProfileService profileService;
 
     @GetMapping("/{id}")
-    ResponseEntity<ProfileResponse> getProfile(@PathVariable Long id) {
+    ResponseEntity<ProfileDetailResponse> getProfile(@PathVariable Long id) {
         return ResponseEntity.ok(profileService.getProfile(id));
     }
 }

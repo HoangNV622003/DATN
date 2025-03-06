@@ -72,6 +72,21 @@ public enum ApiResponseCode {
     DEVICE_ALREADY_EXITED(9001, "Thiết bị đã tồn tại", HttpStatus.BAD_REQUEST),
     DEVICE_DELETED_SUCCESSFUL(9002, "Thiết bị đã được xóa thành công", HttpStatus.OK),
 
+    //POST
+    POST_DELETED_SUCCESSFUL(1101,"Bài viết đã được xóa thành công", HttpStatus.OK),
+
+
+    //FILTER
+
+    INVALID_ROOM_RENT(1201,"Giá thuê phòng tối đa không được nhỏ hơn giá thuê phòng phòng tối thiểu",HttpStatus.BAD_REQUEST),
+    INVALID_WATER_PRICE(1202,"Giá tiền nước tối đa không được nhỏ hơn giá tiền nước tối thiểu",HttpStatus.BAD_REQUEST),
+    INVALID_ELECTRICITY_PRICE(1203,"Giá tiền điện tối đa không được nhỏ hơn giá tiền điện tối thiểu",HttpStatus.BAD_REQUEST),
+    INVALID_AREA(1204,"Diện tích phòng tối đa không được nhỏ hơn diện tích phòng tối thiểu",HttpStatus.BAD_REQUEST),
+    INVALID_ROOM_RENT_NEGATIVE(1205,"Diện tích phòng tìm kiếm không được nhỏ hơn 0",HttpStatus.BAD_REQUEST),
+    INVALID_WATER_PRICE_NEGATIVE(1206,"Giá tiền nước tìm kiếm không được nhỏ hơn 0",HttpStatus.BAD_REQUEST),
+    INVALID_ELECTRICITY_PRICE_NEGATIVE(1207,"Giá tiền điện tìm kiếm không được nhỏ hơn 0",HttpStatus.BAD_REQUEST),
+    INVALID_AREA_NEGATIVE(1208,"Diện tích tìm kiếm không được nhỏ hơn 0",HttpStatus.BAD_REQUEST),
+
     ;
     private final Integer code;
     private final String message;
