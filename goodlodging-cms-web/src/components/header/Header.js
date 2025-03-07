@@ -17,6 +17,7 @@ const Header = () => {
   const isLogin = useState(true);
   return (
     <div className="header">
+    <div className="header__content">
         <Link to="/" className="header__home">
           <RiHome2Line className="header__icon" aria-label="Trang chủ" />
             <p className="header__title">Trọ tốt</p>
@@ -46,6 +47,8 @@ const Header = () => {
         )}
       </div>
     </div>
+    </div>
+
   );
 };
 

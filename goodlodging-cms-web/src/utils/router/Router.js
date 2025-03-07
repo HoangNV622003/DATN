@@ -2,7 +2,7 @@ export const ROUTERS={
     USER:{
         HOME:"",
         PROFILE:"profile",
-        
+        POST_DETAIL:"post-detail/:id"
     },
     ADMIN:{
 

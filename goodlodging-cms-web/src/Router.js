@@ -6,12 +6,12 @@ const renderRouterUser = () => {
   return (
     <Routes>
       <Route
-        path=""
+        path="/*"
         element={
           <MasterLayout>
             <Routes>
               {managementRouter.map((item, key) => (
-                <Route key={key} path={item.path} element={<div className="body">{item.element}</div>}/>
+                <Route key={key} path={item.path} element={<div className="content">{item.element}</div>}/>
               ))}
             </Routes>
           </MasterLayout>

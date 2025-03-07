@@ -1,0 +1,11 @@
+.container__home {
+    width: 1200px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    .container__search__bar {
+        width: 1200px;
+        position: fixed;
+        z-index: 1000;
+    }
+}

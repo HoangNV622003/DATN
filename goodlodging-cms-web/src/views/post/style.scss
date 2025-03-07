@@ -1,0 +1,140 @@
+.container__list__post{
+    position: relative;
+    z-index: 10;
+    box-sizing: border-box;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Chia thành 4 cột đều */
+    gap: 1.25rem; /* Khoảng cách giữa các phần tử */
+    padding: 1.25rem; /* Padding tổng thể */
+}
+// src/components/style.scss
+
+// Biến màu sắc
+$primary-color: #1e90ff;
+$hover-color: #104e8b;
+$border-color: #e0e0e0;
+$text-color: #2c3e50;
+$background-color: #ffffff;
+$shadow-color: rgba(0, 0, 0, 0.1);
+$highlight-color: #f5f8fa;
+
+// PostItem
+.post__item {
+  display: block; // Đảm bảo Link hoạt động như block
+  text-decoration: none; // Bỏ gạch chân mặc định của Link
+  background: $background-color;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  overflow: hidden; // Bo góc không bị tràn
+  transition: all 0.3s ease; // Hiệu ứng mượt mà cho hover
+
+  &:hover {
+    transform: translateY(-5px); // Nhấc lên nhẹ khi hover
+    box-shadow: 0 8px 20px $shadow-color; // Bóng đổ lớn hơn
+    border-color: $primary-color; // Viền đổi màu khi hover
+    z-index: 5;
+  }
+}
+
+// Nội dung bên trong
+.post__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// Hình ảnh
+.image__item {
+  width: 100%;
+  height: 180px; // Chiều cao cố định cho ảnh
+  object-fit: cover; // Ảnh không bị méo
+  transition: transform 0.3s ease; // Hiệu ứng phóng to ảnh
+
+  .post__item:hover & {
+    transform: scale(1.05); // Phóng to nhẹ khi hover
+  }
+}
+
+// Chi tiết bài đăng
+.post__details {
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; // Khoảng cách giữa các dòng
+}
+
+// Tiêu đề
+.post__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-color;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap; // Không xuống dòng
+  overflow: hidden;
+  text-overflow: ellipsis; // Thêm dấu "..." nếu quá dài
+
+  .post__item:hover & {
+    color: $primary-color; // Đổi màu khi hover
+  }
+}
+
+// Giá thuê
+.post__price {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e74c3c; // Màu đỏ nổi bật cho giá
+  margin: 0;
+}
+
+// Diện tích
+.post__area {
+  font-size: 14px;
+  color: $text-color;
+  margin: 0;
+}
+
+// Địa chỉ
+.post__address {
+  font-size: 14px;
+  color: #7f8c8d; // Màu xám nhạt cho địa chỉ
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; // Giới hạn 2 dòng
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Ngày sửa đổi
+.post__date {
+  font-size: 12px;
+  color: #95a5a6; // Màu xám nhẹ cho ngày
+  margin: 0;
+  margin-top: auto; // Đẩy xuống dưới cùng
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .post__item {
+    width: 100%; // Chiếm toàn bộ chiều rộng trên mobile
+  }
+
+  .image__item {
+    height: 150px; // Giảm chiều cao ảnh trên mobile
+  }
+
+  .post__title {
+    font-size: 16px;
+  }
+
+  .post__price {
+    font-size: 14px;
+  }
+}
+.container__post__detail{
+  
+}

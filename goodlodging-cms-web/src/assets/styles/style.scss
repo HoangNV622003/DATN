@@ -1,43 +1,52 @@
-$width-percentage: 80%;
+$width-percentage: 1200px;
+$primary-color: #007bff;
+$hover-color: #0056b3;
+$border-color: #ccc;
+$text-color: #333;
+$background-color: #fff;
+$shadow-color: rgba(0, 0, 0, 0.15);
+$selected-color: #e6f0ff;
 
+html,
+body{
+  margin: 0;
+}
+*{
+  padding: 0;
+  margin: 0;
+}
 // Container chính
-.container {
+.master_layout {
+  background-color: $background-color;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   min-height: 100vh; // Chiều cao tối thiểu full màn hình
   align-items: center; // Căn giữa ngang
-
-  .header,
-  .body,
-  .footer {
+  .content,.footer{
     width: $width-percentage;
   }
 }
 
-// Header cố định ở trên
 .header {
+  width: 100%;
+  height: 50px;
   position: fixed;
   top: 0;
   left: 50%;
   transform: translateX(-50%); // Căn giữa ngang
   background-color: #f8f9fa;
-  padding: 20px;
+  padding: 10px 30px;
   z-index: 1000;
 }
 
-// Body linh hoạt
-.body {
-
+.content {
   flex: 1; // Chiếm không gian còn lại
-  background-color: #e9ecef;
-  padding-top: 200px;
-  margin-top: 60px; // Khoảng cách bằng chiều cao header (padding 20px + nội dung)
+  margin-top: 70px; // Khoảng cách bằng chiều cao header (padding 20px + nội dung)
 }
 
-// Footer luôn ở dưới
 .footer {
   background-color: #dee2e6;
-  padding: 20px;
   margin-top: auto; // Đẩy xuống dưới nếu body rỗng
 }
-

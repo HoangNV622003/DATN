@@ -1,5 +1,4 @@
 import { BrowserRouter } from 'react-router-dom';
-import './App.css';
 import RouterCustom from './Router';
 function App() {
   return (
