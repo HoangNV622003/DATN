@@ -28,7 +28,9 @@ public class SecurityConfig {
             "/users",
             "/notifications/otp/send",
             "/notifications/otp/resend",
-            "/notifications/otp/verify"
+            "/notifications/otp/verify",
+            "/addresses",
+            "/posts"
     };
 
     @Autowired
@@ -38,6 +40,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers(HttpMethod.GET,PUBLIC_ENDPOINTS).permitAll()
                 .anyRequest().authenticated()
         );
 

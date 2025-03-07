@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddressDetailResponse {
+public class AddressResponse {
     Long id;
     Integer houseNumber;
     String streetName;

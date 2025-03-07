@@ -1,6 +1,6 @@
 package com.example.good_lodging_service.dto.response.Address;
 
-public interface AddressPresentation {
+public interface AddressProjection {
     Long getBoardingHouseId();
     Long getAddressId();
     Long getProvinceId();

@@ -127,25 +127,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("features") String features,
             @Param("description") String description,
             Pageable pageable);
+
 }
-//SELECT DISTINCT ON (p.id) p.* FROM post p
-//    INNER JOIN boarding_house bh ON p.boarding_house_id = bh.id
-//    INNER JOIN address a ON a.boarding_house_id = bh.id
-//    WHERE
-//        (:wardsId IS NULL OR a.wards_id = :wardsId)
-//        AND (:districtId IS NULL OR a.district_id = :districtId)
-//        AND (:provinceId IS NULL OR a.province_id = :provinceId)
-//        AND (p.room_rent BETWEEN :minPrice AND :maxPrice)
-//        AND bh.features LIKE CONCAT('%', :features, '%')
-//    """,
-//            countQuery = """
-//    SELECT DISTINCT ON (p.id) COUNT(p.id) FROM post p
-//    INNER JOIN boarding_house bh ON p.boarding_house_id = bh.id
-//    INNER JOIN address a ON a.boarding_house_id = bh.id
-//    WHERE
-//        (:wardsId IS NULL OR a.wards_id = :wardsId)
-//        AND (:districtId IS NULL OR a.district_id = :districtId)
-//        AND (:provinceId IS NULL OR a.province_id = :provinceId)
-//        AND (p.room_rent BETWEEN :minPrice AND :maxPrice)
-//        AND bh.features LIKE CONCAT('%', :features, '%')
-//    """
+

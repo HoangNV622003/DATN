@@ -2,8 +2,8 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
-import com.example.good_lodging_service.dto.response.Address.AddressDetailResponse;
-import com.example.good_lodging_service.dto.response.Address.AddressPresentation;
+import com.example.good_lodging_service.dto.response.Address.AddressResponse;
+import com.example.good_lodging_service.dto.response.Address.AddressProjection;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseDetailResponse;
 import com.example.good_lodging_service.dto.response.Profile.ProfileDetailResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
@@ -37,12 +37,12 @@ public class ProfileService {
     BoardingHouseMapper boardingHouseMapper;
 
     private List<BoardingHouseDetailResponse> setAddress(List<BoardingHouseDetailResponse> boardingHouseDetailRespons) {
-        Map<Long, AddressDetailResponse> addressResponseMap = new HashMap<>();
-        List<AddressPresentation> addressPresentations = addressRepository.findAllByBoardingHouseIdInWithQuery(boardingHouseDetailRespons.stream().map(BoardingHouseDetailResponse::getId).toList());
-        addressPresentations.forEach(addressPresentation -> {
-            addressResponseMap.put(addressPresentation.getAddressId(), AddressDetailResponse.builder()
-                    .id(addressPresentation.getAddressId())
-                    .fullAddress(addressPresentation.getFullAddress())
+        Map<Long, AddressResponse> addressResponseMap = new HashMap<>();
+        List<AddressProjection> addressProjections = addressRepository.findAllByBoardingHouseIdInWithQuery(boardingHouseDetailRespons.stream().map(BoardingHouseDetailResponse::getId).toList());
+        addressProjections.forEach(addressProjection -> {
+            addressResponseMap.put(addressProjection.getAddressId(), AddressResponse.builder()
+                    .id(addressProjection.getAddressId())
+                    .fullAddress(addressProjection.getFullAddress())
                     .build());
         });
         boardingHouseDetailRespons.forEach(boardingHouseResponse -> {
