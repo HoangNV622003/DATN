@@ -18,7 +18,6 @@ public class PostRequest {
     Float roomRent;
     String address;
     Long roomId;
-
     Long userId;
     Long boardingHouseId;
 

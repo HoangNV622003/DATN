@@ -62,7 +62,7 @@ public class ProfileService {
 
     private List<BoardingHouseDetailResponse> getAllBoardingHouseByUserId(Long userId) {
         List<BoardingHouseDetailResponse> boardingHouses = boardingHouseRepository.findAllByUserIdAndStatus(userId, CommonStatus.ACTIVE.getValue())
-                .stream().map(boardingHouseMapper::toBoardingHouseResponseDTO).toList();
+                .stream().map(boardingHouseMapper::toBoardingHouseDetailResponseDTO).toList();
         List<Long> boardingHouseIds = boardingHouses.stream().map(BoardingHouseDetailResponse::getId).toList();
         List<RoomResponse> rooms = roomRepository.findAllByBoardingHouseIdInAndStatus(boardingHouseIds, CommonStatus.ACTIVE.getValue())
                 .stream().map(roomMapper::toRoomResponseDTO).toList();

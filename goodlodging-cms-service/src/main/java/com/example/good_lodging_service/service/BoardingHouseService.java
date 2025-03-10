@@ -44,7 +44,7 @@ public class BoardingHouseService {
         boardingHouse.setStatus(CommonStatus.ACTIVE.getValue());
         boardingHouse = boardingHouseRepository.save(boardingHouse);
 
-        return boardingHouseMapper.toBoardingHouseResponseDTO(boardingHouse);
+        return boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
     }
 
 
@@ -53,7 +53,7 @@ public class BoardingHouseService {
 
         List<RoomResponse> rooms = roomRepository.findAllByBoardingHouseIdAndStatus(boardingHouseId, CommonStatus.ACTIVE.getValue())
                 .stream().map(roomMapper::toRoomResponseDTO).toList();
-        BoardingHouseDetailResponse response = boardingHouseMapper.toBoardingHouseResponseDTO(boardingHouse);
+        BoardingHouseDetailResponse response = boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
         response.setRooms(ValueUtils.getOrDefault(rooms, new ArrayList<>()));
 
         Address address = addressRepository.findByBoardingHouseIdAndStatusWithQuery(boardingHouseId, CommonStatus.ACTIVE.getValue());
@@ -69,7 +69,7 @@ public class BoardingHouseService {
         boardingHouseMapper.updateBoardingHouse(boardingHouse, request);
         boardingHouse.setStatus(CommonStatus.ACTIVE.getValue());
         boardingHouse = boardingHouseRepository.save(boardingHouse);
-        return boardingHouseMapper.toBoardingHouseResponseDTO(boardingHouse);
+        return boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
     }
 
 

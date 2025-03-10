@@ -1,5 +1,6 @@
 package com.example.good_lodging_service.repository;
 
+import com.example.good_lodging_service.dto.response.Post.PostDetailProjection;
 import com.example.good_lodging_service.dto.response.Post.PostProjection;
 import com.example.good_lodging_service.entity.Post;
 import jakarta.transaction.Transactional;
@@ -34,7 +35,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT COUNT(DISTINCT p.id )
             FROM post p WHERE p.status=:status
         """)
-    Page<PostProjection> findAllByStatusWithQuery(Integer status, Pageable pageable);
+    Page<PostProjection> findAllByStatusWithQuery(@Param("status")Integer status, Pageable pageable);
     @Query(nativeQuery = true,
             value = """
             SELECT DISTINCT 
@@ -54,7 +55,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT COUNT(DISTINCT p.id )
             FROM post p WHERE p.status=:status AND p.user_id=:userId
         """)
-    Page<PostProjection> findAllByUserIdAndStatusWithQuery(Long userId, Integer status, Pageable pageable);
+    Page<PostProjection> findAllByUserIdAndStatusWithQuery(@Param("userId")Long userId,@Param("status") Integer status, Pageable pageable);
     @Query(nativeQuery = true,
             value = """
         SELECT DISTINCT 
@@ -127,6 +128,33 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("features") String features,
             @Param("description") String description,
             Pageable pageable);
-
+    @Query(nativeQuery = true,value = """
+            
+            SELECT
+                p.id AS postId,
+                p.user_id AS userId,
+                p.address AS address,
+                p.title AS title,
+                CONCAT(u.first_name,' ',u.last_name) AS fullname,
+                u.url_avatar AS urlAvatar,
+                u.email AS email,
+                u.phone AS phoneNumber,
+                r.area AS area,
+                r.floor AS floor,
+                bh.id AS boardingHouseId,
+                bh.name as boardingHouseName,
+                bh.features AS features,
+                bh.description AS description,
+                bh.room_rent AS roomRent,
+                bh.water_price AS waterPrice,
+                bh.electricity_price AS electricityPrice,
+                p.date_updated as modifiedDate
+            FROM post p
+            INNER JOIN user u ON p.user_id=u.id AND u.status=:status
+            INNER JOIN boarding_house bh ON bh.id=p.boarding_house_id AND bh.status=:status
+            INNER JOIN room r ON r.id=p.room_id AND r.status=:status
+            WHERE p.id=:postId AND p.status=:status
+            """)
+    Optional<PostDetailProjection> findByPostIdAndStatusWithQuery(@Param("postId")Long postId,@Param("status") Integer status);
 }
 

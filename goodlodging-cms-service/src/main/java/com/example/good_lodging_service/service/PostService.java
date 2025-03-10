@@ -2,17 +2,26 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
+import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.Post.PostFilterRequest;
 import com.example.good_lodging_service.dto.request.Post.PostRequest;
 import com.example.good_lodging_service.dto.request.Post.PostUpdateRequest;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
+import com.example.good_lodging_service.dto.response.Post.PostDetailProjection;
 import com.example.good_lodging_service.dto.response.Post.PostDetailResponse;
 import com.example.good_lodging_service.dto.response.Post.PostProjection;
 import com.example.good_lodging_service.dto.response.Post.PostResponse;
+import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
+import com.example.good_lodging_service.entity.Image;
 import com.example.good_lodging_service.entity.Post;
 import com.example.good_lodging_service.exception.AppException;
+import com.example.good_lodging_service.mapper.BoardingHouseMapper;
 import com.example.good_lodging_service.mapper.PostMapper;
-import com.example.good_lodging_service.repository.PostRepository;
+import com.example.good_lodging_service.mapper.ProfileMapper;
+import com.example.good_lodging_service.mapper.RoomMapper;
+import com.example.good_lodging_service.repository.*;
+import com.example.good_lodging_service.utils.ValueUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,7 +37,14 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostService {
     PostRepository postRepository;
+    BoardingHouseRepository boardingHouseRepository;
+    BoardingHouseMapper boardingHouseMapper;
     PostMapper postMapper;
+    UserRepository userRepository;
+    ProfileMapper profileMapper;
+    private final RoomRepository roomRepository;
+    private final RoomMapper roomMapper;
+    private final ImageRepository imageRepository;
 
     public PostResponse createPost(PostRequest request) {
         Post post = postMapper.toPost(request);
@@ -47,11 +64,24 @@ public class PostService {
     }
 
     public PostDetailResponse getPostDetailById(Long id) {
-        Post post = findById(id);
+        PostDetailProjection postDetailProjection=postRepository.findByPostIdAndStatusWithQuery(id,CommonStatus.ACTIVE.getValue()).orElseThrow(
+                ()->new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        List<Image> boardingHouseImageUrls=imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getBoardingHouseId(), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
+        List<Image> roomImageUrls=imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getRoomId(), EntityType.ROOM.getValue(), CommonStatus.ACTIVE.getValue());
+        boardingHouseImageUrls.addAll(roomImageUrls);
+        List<String> imageUrls=boardingHouseImageUrls.stream().map(Image::getImageUrl).toList();
 
-        return PostDetailResponse.builder().build();
+        return PostDetailResponse.builder()
+                .userProfile(ProfileResponse.fromPostDetailProjection(postDetailProjection))
+                .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(),""))
+                .floor(ValueUtils.getOrDefault(postDetailProjection.getFloor(),0))
+                .area(ValueUtils.getOrDefault(postDetailProjection.getArea(),0F))
+                .boardingHouse(BoardingHouseResponse.fromPostDetailProjection(postDetailProjection))
+                .imageUrl(imageUrls)
+                .build();
 
     }
+
 
     public CommonResponse deletePost(Long id) {
         Post post = findById(id);
