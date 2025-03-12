@@ -6,6 +6,7 @@ import com.example.good_lodging_service.dto.response.Address.AddressProjection;
 import com.example.good_lodging_service.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,28 +22,15 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                 SELECT
                     bh.id as boardingHouseId,
                     a.id as addressId,
-                    a.province_id as provinceId,
-                    a.district_id as districtId,
-                    a.wards_id as wardsId,
-                    a.street_name as streetName,
-                    a.house_number as houseNumber
+                    a.full_address as fullAddress
                 FROM boarding_house bh
-                    JOIN address a ON bh.address_id = a.id
-                    JOIN province p ON p.province_id=a.province_id
-                    JOIN district d ON d.district_id=a.district_id
-                    JOIN wards w ON w.wards_id=a.wards_id
+                    JOIN address a ON bh.id = a.boarding_house_id
                 WHERE bh.id IN :ids AND a.status=1;
                 ;
             """)
-    List<AddressProjection> findAllByBoardingHouseIdInWithQuery(List<Long> ids);
-
-    @Query(nativeQuery = true, value = """
-                SELECT a.* FROM address a 
-                    JOIN boarding_house bh ON bh.id = a.boarding_house_id
-                    WHERE bh.id = :boardingHouseId AND bh.status = :status LIMIT 1;
-            """)
-    Address findByBoardingHouseIdAndStatusWithQuery(Long boardingHouseId, Integer status);
-
+    List<AddressProjection> findAllByBoardingHouseIdInWithQuery(@Param("ids")List<Long> ids);
+    List<Address> findAllByBoardingHouseIdIn(List<Long> ids);
+    Address findByBoardingHouseIdAndStatus(Long boardingHouseId, Integer status);
     Optional<Address> findByIdAndStatus(Long id, Integer status);
 
     boolean existsByIdAndStatus(Long id, Integer status);

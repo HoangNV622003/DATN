@@ -13,8 +13,5 @@ import java.util.List;
 @Repository
 @Transactional
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    @Query("SELECT i FROM Image i WHERE (i.entityId, i.entityType) IN :entities AND i.status = :status")
-    List<Image> findImagesByEntitiesAndStatus(@Param("entities") List<ImageIdentifier> entities, @Param("status") Integer status);
-
     List<Image> findAllByEntityIdAndEntityTypeAndStatus(Long entityId, Integer entityType, Integer status);
 }

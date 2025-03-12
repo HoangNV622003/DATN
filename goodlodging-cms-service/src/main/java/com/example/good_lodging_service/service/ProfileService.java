@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,25 +37,26 @@ public class ProfileService {
     BoardingHouseRepository boardingHouseRepository;
     BoardingHouseMapper boardingHouseMapper;
 
-    private List<BoardingHouseDetailResponse> setAddress(List<BoardingHouseDetailResponse> boardingHouseDetailRespons) {
+    private List<BoardingHouseDetailResponse> setAddress(List<BoardingHouseDetailResponse> boardingHouseDetailResponses) {
         Map<Long, AddressResponse> addressResponseMap = new HashMap<>();
-        List<AddressProjection> addressProjections = addressRepository.findAllByBoardingHouseIdInWithQuery(boardingHouseDetailRespons.stream().map(BoardingHouseDetailResponse::getId).toList());
+        List<Long> boardingHouseIds = boardingHouseDetailResponses.stream().map(BoardingHouseDetailResponse::getId).toList();
+        List<AddressProjection> addressProjections = addressRepository.findAllByBoardingHouseIdInWithQuery(boardingHouseIds);
         addressProjections.forEach(addressProjection -> {
             addressResponseMap.put(addressProjection.getAddressId(), AddressResponse.builder()
                     .id(addressProjection.getAddressId())
                     .fullAddress(addressProjection.getFullAddress())
                     .build());
         });
-        boardingHouseDetailRespons.forEach(boardingHouseResponse -> {
+        boardingHouseDetailResponses.forEach(boardingHouseResponse -> {
             boardingHouseResponse.setAddress(addressResponseMap.get(boardingHouseResponse.getId()).getFullAddress());
         });
-        return boardingHouseDetailRespons;
+        return boardingHouseDetailResponses;
     }
 
     public ProfileDetailResponse getProfile(Long id) {
         return ProfileDetailResponse.builder()
                 .user(userMapper.toUserResponse(findById(id)))
-                .boardingHouses(setAddress(getAllBoardingHouseByUserId(id)))
+                .boardingHouses(getAllBoardingHouseByUserId(id))
                 .rooms(getAllRoomByUserId(id))
                 .build();
 

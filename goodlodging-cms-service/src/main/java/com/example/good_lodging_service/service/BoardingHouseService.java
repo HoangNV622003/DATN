@@ -56,7 +56,7 @@ public class BoardingHouseService {
         BoardingHouseDetailResponse response = boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
         response.setRooms(ValueUtils.getOrDefault(rooms, new ArrayList<>()));
 
-        Address address = addressRepository.findByBoardingHouseIdAndStatusWithQuery(boardingHouseId, CommonStatus.ACTIVE.getValue());
+        Address address = addressRepository.findByBoardingHouseIdAndStatus(boardingHouseId, CommonStatus.ACTIVE.getValue());
         response.setAddress(!Objects.isNull(address) ? address.getFullAddress() : "");
         return response;
     }
@@ -74,21 +74,13 @@ public class BoardingHouseService {
 
 
     public CommonResponse deleteBoardingHouse(List<Long> boardingHouseIds) {
+        //delete boarding house
         List<BoardingHouse> boardingHouses = boardingHouseRepository.findAllByIdInAndStatus(boardingHouseIds, CommonStatus.ACTIVE.getValue());
         boardingHouses.forEach(boardingHouse -> boardingHouse.setStatus(CommonStatus.DELETED.getValue()));
-        List<Address> addressPresentations = addressRepository.findAllByBoardingHouseIdInWithQuery(boardingHouseIds).stream().map(addressPresentation ->
-                        Address.builder()
-                                .id(addressPresentation.getAddressId())
-                                .provinceId(addressPresentation.getProvinceId())
-                                .districtId(addressPresentation.getDistrictId())
-                                .wardsId(addressPresentation.getWardsId())
-                                .streetName(addressPresentation.getStreetName())
-                                .houseNumber(addressPresentation.getHouseNumber())
-                                .fullAddress(addressPresentation.getFullAddress())
-                                .status(CommonStatus.DELETED.getValue())
-                                .build())
-                .toList();
 
+        //delete address
+        List<Address> addressPresentations=addressRepository.findAllByBoardingHouseIdIn(boardingHouseIds);
+        addressPresentations.forEach(addressPresentation -> addressPresentation.setStatus(CommonStatus.DELETED.getValue()));
         boardingHouseRepository.saveAll(boardingHouses);
         addressRepository.saveAll(addressPresentations);
         return CommonResponse.builder().result(ApiResponseCode.BOARDING_HOUSE_DELETED_SUCCESSFUL.getMessage()).build();
