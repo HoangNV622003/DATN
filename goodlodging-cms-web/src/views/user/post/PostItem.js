@@ -1,9 +1,8 @@
-// src/components/PostItem.jsx
 import React from 'react';
 import './style.scss';
-import { formatDate } from '../../utils/DateTimeUtils';
+import { formatDate } from '../../../utils/DateTimeUtils';
 import { Link } from 'react-router-dom';
-import { ROUTERS } from '../../utils/router/Router';
+import { ROUTERS } from '../../../utils/router/Router';
 
 const PostItem = ({ post }) => {
   const { id, title, imageUrl, area, roomRent, address, modifiedDate } = post;

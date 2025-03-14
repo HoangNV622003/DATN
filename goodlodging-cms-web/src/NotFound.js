@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Profile = () => {
+const NotFound = () => {
     return (
         <div>
-            profile
+            not found
         </div>
     );
 };
 
-export default Profile;
+export default NotFound;

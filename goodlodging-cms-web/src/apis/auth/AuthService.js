@@ -16,6 +16,18 @@ export const loginUser = async (payload) => {
   }
 };
 
+export const introspectToken = async (payload) => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/introspect`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 //payload => {token}
 export const logoutUser = async (payload) => {
   try {

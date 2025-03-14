@@ -1,0 +1,53 @@
+.search-page {
+    margin: 0 auto;
+    width: 80%;
+    box-sizing: border-box;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+
+    .container__search__bar {
+        width: 100%;
+        margin: 60px auto;
+        position: fixed;
+        top: 0; // Đảm bảo thanh tìm kiếm nằm ở đầu trang
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+
+    .content-wrapper {
+        flex: 1;
+        display: flex;
+        margin-top: 80px; // Khoảng cách để tránh overlap với search bar cố định
+
+        .search__list__post {
+            width: 75%;
+            transition: all 0.3s ease;
+        }
+        .config-view{
+            padding: 20px;
+            width: 25%;
+            box-sizing: border-box;
+        }
+
+    }
+
+    .navigation__paging {
+        margin-top: auto;
+        padding: 10px 0;
+        text-align: center;
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .search-page {
+        width: 100%;
+        padding: 10px;
+
+        .container__search__bar {
+            width: 100%;
+        }
+    }
+}

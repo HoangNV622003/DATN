@@ -71,7 +71,7 @@ export const deletePost=async(payload)=>{
         throw error;
     }
 }
-export const getPost=async({id})=>{
+export const getPost=async(id)=>{
     try {
         const response=await axios.get(`${API_URL}/posts/${id}`)
         return response.data;

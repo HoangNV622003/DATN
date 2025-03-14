@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../../utils/service/localStorageService";
 import { API_URL } from "../../utils/ApiUrl";
 const accessToken = getToken();
-export const fetchUser = async () => {
+export const fetchUsers = async () => {
   try {
     const response = await axios.get(`${API_URL}/users`, {
       headers: {
@@ -11,10 +11,22 @@ export const fetchUser = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 };
 
+export const getUser=async(id)=>{
+  try {
+    const response = await axios.get(`${API_URL}/users/${id}`,{
+      headers:{
+        Authorization:`Bearer ${accessToken}`,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 export const createUser = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/users`, userData, {
