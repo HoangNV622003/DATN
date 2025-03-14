@@ -1,5 +1,6 @@
 package com.example.good_lodging_service.dto.request.User;
 
+import com.example.good_lodging_service.dto.request.Address.AddressRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,7 +18,7 @@ public class UserCreateRequest {
     String lastName;
     String email;
     String phone;
-    String address;
+    AddressRequest address;
     String gender;
     LocalDate birthday;
 }

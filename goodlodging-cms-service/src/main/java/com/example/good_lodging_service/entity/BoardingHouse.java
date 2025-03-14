@@ -29,5 +29,6 @@ public class BoardingHouse extends AbstractAuditingEntity implements Serializabl
     Float electricityPrice;
     Float waterPrice;
     String features;
+    Long addressId;
     Integer status;
 }

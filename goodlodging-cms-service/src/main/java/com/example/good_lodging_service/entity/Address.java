@@ -23,7 +23,6 @@ public class Address extends AbstractAuditingEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long boardingHouseId;
     Integer houseNumber;
     String streetName;
     Long wardsId;

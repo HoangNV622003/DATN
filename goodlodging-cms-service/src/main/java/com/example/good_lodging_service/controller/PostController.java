@@ -30,7 +30,7 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<Page<PostProjection>> getPosts(
-            @PageableDefault(size = 15, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 5, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
 
@@ -63,9 +63,10 @@ public class PostController {
         return ResponseEntity.ok(postService.deletePost(id));
     }
 
+    //this endpoint used to search data
     @PostMapping("/search")
     public ResponseEntity<Page<PostProjection>> searchPosts(
-            @PageableDefault(size = 15, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @PageableDefault(size = 2, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestBody(required = false) PostFilterRequest request
     ) {
         return ResponseEntity.ok(postService.searchPosts(request, pageable));

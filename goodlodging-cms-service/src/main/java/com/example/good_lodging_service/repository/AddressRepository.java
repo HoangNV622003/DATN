@@ -14,10 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
-    boolean existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatus(Integer houseNumber, String streetName, Long wardsId, Long districtId, Long provinceId, Long boardingHouseId, Integer status);
-
-    boolean existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatusAndIdNot(Integer houseNumber, String streetName, Long wardsId, Long districtId, Long provinceId, Long boardingHouseId, Integer status, Long id);
-
     @Query(nativeQuery = true, value = """
                 SELECT
                     bh.id as boardingHouseId,
@@ -28,13 +24,11 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                 WHERE bh.id IN :ids AND a.status=1;
                 ;
             """)
-    List<AddressProjection> findAllByBoardingHouseIdInWithQuery(@Param("ids")List<Long> ids);
-    List<Address> findAllByBoardingHouseIdIn(List<Long> ids);
-    Address findByBoardingHouseIdAndStatus(Long boardingHouseId, Integer status);
+    List<AddressProjection> findAllByBoardingHouseIdInWithQuery(@Param("ids") List<Long> ids);
+
     Optional<Address> findByIdAndStatus(Long id, Integer status);
 
-    boolean existsByIdAndStatus(Long id, Integer status);
-    @Query(nativeQuery = true,value = """
+    @Query(nativeQuery = true, value = """
                 SELECT
                     	w.wards_id      AS wardsId,
                     	w.name          AS wardsName,
@@ -47,4 +41,5 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                     INNER JOIN province p ON d.province_id=p.province_id
             """)
     List<AddressDetailProjection> findAllByQuery();
+
 }

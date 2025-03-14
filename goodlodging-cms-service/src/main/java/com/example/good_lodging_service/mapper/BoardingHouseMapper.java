@@ -18,6 +18,7 @@ public interface BoardingHouseMapper {
     BoardingHouseDetailResponse toBoardingHouseDetailResponseDTO(BoardingHouse boardingHouse);
 
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "addressId", ignore = true)
     void updateBoardingHouse(@MappingTarget BoardingHouse boardingHouse, BoardingHouseUpdateRequest boardingHouseUpdateRequest);
 
     @Mapping(target = "imageUrl", ignore = true)

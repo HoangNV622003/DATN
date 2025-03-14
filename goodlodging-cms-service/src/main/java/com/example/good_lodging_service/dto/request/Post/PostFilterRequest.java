@@ -4,13 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
 public class PostFilterRequest {
-    private Long provinceId;
-    private Long districtId;
-    private Long wardsId;
+    private List<Long> wardsId;
     private Float minRoomRent;
     private Float maxRoomRent;
     private Float minArea;

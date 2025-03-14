@@ -21,4 +21,5 @@ public class BoardingHouseRequest {
     Float electricityPrice;
     Float waterPrice;
     String features;
+    AddressRequest address;
 }

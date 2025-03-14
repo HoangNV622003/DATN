@@ -113,8 +113,6 @@ public class PostService {
     private Page<PostProjection> findByAddressAndFeature(PostFilterRequest filter, Pageable pageable) {
         validateFilter(filter);
         return postRepository.findAllByAddressAndFeaturesWithQuery(
-                filter.getProvinceId(),
-                filter.getDistrictId(),
                 filter.getWardsId(),
                 filter.getMinRoomRent(),
                 filter.getMaxRoomRent(),

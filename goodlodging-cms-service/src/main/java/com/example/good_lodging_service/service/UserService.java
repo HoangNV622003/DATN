@@ -8,9 +8,11 @@ import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
+import com.example.good_lodging_service.entity.Address;
 import com.example.good_lodging_service.entity.Role;
 import com.example.good_lodging_service.entity.User;
 import com.example.good_lodging_service.exception.AppException;
+import com.example.good_lodging_service.mapper.AddressMapper;
 import com.example.good_lodging_service.mapper.BoardingHouseMapper;
 import com.example.good_lodging_service.mapper.RoomMapper;
 import com.example.good_lodging_service.mapper.UserMapper;
@@ -36,6 +38,8 @@ public class UserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
+    AddressMapper addressMapper;
+    AddressRepository addressRepository;
 
     public UserResponseDTO createUser(UserCreateRequest request) {
         // find user by username, email, phone
@@ -43,9 +47,16 @@ public class UserService {
             throw new AppException(ApiResponseCode.USER_ALREADY_EXISTS);
         }
 
+        //save address
+        Address address = addressMapper.toAddress(request.getAddress());
+        address.setStatus(CommonStatus.ACTIVE.getValue());
+        address = addressRepository.save(address);
+
+        //save user
         User user = userMapper.toUser(request);
         user.setStatus(CommonStatus.ACTIVE.getValue());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAddressId(address.getId());
         Set<Role> roles = new HashSet<>();
         roleRepository.findById(Authorities.CUSTOMER.name()).ifPresent(roles::add);
         user.setRoles(roles);

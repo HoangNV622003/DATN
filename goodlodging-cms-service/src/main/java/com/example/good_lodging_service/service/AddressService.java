@@ -58,32 +58,33 @@ public class AddressService {
         return new ArrayList<>(provinceMap.values());
     }
     public AddressResponse createAddress(AddressRequest addressRequest) {
-        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatus(
-                addressRequest.getHouseNumber(),
-                addressRequest.getStreetName(),
-                addressRequest.getWardsId(),
-                addressRequest.getDistrictId(),
-                addressRequest.getProvinceId(),
-                addressRequest.getBoardingHouseId(),
-                CommonStatus.ACTIVE.getValue()))
-            throw new AppException(ApiResponseCode.ADDRESS_ALREADY_EXISTS);
+//        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatus(
+//                addressRequest.getHouseNumber(),
+//                addressRequest.getStreetName(),
+//                addressRequest.getWardsId(),
+//                addressRequest.getDistrictId(),
+//                addressRequest.getProvinceId(),
+//                addressRequest.getBoardingHouseId(),
+//                CommonStatus.ACTIVE.getValue()))
+//            throw new AppException(ApiResponseCode.ADDRESS_ALREADY_EXISTS);
         Address address = addressMapper.toAddress(addressRequest);
         address.setStatus(CommonStatus.ACTIVE.getValue());
         return addressMapper.toAddressResponseDTO(addressRepository.save(address));
     }
 
     public AddressResponse updateAddress(Long addressId, AddressRequest addressRequest) {
-        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatusAndIdNot(
-                addressRequest.getHouseNumber(),
-                addressRequest.getStreetName(),
-                addressRequest.getWardsId(),
-                addressRequest.getDistrictId(),
-                addressRequest.getProvinceId(),
-                addressRequest.getBoardingHouseId(),
-                CommonStatus.ACTIVE.getValue(),
-                addressId))
-            throw new AppException(ApiResponseCode.ADDRESS_ALREADY_EXISTS);
-        Address address = addressMapper.toAddress(addressRequest);
+//        if (addressRepository.existsByHouseNumberAndStreetNameAndWardsIdAndDistrictIdAndProvinceIdAndBoardingHouseIdAndStatusAndIdNot(
+//                addressRequest.getHouseNumber(),
+//                addressRequest.getStreetName(),
+//                addressRequest.getWardsId(),
+//                addressRequest.getDistrictId(),
+//                addressRequest.getProvinceId(),
+//                addressRequest.getBoardingHouseId(),
+//                CommonStatus.ACTIVE.getValue(),
+//                addressId))
+//            throw new AppException(ApiResponseCode.ADDRESS_ALREADY_EXISTS);
+        Address address = findById(addressId);
+        address = addressMapper.toAddress(addressRequest);
         address.setId(addressId);
         address.setStatus(CommonStatus.ACTIVE.getValue());
         return addressMapper.toAddressResponseDTO(addressRepository.save(address));

@@ -40,10 +40,16 @@ public class BoardingHouseService {
             throw new AppException(ApiResponseCode.BOARDING_HOUSE_ALREADY_EXISTED);
         }
 
+        //save address
+        Address address = addressMapper.toAddress(request.getAddress());
+        address.setStatus(CommonStatus.ACTIVE.getValue());
+        address = addressRepository.save(address);
+
+        //save boarding house
         BoardingHouse boardingHouse = boardingHouseMapper.toBoardingHouse(request);
         boardingHouse.setStatus(CommonStatus.ACTIVE.getValue());
+        boardingHouse.setAddressId(address.getId());
         boardingHouse = boardingHouseRepository.save(boardingHouse);
-
         return boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
     }
 
@@ -56,7 +62,7 @@ public class BoardingHouseService {
         BoardingHouseDetailResponse response = boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
         response.setRooms(ValueUtils.getOrDefault(rooms, new ArrayList<>()));
 
-        Address address = addressRepository.findByBoardingHouseIdAndStatus(boardingHouseId, CommonStatus.ACTIVE.getValue());
+        Address address = addressRepository.findByIdAndStatus(boardingHouse.getAddressId(), CommonStatus.ACTIVE.getValue()).orElse(null);
         response.setAddress(!Objects.isNull(address) ? address.getFullAddress() : "");
         return response;
     }
@@ -79,7 +85,8 @@ public class BoardingHouseService {
         boardingHouses.forEach(boardingHouse -> boardingHouse.setStatus(CommonStatus.DELETED.getValue()));
 
         //delete address
-        List<Address> addressPresentations=addressRepository.findAllByBoardingHouseIdIn(boardingHouseIds);
+        List<Long>addressIds=boardingHouses.stream().map(BoardingHouse::getAddressId).toList();
+        List<Address> addressPresentations = addressRepository.findAllById(addressIds);
         addressPresentations.forEach(addressPresentation -> addressPresentation.setStatus(CommonStatus.DELETED.getValue()));
         boardingHouseRepository.saveAll(boardingHouses);
         addressRepository.saveAll(addressPresentations);

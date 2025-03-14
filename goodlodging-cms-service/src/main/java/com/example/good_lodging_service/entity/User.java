@@ -30,7 +30,7 @@ public class User extends AbstractAuditingDate implements Serializable {
     String lastName;
     String email;
     String phone;
-    String address;
+    Long addressId;
     String gender;
     String urlAvatar;
     LocalDate birthday;

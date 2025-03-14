@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -77,9 +78,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         WHERE
             p.status = 1
             -- Lọc theo địa chỉ
-            AND (a.wards_id = :wardsId OR :wardsId IS NULL OR :wardsId = '')
-            AND (a.district_id = :districtId OR :districtId IS NULL OR :districtId = '')
-            AND (a.province_id = :provinceId OR :provinceId IS NULL OR :provinceId = '')
+            AND (a.wards_id IN :wardsIds)
             -- Lọc theo các tiêu chí khác
             AND (p.room_rent BETWEEN COALESCE(:minRoomRent, p.room_rent) AND COALESCE(:maxRoomRent, p.room_rent))
             AND (p.area BETWEEN COALESCE(:minArea, p.area) AND COALESCE(:maxArea, p.area))
@@ -100,9 +99,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             address a ON bh.id = a.boarding_house_id AND a.status=1
         WHERE
             p.status = 1
-            AND (a.wards_id = :wardsId OR :wardsId IS NULL OR :wardsId = '')
-            AND (a.district_id = :districtId OR :districtId IS NULL OR :districtId = '')
-            AND (a.province_id = :provinceId OR :provinceId IS NULL OR :provinceId = '')
+            AND (a.wards_id IN :wardsIds OR :wardsId IS NULL OR :wardsId = '')
             AND (p.room_rent BETWEEN COALESCE(:minRoomRent, p.room_rent) AND COALESCE(:maxRoomRent, p.room_rent))
             AND (p.area BETWEEN COALESCE(:minArea, p.area) AND COALESCE(:maxArea, p.area))
             AND (bh.electricity_price BETWEEN COALESCE(:minElectricityPrice, bh.electricity_price) 
@@ -114,9 +111,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         """
     )
     Page<PostProjection> findAllByAddressAndFeaturesWithQuery(
-            @Param("provinceId") Long provinceId,
-            @Param("districtId") Long districtId,
-            @Param("wardsId") Long wardsId,
+            @Param("wardsIds") List<Long> wardsId,
             @Param("minRoomRent") Float minRoomRent,
             @Param("maxRoomRent") Float maxRoomRent,
             @Param("minArea") Float minArea,
