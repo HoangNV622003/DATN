@@ -1,0 +1,50 @@
+// src/pages/HomePage/style.scss
+.container__home {
+    margin: 0 auto;
+    width: 80%;
+    box-sizing: border-box;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  
+    .container__search__bar {
+      width: 100%;
+      margin: 60px auto;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      max-width: inherit; // Kế thừa width từ .container__home
+    }
+  
+    .list__post {
+      width: 100%;
+      margin-top: 120px; // Đảm bảo không overlap với search bar cố định
+      transition: all 0.3s ease;
+      // Không cần thêm display hay grid ở đây, để ListPost tự quản lý
+    }
+  
+    .navigation__paging {
+      margin-top: auto;
+      padding: 10px 0;
+      text-align: center;
+    }
+  }
+  
+  // Responsive
+  @media (max-width: 768px) {
+    .container__home {
+      width: 100%;
+      padding: 10px;
+  
+      .container__search__bar {
+        width: 100%;
+        margin: 20px auto; // Giảm margin trên mobile
+      }
+  
+      .list__post {
+        margin-top: 80px; // Giảm khoảng cách trên mobile
+      }
+    }
+  }

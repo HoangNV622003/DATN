@@ -16,5 +16,6 @@ public class AddressResponse {
     Long wardsId;
     Long districtId;
     Long provinceId;
+    String fullAddress;
     Integer status;
 }

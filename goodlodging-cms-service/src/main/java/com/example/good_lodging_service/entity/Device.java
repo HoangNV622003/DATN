@@ -23,9 +23,7 @@ public class Device extends AbstractAuditingEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long roomId;
     String name;
     String description;
-    String deviceStatus;
     Integer status;
 }

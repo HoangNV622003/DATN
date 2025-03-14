@@ -28,5 +28,6 @@ public class Address extends AbstractAuditingEntity implements Serializable {
     Long wardsId;
     Long districtId;
     Long provinceId;
+    String fullAddress;
     Integer status;
 }

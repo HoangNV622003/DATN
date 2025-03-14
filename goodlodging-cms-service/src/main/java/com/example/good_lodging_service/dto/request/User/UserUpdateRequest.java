@@ -16,7 +16,6 @@ public class UserUpdateRequest {
     String lastName;
     String email;
     String phone;
-    String address;
     String gender;
     String urlAvatar;
     LocalDate birthday;

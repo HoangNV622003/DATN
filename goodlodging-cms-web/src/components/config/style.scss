@@ -1,0 +1,122 @@
+// src/pages/ConfigView/style.scss
+.container-config-view {
+    box-sizing: border-box;
+    background: #ffffff; // Nền trắng
+    border: 1px solid #e0e0e0; // Viền nhẹ
+    border-radius: 8px; // Bo góc
+    padding: 20px; // Khoảng cách bên trong
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); // Bóng đổ nhẹ
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50; // Màu chữ đậm
+        margin: 0 0 15px 0; // Khoảng cách dưới tiêu đề
+        border-bottom: 1px solid #e0e0e0; // Gạch chân nhẹ
+        padding-bottom: 8px;
+    }
+
+    // Label cho các nhóm lọc
+    > label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #34495e; // Màu chữ nhạt hơn
+        margin: 15px 0 5px 0; // Khoảng cách trên/dưới
+    }
+
+    // Style chung cho các ul (danh sách lọc)
+    .config-room-price,
+    .config-electricity-price,
+    .config-price,
+    .config-area {
+        width: 100%;
+        list-style: none;
+        padding: 0;
+        margin: 0 0 15px 0; // Khoảng cách dưới mỗi danh sách
+
+        li {
+            display: flex;
+            align-items: center;
+            padding: 8px 0; // Khoảng cách trong mỗi item
+            transition: background 0.2s ease;
+
+            &:hover {
+                background: #f5f8fa; // Nền sáng nhẹ khi hover
+                border-radius: 4px;
+            }
+
+            input[type="radio"] {
+                margin-right: 10px; // Khoảng cách giữa checkbox và label
+                width: 16px;
+                height: 16px;
+                accent-color: #1e90ff; // Màu checkbox khi checked
+                cursor: pointer;
+
+                &:checked + label {
+                    color: #1e90ff; // Đổi màu chữ khi checked
+                    font-weight: 500;
+                }
+            }
+
+            label {
+                font-size: 13px;
+                color: #7f8c8d; // Màu chữ mặc định
+                cursor: pointer;
+                flex: 1; // Chiếm toàn bộ không gian còn lại
+                margin: 0;
+                transition: color 0.2s ease;
+            }
+        }
+    }
+
+    // Tùy chỉnh riêng cho từng danh sách nếu cần
+    .config-room-price {
+        // Có thể thêm style riêng nếu muốn
+    }
+
+    .config-electricity-price {
+        // Có thể thêm style riêng nếu muốn
+    }
+
+    .config-price {
+        // Có thể thêm style riêng nếu muốn
+    }
+
+    .config-area {
+        // Có thể thêm style riêng nếu muốn
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .config-view {
+        padding: 15px;
+
+        h3 {
+            font-size: 16px;
+        }
+
+        > label {
+            font-size: 13px;
+        }
+
+        .config-room-price,
+        .config-electricity-price,
+        .config-price,
+        .config-area {
+            li {
+                padding: 6px 0;
+
+                input[type="radio"] {
+                    width: 14px;
+                    height: 14px;
+                }
+
+                label {
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}

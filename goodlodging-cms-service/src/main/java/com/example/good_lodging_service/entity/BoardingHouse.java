@@ -24,11 +24,11 @@ public class BoardingHouse extends AbstractAuditingEntity implements Serializabl
     Long id;
     Long userId;
     String name;
-    String address;
-    String phone;
-    String email;
+    String description;
+    Float roomRent;
     Float electricityPrice;
     Float waterPrice;
-    Boolean hasElevator;
+    String features;
+    Long addressId;
     Integer status;
 }

@@ -1,7 +1,11 @@
 package com.example.good_lodging_service.dto.request.BoardingHouse;
 
+import com.example.good_lodging_service.dto.request.Address.AddressRequest;
+import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,10 +16,10 @@ import lombok.experimental.FieldDefaults;
 public class BoardingHouseRequest {
     Long userId;
     String name;
-    String address;
-    String phone;
-    String email;
+    String description;
+    Float roomRent;
     Float electricityPrice;
     Float waterPrice;
-    Boolean hasElevator;
+    String features;
+    AddressRequest address;
 }

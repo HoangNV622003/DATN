@@ -16,7 +16,6 @@ import java.util.List;
 public class UserResponseDTO {
     Long id;
     String username;
-    String password;
     String firstName;
     String lastName;
     String email;

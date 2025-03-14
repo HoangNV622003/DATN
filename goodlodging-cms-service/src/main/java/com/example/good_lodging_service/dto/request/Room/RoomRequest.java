@@ -16,5 +16,4 @@ public class RoomRequest {
     String description;
     Float area;
     Integer floor;
-    List<Long> deviceIds;
 }

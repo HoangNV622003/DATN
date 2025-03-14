@@ -7,7 +7,6 @@ import com.example.good_lodging_service.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -20,17 +19,46 @@ import java.text.ParseException;
 import java.util.Objects;
 
 @Slf4j
+//@Component
+//public class CustomJwtDecoder implements JwtDecoder {
+//
+//    @Autowired
+//    private AuthenticationService authenticationService;
+//    private NimbusJwtDecoder nimbusJwtDecoder = null;
+//    @Autowired
+//    private TokenProvider tokenProvider;
+//
+//
+//    @Override
+//    public Jwt decode(String token) throws JwtException {
+//        try {
+//            IntrospectResponse introspectResponse = authenticationService.introspect(new IntrospectRequest(token));
+//            if (introspectResponse == null || !introspectResponse.isValid()) {
+//                throw new JwtException("Invalid token");
+//            }
+//        } catch (ParseException | JOSEException e) {
+//            throw new JwtException("Error parsing JWT: " + e.getMessage(), e);
+//        }
+//        if (Objects.isNull(nimbusJwtDecoder)) {
+//            SecretKeySpec secretKeySpec = new SecretKeySpec(tokenProvider.getKey().getEncoded(), "HmacSHA512");
+//            nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS512).build();
+//        }
+//        return nimbusJwtDecoder.decode(token);
+//    }
+//
+//}
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
-    @Value("${jwt.signerKey}")
-    private String signerKey;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
+    private final TokenProvider tokenProvider;
     private NimbusJwtDecoder nimbusJwtDecoder = null;
-    @Autowired
-    private TokenProvider tokenProvider;
 
+    @Autowired
+    public CustomJwtDecoder(AuthenticationService authenticationService, TokenProvider tokenProvider) {
+        this.authenticationService = authenticationService;
+        this.tokenProvider = tokenProvider;
+    }
 
     @Override
     public Jwt decode(String token) throws JwtException {
@@ -42,11 +70,12 @@ public class CustomJwtDecoder implements JwtDecoder {
         } catch (ParseException | JOSEException e) {
             throw new JwtException("Error parsing JWT: " + e.getMessage(), e);
         }
+
         if (Objects.isNull(nimbusJwtDecoder)) {
             SecretKeySpec secretKeySpec = new SecretKeySpec(tokenProvider.getKey().getEncoded(), "HmacSHA512");
             nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS512).build();
         }
+
         return nimbusJwtDecoder.decode(token);
     }
-
 }
