@@ -1,11 +1,14 @@
 .search-page {
-    margin: 0 auto;
+    margin:0 auto;
+    margin-top: 100px;
     width: 80%;
     box-sizing: border-box;
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-
+    h2{
+        text-align: center;
+    }
     .container__search__bar {
         width: 100%;
         margin: 60px auto;
@@ -19,8 +22,6 @@
     .content-wrapper {
         flex: 1;
         display: flex;
-        margin-top: 80px; // Khoảng cách để tránh overlap với search bar cố định
-
         .search__list__post {
             width: 75%;
             transition: all 0.3s ease;
