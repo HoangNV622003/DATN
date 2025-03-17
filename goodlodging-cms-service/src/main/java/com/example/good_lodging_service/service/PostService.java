@@ -13,6 +13,8 @@ import com.example.good_lodging_service.dto.response.Post.PostDetailResponse;
 import com.example.good_lodging_service.dto.response.Post.PostProjection;
 import com.example.good_lodging_service.dto.response.Post.PostResponse;
 import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
+import com.example.good_lodging_service.entity.Address;
+import com.example.good_lodging_service.entity.BoardingHouse;
 import com.example.good_lodging_service.entity.Image;
 import com.example.good_lodging_service.entity.Post;
 import com.example.good_lodging_service.exception.AppException;
@@ -25,12 +27,18 @@ import com.example.good_lodging_service.utils.ValueUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,12 +53,21 @@ public class PostService {
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
     private final ImageRepository imageRepository;
+    BoardingHouseRepository bhRepository;
+    AddressRepository addressRepository;
 
-    public PostResponse createPost(PostRequest request) {
+    @Value("${upload.uploadDir}")
+    @NonFinal
+    private String uploadDir;
+
+    public PostResponse createPost(PostRequest request) throws Exception {
+        //get address by boardingHouseId
+        Address address = addressRepository.findByBoardingHouseIdAndStatusWithQuery(request.getBoardingHouseId(), CommonStatus.ACTIVE.getValue()).orElse(null);
         Post post = postMapper.toPost(request);
         post.setStatus(CommonStatus.ACTIVE.getValue());
+        post.setAddress(address != null ? address.getFullAddress() : "");
+        post.setImageUrl(uploadImage(request.getImageUrl()));
         post = postRepository.save(post);
-
         return postMapper.toPostResponse(post);
     }
 
@@ -59,23 +76,24 @@ public class PostService {
 
         Post post = findById(id);
         postMapper.updatePost(post, request);
+        post.setImageUrl(uploadImage(request.getImageUrl()));
         post = postRepository.save(post);
         return postMapper.toPostResponse(post);
     }
 
     public PostDetailResponse getPostDetailById(Long id) {
-        PostDetailProjection postDetailProjection=postRepository.findByPostIdAndStatusWithQuery(id,CommonStatus.ACTIVE.getValue()).orElseThrow(
-                ()->new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
-        List<Image> boardingHouseImageUrls=imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getBoardingHouseId(), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
-        List<Image> roomImageUrls=imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getRoomId(), EntityType.ROOM.getValue(), CommonStatus.ACTIVE.getValue());
+        PostDetailProjection postDetailProjection = postRepository.findByPostIdAndStatusWithQuery(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        List<Image> boardingHouseImageUrls = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getBoardingHouseId(), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
+        List<Image> roomImageUrls = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getRoomId(), EntityType.ROOM.getValue(), CommonStatus.ACTIVE.getValue());
         boardingHouseImageUrls.addAll(roomImageUrls);
-        List<String> imageUrls=boardingHouseImageUrls.stream().map(Image::getImageUrl).toList();
+        List<String> imageUrls = boardingHouseImageUrls.stream().map(Image::getImageUrl).toList();
 
         return PostDetailResponse.builder()
                 .userProfile(ProfileResponse.fromPostDetailProjection(postDetailProjection))
-                .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(),""))
-                .floor(ValueUtils.getOrDefault(postDetailProjection.getFloor(),0))
-                .area(ValueUtils.getOrDefault(postDetailProjection.getArea(),0F))
+                .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(), ""))
+                .floor(ValueUtils.getOrDefault(postDetailProjection.getFloor(), 0))
+                .area(ValueUtils.getOrDefault(postDetailProjection.getArea(), 0F))
                 .boardingHouse(BoardingHouseResponse.fromPostDetailProjection(postDetailProjection))
                 .imageUrl(imageUrls)
                 .build();
@@ -169,6 +187,31 @@ public class PostService {
         }
         if (filter.getMaxArea() != null && filter.getMaxArea() < 0) {
             throw new AppException(ApiResponseCode.INVALID_AREA_NEGATIVE);
+        }
+    }
+    public String uploadImage(MultipartFile image) {
+        try {
+            if (image == null || image.isEmpty()) {
+                return null;
+            }
+
+            // Đảm bảo đường dẫn thư mục đúng định dạng
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+
+            // Tạo tên file duy nhất
+            String originalFileName = image.getOriginalFilename();
+            String sanitizedFileName = originalFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+            String fileName = UUID.randomUUID() + "_" + sanitizedFileName;
+
+            // Lưu file vào thư mục
+            File dest = new File(uploadDir + fileName);
+            image.transferTo(dest);
+
+            return "http://localhost:8888/uploads/" + fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

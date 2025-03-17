@@ -76,14 +76,6 @@ public class AuthenticationService {
     }
 
     public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
-//        String token = request.getToken();
-//        boolean isValid = true;
-//        try {
-//            verifyToken(token, false);
-//        } catch (AppException e) {
-//            isValid = false;
-//        }
-//        return IntrospectResponse.builder().valid(isValid).build();
         return IntrospectResponse.builder().valid(tokenProvider.validateToken(request.getToken())).build();
     }
 
@@ -131,38 +123,9 @@ public class AuthenticationService {
     }
 
     private String generateToken(User user) {
-//        JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
-//
-//        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-//                .subject(user.getUsername())
-//                .issueTime(new Date())
-//                .issuer("huce.edu.vn")
-//                .expirationTime(new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
-//                .jwtID(UUID.randomUUID().toString())
-//                .claim("userId", user.getId())
-//                .claim("scope", buildScope(user))
-//                .build();
-//        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-//        JWSObject jwsObject = new JWSObject(jwsHeader, payload);
-//        try {
-//            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
-//            return jwsObject.serialize();
-//        } catch (JOSEException e) {
-//            log.error("Cannot create JWT object", e);
-//            throw new RuntimeException(e);
-//        }
         return tokenProvider.createTokenUser(user.getId(), user.getUsername());
     }
 
-    private String buildScope(User user) {
-        StringJoiner scope = new StringJoiner(" ");
-        if (!CollectionUtils.isEmpty(user.getRoles())) {
-            user.getRoles().forEach(role -> {
-                scope.add("ROLE_" + role.getName());
-            });
-        }
-        return scope.toString();
-    }
 
     public CommonResponse changePassword(ChangeUserPasswordRequest request) {
         String currentPassword = request.getCurrentPassword();

@@ -10,7 +10,7 @@ import org.mapstruct.MappingTarget;
 public interface ProfileMapper {
     @Mapping(target = "userId",source = "id")
     @Mapping(target = "fullName",ignore = true)
-    @Mapping(target = "imageUrl",source = "urlAvatar")
+    @Mapping(target = "imageUrl",ignore = true)
     @Mapping(target = "phoneNumber",source = "phone")
     ProfileResponse profileToProfileResponse(User user);
 }

@@ -13,7 +13,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameAndStatus(String username, Integer status);
-
     Optional<User> findByIdAndStatus(Long id, Integer status);
 
     @Query(nativeQuery = true, value = """

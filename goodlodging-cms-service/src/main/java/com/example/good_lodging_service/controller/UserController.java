@@ -4,6 +4,8 @@ import com.example.good_lodging_service.dto.ApiResponse;
 import com.example.good_lodging_service.dto.request.Auth.UpdatePasswordRequest;
 import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseDetailResponse;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.service.UserService;
@@ -27,7 +29,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public ApiResponse<List<UserResponseDTO>> getUsers(@PageableDefault(size = 15, sort = "dateUpdated",direction = Sort.Direction.DESC) Pageable pageable) {
+    public ApiResponse<List<UserResponseDTO>> getUsers(@PageableDefault(size = 15, sort = "dateUpdated", direction = Sort.Direction.DESC) Pageable pageable) {
         return ApiResponse.<List<UserResponseDTO>>builder().result(userService.getAllUsers(pageable)).build();
     }
 
@@ -42,8 +44,8 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ApiResponse<UserResponseDTO> updateUser(@PathVariable Long userId,@RequestBody UserUpdateRequest requestDTO) {
-        return ApiResponse.<UserResponseDTO>builder().result(userService.updateUser(userId,requestDTO)).build();
+    public ApiResponse<UserResponseDTO> updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequest requestDTO) {
+        return ApiResponse.<UserResponseDTO>builder().result(userService.updateUser(userId, requestDTO)).build();
     }
 
     @DeleteMapping("/{userId}")
@@ -53,6 +55,11 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ApiResponse<CommonResponse> updatePassword(@PathVariable Long userId, @RequestBody UpdatePasswordRequest requestDTO) {
-        return ApiResponse.<CommonResponse>builder().result(userService.updatePassword(userId,requestDTO)).build();
+        return ApiResponse.<CommonResponse>builder().result(userService.updatePassword(userId, requestDTO)).build();
+    }
+
+    @GetMapping("/{userId}/boarding-house")
+    public ResponseEntity<List<BoardingHouseResponse>> getMyBoardingHouse(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getMyBoardingHouses(userId));
     }
 }

@@ -27,7 +27,13 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
     List<AddressProjection> findAllByBoardingHouseIdInWithQuery(@Param("ids") List<Long> ids);
 
     Optional<Address> findByIdAndStatus(Long id, Integer status);
-
+    @Query(nativeQuery = true, value = """
+        SELECT a.* FROM address a
+        	INNER JOIN boarding_house b\s
+            ON b.address_id=a.id AND b.status=:status AND a.status=:status
+            WHERE b.id=:id
+    """)
+    Optional<Address> findByBoardingHouseIdAndStatusWithQuery(@Param("id")Long boardingHouseId,@Param("status") Integer status);
     @Query(nativeQuery = true, value = """
                 SELECT
                     	w.wards_id      AS wardsId,

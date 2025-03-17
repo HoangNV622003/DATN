@@ -22,7 +22,7 @@ public class UserResponseDTO {
     String phone;
     String address;
     String gender;
-    String urlAvatar;
+    String imageUrl;
     LocalDate birthday;
     List<RoleResponse> roles;
     Integer status;

@@ -11,9 +11,11 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface PostMapper {
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "imageUrl",ignore = true)
     Post toPost(PostRequest request);
     PostResponse toPostResponse(Post post);
     @Mapping(target = "userId",ignore = true)
     @Mapping(target = "boardingHouseId",ignore = true)
+    @Mapping(target = "imageUrl",ignore = true)
     void updatePost(@MappingTarget Post post, PostUpdateRequest postRequest);
 }

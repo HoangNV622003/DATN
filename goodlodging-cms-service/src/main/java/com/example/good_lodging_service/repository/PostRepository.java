@@ -99,7 +99,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             address a ON bh.id = a.boarding_house_id AND a.status=1
         WHERE
             p.status = 1
-            AND (a.wards_id IN :wardsIds OR :wardsId IS NULL OR :wardsId = '')
+            AND (a.wards_id IN :wardsIds)
             AND (p.room_rent BETWEEN COALESCE(:minRoomRent, p.room_rent) AND COALESCE(:maxRoomRent, p.room_rent))
             AND (p.area BETWEEN COALESCE(:minArea, p.area) AND COALESCE(:maxArea, p.area))
             AND (bh.electricity_price BETWEEN COALESCE(:minElectricityPrice, bh.electricity_price) 

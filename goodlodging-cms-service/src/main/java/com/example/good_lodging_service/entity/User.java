@@ -32,7 +32,7 @@ public class User extends AbstractAuditingDate implements Serializable {
     String phone;
     Long addressId;
     String gender;
-    String urlAvatar;
+    String imageUrl;
     LocalDate birthday;
     Integer status;
 

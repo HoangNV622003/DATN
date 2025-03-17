@@ -1,11 +1,13 @@
 package com.example.good_lodging_service.dto.request.Post;
 
 import com.example.good_lodging_service.dto.request.Image.ImageRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -13,12 +15,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostRequest {
     String title;
-    String imageUrl;
+    @JsonIgnore // Bỏ qua khi serialize
+    MultipartFile imageUrl;
     Float area;
     Float roomRent;
-    String address;
-    Long roomId;
     Long userId;
     Long boardingHouseId;
-
 }

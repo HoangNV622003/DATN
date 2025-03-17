@@ -22,5 +22,5 @@ public interface BoardingHouseMapper {
     void updateBoardingHouse(@MappingTarget BoardingHouse boardingHouse, BoardingHouseUpdateRequest boardingHouseUpdateRequest);
 
     @Mapping(target = "imageUrl", ignore = true)
-    BoardingHouseResponse toBoardingHouseResponseDTO(BoardingHouse boardingHouse);
+    BoardingHouseResponse toBoardingHouseResponse(BoardingHouse boardingHouse);
 }

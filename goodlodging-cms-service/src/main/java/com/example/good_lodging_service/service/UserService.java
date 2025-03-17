@@ -3,12 +3,15 @@ package com.example.good_lodging_service.service;
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.Authorities;
 import com.example.good_lodging_service.constants.CommonStatus;
+import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.Auth.UpdatePasswordRequest;
 import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
+import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.Address;
+import com.example.good_lodging_service.entity.Image;
 import com.example.good_lodging_service.entity.Role;
 import com.example.good_lodging_service.entity.User;
 import com.example.good_lodging_service.exception.AppException;
@@ -17,6 +20,7 @@ import com.example.good_lodging_service.mapper.BoardingHouseMapper;
 import com.example.good_lodging_service.mapper.RoomMapper;
 import com.example.good_lodging_service.mapper.UserMapper;
 import com.example.good_lodging_service.repository.*;
+import com.example.good_lodging_service.utils.ValueUtils;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,7 +43,9 @@ public class UserService {
     RoleRepository roleRepository;
     AddressMapper addressMapper;
     AddressRepository addressRepository;
-
+    ImageRepository imageRepository;
+    BoardingHouseRepository boardingHouseRepository;
+    BoardingHouseMapper boardingHouseMapper;
     public UserResponseDTO createUser(UserCreateRequest request) {
         // find user by username, email, phone
         if (userRepository.existByUsernameOrEmailOrPhoneWithQuery(request.getUsername(), request.getEmail(), request.getPhone(), CommonStatus.ACTIVE.getValue()) > 0) {
@@ -96,17 +101,46 @@ public class UserService {
     }
 
     public UserResponseDTO getUser(Long id) {
-        return userMapper.toUserResponse(findById(id));
+        User user = findById(id);
+        return userMapper.toUserResponse(user);
     }
 
     public CommonResponse deleteUser(Long id) {
+        //delete user
         User user = findById(id);
         user.setStatus(CommonStatus.DELETED.getValue());
         userRepository.save(user);
+        //delete boarding-house
+
+        //delete address
         return CommonResponse.builder().result(ApiResponseCode.USER_DELETED_SUCCESSFULLY.getMessage()).build();
     }
 
     public List<UserResponseDTO> getAllUsers(Pageable pageable) {
         return findAll(pageable).stream().map(userMapper::toUserResponse).toList();
+    }
+
+    public List<BoardingHouseResponse> getMyBoardingHouses(Long userId) {
+        //get my boarding house
+        List<BoardingHouseResponse> boardingHouseResponses = boardingHouseRepository.findAllByUserIdAndStatus(userId,CommonStatus.ACTIVE.getValue())
+                .stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
+
+        //get list boardingHouse id
+        List<Long> boardingHouseIds = boardingHouseResponses.stream().map(BoardingHouseResponse::getId).toList();
+
+        //get list image
+        List<Image> images = imageRepository.findAllByEntityIdInAndEntityTypeAndStatus(boardingHouseIds, EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
+        Map<Long, List<String>> imageUrlMap = images.stream()
+                .collect(Collectors.groupingBy(
+                        Image::getEntityId, // Nhóm theo entityId
+                        Collectors.mapping(Image::getImageUrl, Collectors.toList()) // Lấy imageUrl thành List<String>
+                ));
+
+        // Gán danh sách imageUrl vào từng BoardingHouseResponse
+        boardingHouseResponses.forEach(response -> {
+            List<String> imageUrls = imageUrlMap.getOrDefault(response.getId(), Collections.emptyList());
+            response.setImageUrl(imageUrls);
+        });
+        return boardingHouseResponses;
     }
 }
