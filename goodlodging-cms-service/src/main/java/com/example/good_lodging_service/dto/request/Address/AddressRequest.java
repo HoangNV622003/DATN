@@ -11,8 +11,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddressRequest {
-    Long boardingHouseId;
-
     Integer houseNumber;
     String streetName;
     Long wardsId;

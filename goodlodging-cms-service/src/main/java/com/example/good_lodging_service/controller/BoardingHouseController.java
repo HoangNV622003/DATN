@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/boarding-house")
+@RequestMapping("/boarding-houses")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BoardingHouseController {
@@ -38,4 +38,6 @@ public class BoardingHouseController {
     public ResponseEntity<CommonResponse> deleteBoardingHouse(@RequestBody List<Long> ids) {
         return ResponseEntity.ok(boardingHouseService.deleteBoardingHouse(ids));
     }
+
+
 }

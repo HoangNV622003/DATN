@@ -17,5 +17,8 @@ public class BoardingHouseUpdateRequest {
     String description;
     Float electricityPrice;
     Float waterPrice;
+    Float roomRent;
+    Float roomArea;
+
     String features;
 }

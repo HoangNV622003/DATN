@@ -87,6 +87,8 @@ public enum ApiResponseCode {
     INVALID_ELECTRICITY_PRICE_NEGATIVE(1207,"Giá tiền điện tìm kiếm không được nhỏ hơn 0",HttpStatus.BAD_REQUEST),
     INVALID_AREA_NEGATIVE(1208,"Diện tích tìm kiếm không được nhỏ hơn 0",HttpStatus.BAD_REQUEST),
 
+    //UPLOAD
+
     ;
     private final Integer code;
     private final String message;

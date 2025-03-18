@@ -1,5 +1,6 @@
 package com.example.good_lodging_service.dto.response.BoardingHouse;
 
+import com.example.good_lodging_service.dto.response.Image.ImageResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,5 +23,6 @@ public class BoardingHouseDetailResponse {
     Float electricityPrice;
     Float waterPrice;
     String features;
+    List<ImageResponse> images;
     List<RoomResponse> rooms;
 }

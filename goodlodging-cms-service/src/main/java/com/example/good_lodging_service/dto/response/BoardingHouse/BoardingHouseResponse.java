@@ -18,6 +18,7 @@ public class BoardingHouseResponse {
     String name;
     String address;
     String description;
+    Float roomArea;
     Float roomRent;
     Float electricityPrice;
     Float waterPrice;

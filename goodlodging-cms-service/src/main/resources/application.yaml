@@ -58,7 +58,7 @@ jwt:
   valid-duration: 60 #seconds
   refreshable-duration: 120 # seconds
 upload:
-  uploadDir: "E:/uploads/"
+  uploadDir: "D:/Xampp/htdocs/uploads/"
 jhipster:
   security:
     authentication:

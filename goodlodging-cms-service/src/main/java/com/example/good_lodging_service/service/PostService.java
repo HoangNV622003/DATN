@@ -8,10 +8,7 @@ import com.example.good_lodging_service.dto.request.Post.PostRequest;
 import com.example.good_lodging_service.dto.request.Post.PostUpdateRequest;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
-import com.example.good_lodging_service.dto.response.Post.PostDetailProjection;
-import com.example.good_lodging_service.dto.response.Post.PostDetailResponse;
-import com.example.good_lodging_service.dto.response.Post.PostProjection;
-import com.example.good_lodging_service.dto.response.Post.PostResponse;
+import com.example.good_lodging_service.dto.response.Post.*;
 import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
 import com.example.good_lodging_service.entity.Address;
 import com.example.good_lodging_service.entity.BoardingHouse;
@@ -72,11 +69,11 @@ public class PostService {
     }
 
 
-    public PostResponse updatePost(Long id, PostUpdateRequest request) {
+    public PostResponse updatePost(Long id, PostRequest request) {
 
         Post post = findById(id);
         postMapper.updatePost(post, request);
-        post.setImageUrl(uploadImage(request.getImageUrl()));
+        post.setImageUrl(request.getImageUrl() != null ? uploadImage(request.getImageUrl()) : post.getImageUrl());
         post = postRepository.save(post);
         return postMapper.toPostResponse(post);
     }
@@ -114,6 +111,12 @@ public class PostService {
 
     public Page<PostProjection> getAllMyPosts(Long userId, Pageable pageable) {
         return postRepository.findAllByUserIdAndStatusWithQuery(userId, CommonStatus.ACTIVE.getValue(), pageable);
+    }
+
+    public MyPostResponse getMyPost(Long postId) {
+        Post post = postRepository.findByIdAndStatus(postId, CommonStatus.ACTIVE.getValue()).orElseThrow(() -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        List<BoardingHouseResponse> boardingHouses=boardingHouseRepository.findAllByUserIdAndStatus(post.getUserId(), CommonStatus.ACTIVE.getValue()).stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
+        return MyPostResponse.builder().postResponse(postMapper.toPostResponse(post)).boardingHouses(boardingHouses).build();
     }
 
     private Post findById(Long id) {
@@ -189,6 +192,7 @@ public class PostService {
             throw new AppException(ApiResponseCode.INVALID_AREA_NEGATIVE);
         }
     }
+
     public String uploadImage(MultipartFile image) {
         try {
             if (image == null || image.isEmpty()) {
@@ -208,7 +212,7 @@ public class PostService {
             File dest = new File(uploadDir + fileName);
             image.transferTo(dest);
 
-            return "http://localhost:8888/uploads/" + fileName;
+            return "uploads/" + fileName;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
