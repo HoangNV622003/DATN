@@ -1,20 +1,22 @@
 export const ROUTERS = {
     USER: {
-      HOME: "",
+      HOME: "/",
       SEARCH:"/search",
       PROFILE: "/profile/*", // Không dùng wildcard
       POST_DETAIL: "/post/:id",
       POST: {
         MANAGEMENT: 'posts',
-        CREATE: 'posts/create',
-        UPDATE: 'posts/update/:postId',
+        CREATE: 'create-post',
+        UPDATE: 'update-post/:postId',
         DETAIL: 'posts/:postId',
       },
       BOARDING_HOUSE: {
+        RENTING:'renting',
+        FOR_RENT:'for-rent',
         MANAGEMENT: 'boarding-houses',
-        CREATE: 'boarding-houses/create',
-        UPDATE: 'boarding-houses/update/:boardingHouseId',
-        DETAIL: 'boarding-houses/:boardingHouseId',
+        CREATE: 'create-boarding-house',
+        UPDATE: 'update-boarding-house/:boardingHouseId',
+        DETAIL: 'boarding-houses/:id',
       },
       ROOMS: {
         MANAGEMENT: "rooms",

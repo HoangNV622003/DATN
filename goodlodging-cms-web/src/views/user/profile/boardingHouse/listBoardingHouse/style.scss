@@ -1,0 +1,23 @@
+// Variables
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$text-color: #333;
+$border-radius: 8px;
+$spacing: 15px;
+
+// Style cho ListBoardingHouse
+.list__boarding__house {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing;
+
+  .no-data {
+    text-align: center;
+    color: $text-color;
+    font-size: 18px;
+    padding: $spacing * 2;
+    background-color: $background-color;
+    border-radius: $border-radius;
+  }
+}

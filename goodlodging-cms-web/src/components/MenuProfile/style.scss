@@ -1,31 +1,49 @@
+// Variables
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$text-color: #333;
+$hover-color: #0056b3;
+$border-radius: 8px;
+$spacing: 15px;
+
 .profile-menu {
-  width: 250px;
+  width: 280px;
   background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 15px;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: $spacing;
   font-family: Arial, sans-serif;
 
   // Profile header styling
   .profile-header {
     display: flex;
     align-items: center;
-    padding-bottom: 15px;
+    padding-bottom: $spacing;
     border-bottom: 1px solid #eee;
 
     img {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       object-fit: cover;
-      margin-right: 10px;
+      margin-right: $spacing;
+      border: 2px solid $primary-color;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
 
     h3 {
       margin: 0;
-      font-size: 16px;
-      color: #333;
+      font-size: 18px;
+      color: $text-color;
       font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
@@ -35,46 +53,51 @@
 
     &.profile-nav {
       p {
-        padding: 8px 10px;
+        padding: 10px $spacing;
         margin: 0;
+        font-weight: 500;
         cursor: pointer;
-        color: #444;
-        border-radius: 4px;
-        transition: all 0.3s ease;
+        color: $text-color;
+        border-radius: $border-radius / 2;
+        transition: background-color 0.3s ease, color 0.3s ease;
 
         &:hover {
-          background: #f5f5f5;
-          color: #0066cc;
+          background: $background-color;
+          color: $hover-color;
         }
       }
     }
 
-    // Dropdown menu styling
+    // Dropdown menu styling (post-nav và boarding-house-nav)
     &.post-nav,
     &.boarding-house-nav {
       > div {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 10px;
+        padding: 10px $spacing;
         cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;
+        border-radius: $border-radius / 2;
+        transition: background-color 0.3s ease;
 
         &:hover {
-          background: #f5f5f5;
+          background: $background-color;
         }
 
         p {
           margin: 0;
-          color: #444;
+          color: $text-color;
           font-weight: 500;
         }
 
         svg {
-          transition: transform 0.3s ease;
+          font-size: 14px;
+          color: $secondary-color;
+          transition: transform 0.3s ease, color 0.3s ease;
+
           &.active {
             transform: rotate(180deg);
+            color: $primary-color;
           }
         }
       }
@@ -88,27 +111,91 @@
         transition: max-height 0.3s ease;
 
         &.active {
-          max-height: 200px; // Adjust this value based on your content
+          max-height: 300px;
         }
 
         li {
-          padding: 8px 20px;
-          cursor: pointer;
-          transition: all 0.3s ease;
+          padding: 0; // Reset padding để đồng nhất
 
-          p {
-            margin: 0;
-            color: #666;
+          // Các mục cấp 1 (Đang cho thuê, Đang thuê)
+          > p,
+          > div {
+            padding: 8px 25px; // Padding đồng nhất cho cả mục đơn và mục có dropdown
+            cursor: pointer;
+            color: $secondary-color;
+            transition: background-color 0.3s ease, color 0.3s ease;
+
+            &:hover {
+              background: $background-color;
+              color: $hover-color;
+            }
           }
 
-          &:hover {
-            background: #f8f9fa;
+          // Dropdown trong mục "Đang thuê"
+          > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
             p {
-              color: #0066cc;
+              margin: 0;
+              color: $secondary-color;
+              font-weight: 500;
+            }
+
+            svg {
+              font-size: 12px;
+              color: $secondary-color;
+              transition: transform 0.3s ease, color 0.3s ease;
+
+              &.active {
+                transform: rotate(180deg);
+                color: $primary-color;
+              }
+            }
+          }
+
+          ul {
+            padding-left: $spacing; // Thụt đầu dòng nhẹ hơn cho dropdown lồng nhau
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+
+            &.active {
+              max-height: 200px;
+            }
+
+            li {
+              padding: 8px 30px;
+              color: $secondary-color;
+
+              &:hover {
+                background: $background-color;
+                color: $hover-color;
+              }
             }
           }
         }
       }
+    }
+  }
+
+  // Button Đăng xuất
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: $spacing;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: $hover-color;
     }
   }
 }

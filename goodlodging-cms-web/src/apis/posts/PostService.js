@@ -11,7 +11,6 @@ export const searchPost=async(page=0,payload)=>{
             },
             headers:{
                 "Content-Type":"application/json",
-                Authorization:`Bearer ${accessToken}`
             }
         })
         return response.data;
@@ -37,8 +36,8 @@ export const createPost=async(payload)=>{
     try {
         const response=await axios.post(`${API_URL}/posts`,payload,{
             headers:{
-                "Content-Type":"application/json",
-                Authorization:`Bearer ${accessToken}`
+                "Content-Type":'multipart/form-data',
+                //Authorization:`Bearer ${accessToken}`
             }
         })
         return response.data;
@@ -46,11 +45,12 @@ export const createPost=async(payload)=>{
         throw error;
     }
 }
-export const updatePost=async(payload)=>{
+export const updatePost=async(id,payload)=>{
     try {
-        const response=await axios.put(`${API_URL}/posts`,payload,{
+        console.log("accessToken",accessToken);
+        const response=await axios.put(`${API_URL}/posts/${id}`,payload,{
             headers:{
-                "Content-Type":"application/json",
+                "Content-Type":'multipart/form-data',
                 Authorization:`Bearer ${accessToken}`
             }
         })
@@ -74,6 +74,30 @@ export const deletePost=async(payload)=>{
 export const getPost=async(id)=>{
     try {
         const response=await axios.get(`${API_URL}/posts/${id}`)
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+export const fetchMyPost =async(postId)=>{
+    try {
+        const response=await axios.get(`${API_URL}/posts/my-post/${postId}`,{
+            headers:{
+                //Authorization:`Bearer ${accessToken}`
+            }
+        })
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+export const fetchMyPosts=async(userId)=>{
+    try {
+        const response=await axios.get(`${API_URL}/posts/my-posts/${userId}`,{
+            headers:{
+                //Authorization:`Bearer ${accessToken}`
+            }
+        })
         return response.data;
     } catch (error) {
         throw error;

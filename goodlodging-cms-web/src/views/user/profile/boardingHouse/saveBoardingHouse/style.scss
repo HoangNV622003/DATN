@@ -1,0 +1,128 @@
+// src/components/SaveBoardingHouse/style.scss
+.save-boarding-house {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+  
+      > div {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+  
+        label {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #555;
+        }
+  
+        input,
+        textarea {
+          padding: 10px;
+          font-size: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          width: 100%;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+  
+          &:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+          }
+  
+          &::placeholder {
+            color: #aaa;
+            font-style: italic;
+          }
+        }
+  
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+      }
+  
+      .price-area-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; // 2 cột đều nhau
+        gap: 20px;
+  
+        @media (max-width: 768px) {
+          grid-template-columns: 1fr; // 1 cột trên màn hình nhỏ
+        }
+      }
+  
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin: 20px 0 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+      }
+  
+      .image-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+  
+        h4 {
+          font-size: 1.2rem;
+          font-weight: 500;
+          color: #444;
+        }
+  
+        img {
+          border-radius: 6px;
+          margin: 5px;
+          object-fit: cover;
+        }
+  
+        input[type="file"] {
+          padding: 5px 0;
+        }
+      }
+  
+      button[type="submit"] {
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+    }
+  
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      margin: 20px 0 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+  }

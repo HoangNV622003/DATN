@@ -1,20 +1,18 @@
-import React from 'react';
-import { Outlet, Route, Routes, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import ProfileLayout from '../../../components/masterLayout/ProfileLayout';
 import profileRouter from '../../profileRouter';
 import ProfileContent from './profileContent/ProfileContent';
-import ManagementPost from './post/managementPost/ManagementPost';
-import SavePost from './post/savePost/SavePost';
+import { useAuth } from '../../../context/AuthContext';
 import { ROUTERS } from '../../../utils/router/Router';
-
 const RenderProfileRouter = () => {
-  const { userId } = useParams(); // Lấy userId từ URL
-  console.log('Rendering RenderProfileRouter with userId:', userId);
-  console.log('ProfileRouter paths:', profileRouter.map(item => ({
-    path: item.path,
-    element: item.element?.type?.name || 'Unknown'
-  })));
-
+  const navigate=useNavigate();
+  const {user,isLogin}=useAuth();
+  useEffect(()=>{
+    if(!user||!isLogin){
+      navigate(`/${ROUTERS.AUTH.LOGIN}`)
+    }
+  })
   return (
       <Routes>
         <Route 

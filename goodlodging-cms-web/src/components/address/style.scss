@@ -1,0 +1,105 @@
+// src/components/AddressSelector/style.scss
+.address-selector {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+  
+    .address-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+  
+      .form-group {
+        flex: 1;
+        min-width: 180px;
+        display: flex;
+        flex-direction: column;
+  
+        label {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #555;
+          margin-bottom: 6px;
+          transition: color 0.2s ease;
+  
+          &:hover {
+            color: #000;
+          }
+        }
+  
+        select,
+        input {
+          padding: 10px;
+          font-size: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          background-color: #fff;
+          width: 100%;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  
+          &:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+          }
+  
+          &:disabled {
+            background-color: #f0f0f0;
+            border-color: #e0e0e0;
+            color: #888;
+            cursor: not-allowed;
+          }
+  
+          &::placeholder {
+            color: #aaa;
+            font-style: italic;
+          }
+        }
+  
+        select {
+          appearance: none;
+          background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23555" d="M7 10l5 5 5-5z"/></svg>')
+            no-repeat right 10px center;
+          background-size: 12px;
+        }
+      }
+    }
+  
+    .form-group.full-address {
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+  
+      label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+  
+      div {
+        padding: 12px;
+        font-size: 1.1rem;
+        color: #444;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        min-height: 20px; // Đảm bảo có chiều cao tối thiểu nếu trống
+        word-wrap: break-word; // Xuống dòng nếu quá dài
+      }
+    }
+  }

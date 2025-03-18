@@ -6,7 +6,7 @@ import { FaAngleRight } from "react-icons/fa6";
 import { FaAngleLeft } from "react-icons/fa6";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiPhoneCall } from "react-icons/fi";
-
+import defaultRoom from "../../../assets/images/defaultRoom.png"
 const PostDetail = () => {
     const { id } = useParams();
     const [postDetail, setPostDetail] = useState(null);
@@ -73,7 +73,7 @@ const PostDetail = () => {
                     <div className="container__image">
                         <div className="main-section">
                             <img
-                                src="https://via.placeholder.com/800x400?text=Không+có+hình+ảnh"
+                                src={defaultRoom}
                                 alt="No Image"
                                 className="main-image"
                             />

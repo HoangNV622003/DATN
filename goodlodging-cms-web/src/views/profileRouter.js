@@ -10,6 +10,8 @@ import SaveRoom from "./user/profile/room/saveRoom/SaveRoom";
 import RoomDetail from "./user/profile/room/detail/RoomDetail";
 import { ROUTERS } from "../utils/router/Router";
 import SavePost from './user/profile/post/savePost/SavePost'; // Đảm bảo đường dẫn đúng
+import ForRentBoardingHouse from "./user/profile/boardingHouse/managementBoardingHouse/forRent/ForRentBoardingHouse";
+import RentingBoardingHouse from "./user/profile/boardingHouse/managementBoardingHouse/renting/RentingBoardingHouse";
 
 const profileRouter = [
   {
@@ -35,6 +37,14 @@ const profileRouter = [
   {
     path: ROUTERS.USER.BOARDING_HOUSE.MANAGEMENT, // boardingHouse
     element: <ManagementBoardingHouse />,
+  },
+  {
+    path: ROUTERS.USER.BOARDING_HOUSE.FOR_RENT,
+    element: <ForRentBoardingHouse/>
+  },
+  {
+    path: ROUTERS.USER.BOARDING_HOUSE.RENTING,
+    element: <RentingBoardingHouse/>
   },
   {
     path: ROUTERS.USER.BOARDING_HOUSE.CREATE, // boardingHouse/create

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getToken } from "../../utils/service/localStorageService";
-const API_URL = process.env.API_URL;
+import { API_URL } from "../../utils/ApiUrl";
 const accessToken = getToken;
 
 export const loginUser = async (payload) => {
@@ -10,9 +10,10 @@ export const loginUser = async (payload) => {
         "Content-Type": "application/json",
       },
     });
+    console.log("response: ", response);
     return response.data;
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 };
 

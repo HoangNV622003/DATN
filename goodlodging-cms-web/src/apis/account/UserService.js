@@ -15,11 +15,11 @@ export const fetchUsers = async () => {
   }
 };
 
-export const getUser=async(id)=>{
+export const getUser=async(id,newToken)=>{
   try {
     const response = await axios.get(`${API_URL}/users/${id}`,{
       headers:{
-        Authorization:`Bearer ${accessToken}`,
+        Authorization:`Bearer ${newToken}`,
       }
     });
     return response.data;
@@ -67,3 +67,11 @@ export const deleteUser = async (userId) => {
     console.log(error);
   }
 };
+
+export const fetchMyBoardingHouse=async(userId)=>{
+  return await axios.get(`${API_URL}/${userId}/boarding-house`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+}

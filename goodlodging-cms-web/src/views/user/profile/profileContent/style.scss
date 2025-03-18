@@ -1,8 +1,185 @@
-.container__profile{
+// Variables cho màu sắc và kích thước
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$text-color: #333;
+$border-radius: 8px;
+$spacing: 15px;
+
+.container__profile {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing * 2;
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    font-size: 24px;
+    color: $text-color;
+    margin-bottom: $spacing * 2;
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-color;
+    margin-bottom: 5px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="date"] {
     width: 100%;
-    height: 100%;
-    background-color: blue($color: #000000);
+    padding: 10px;
+    margin-bottom: $spacing;
+    border: 1px solid #ccc;
+    border-radius: $border-radius;
+    font-size: 16px;
+    transition: border-color 0.3s;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+    }
+  }
+
+  // Container cho hình ảnh
+  .container__image {
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: $spacing;
+    margin-bottom: $spacing * 2;
+
+    img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid $primary-color;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+
+  // Container cho email
+  .container__email {
+    display: flex;
+    align-items: center;
+    gap: $spacing;
+    margin-bottom: $spacing;
+
+    input {
+      flex: 1;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: $secondary-color;
+      color: white;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+
+  // Container cho địa chỉ
+  .container__address {
+    display: flex;
+    align-items: center;
+    gap: $spacing;
+    margin-bottom: $spacing;
+
+    input {
+      flex: 1;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: $secondary-color;
+      color: white;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+
+  // Container cho giới tính
+  .container__gender {
+    display: flex;
+    gap: $spacing;
+    margin-bottom: $spacing;
+
+    input[type="radio"] {
+      margin-right: 5px;
+    }
+  }
+
+  // Container cho các nút cuối
+  .container__button {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing * 2;
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+
+      &:first-child {
+        background-color: $secondary-color;
+        color: white;
+
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+        }
+      }
+
+      &:last-child {
+        background-color: $primary-color;
+        color: white;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
+  }
+}
+
+// Style cho trạng thái loading
+div {
+  &.loading {
+    text-align: center;
+    font-size: 18px;
+    color: $text-color;
+    padding: $spacing * 2;
+  }
 }

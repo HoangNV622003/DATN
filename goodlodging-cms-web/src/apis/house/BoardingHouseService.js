@@ -1,14 +1,11 @@
 import axios from "axios";
 import { getToken } from "../../utils/service/localStorageService";
-const API_URL = process.env.API_URL;
+import { API_URL } from "../../utils/ApiUrl";
 const accessToken = getToken();
 
-export const getAllHouse = async (page = 1) => {
+export const fetchAllHouse = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/boarding-houses`, {
-      params: {
-        page,
-      },
+    const response = await axios.get(`${API_URL}/users/${userId}/boarding-house`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -19,8 +16,9 @@ export const getAllHouse = async (page = 1) => {
   }
 };
 
-export const getHouse = async (houseId) => {
+export const fetchHouse = async (houseId) => {
   try {
+    console.log('fetch-house')
     const response = await axios.get(`${API_URL}/boarding-houses/${houseId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -36,7 +34,7 @@ export const createBoardingHouse = async (houseData) => {
   try {
     const response = await axios.post(`${API_URL}/boarding-houses`, houseData, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${accessToken}`,
       },
     });
@@ -53,7 +51,7 @@ export const updateBoardingHouse = async (houseId, houseData) => {
       houseData,
       {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${accessToken}`,
         },
       }

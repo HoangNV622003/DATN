@@ -1,7 +1,143 @@
-.container__save__post{
-    height: 500px;
-    width: 500px;
-    background-color: aqua;
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$text-color: #333;
+$border-radius: 8px;
+$spacing: 15px;
+
+.save-post-container {
+  max-width: 600px;
+  margin: $spacing * 2 auto;
+  padding: $spacing * 2;
+  background: #ffffff;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    font-size: 24px;
+    color: $text-color;
+    margin-bottom: $spacing * 2;
     text-align: center;
-    font-size: 30px;
+  }
+
+  .error {
+    color: #dc3545;
+    text-align: center;
+    margin-bottom: $spacing;
+    font-size: 16px;
+  }
+
+  .loading {
+    text-align: center;
+    font-size: 18px;
+    color: $text-color;
+    padding: $spacing * 2;
+  }
+
+  form {
+    .form-group {
+      margin-bottom: $spacing * 1.5;
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-color;
+        margin-bottom: 5px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: $border-radius;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          border-color: $primary-color;
+          outline: none;
+        }
+
+        &[type="number"] {
+          -moz-appearance: textfield;
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        }
+
+        &:disabled {
+          background: #e9ecef;
+          color: $secondary-color;
+        }
+      }
+
+      .current-image {
+        margin-bottom: $spacing;
+        img {
+          border-radius: $border-radius;
+          margin-top: 5px;
+          height: 150px;
+        }
+      }
+    }
+
+    input[type="file"] {
+      width: 100%;
+      background: white;
+
+      &::file-selector-button {
+        padding: 8px 16px;
+        background: $primary-color;
+        color: white;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+
+        &:hover {
+          background: darken($primary-color, 10%);
+        }
+      }
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: $spacing * 2;
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: $border-radius;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:first-child {
+          background-color: $primary-color;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background-color: darken($primary-color, 10%);
+          }
+
+          &:disabled {
+            background-color: $secondary-color;
+            cursor: not-allowed;
+          }
+        }
+
+        &.cancel {
+          background-color: $secondary-color;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background-color: darken($secondary-color, 10%);
+          }
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,102 @@
+// src/components/rooms/RoomList/style.scss
+.room-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+  
+    .btn-add-room {
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #28a745;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: flex-start;
+  
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  
+    .room-item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+      .form-group {
+        flex: 1;
+        min-width: 150px;
+        display: flex;
+        flex-direction: column;
+  
+        label {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #555;
+          margin-bottom: 5px;
+        }
+  
+        input {
+          padding: 10px;
+          font-size: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          width: 100%;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+  
+          &:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+          }
+  
+          &::placeholder {
+            color: #aaa;
+            font-style: italic;
+          }
+        }
+      }
+  
+      .button-group {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+  
+        button {
+          padding: 10px 15px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+  
+        .btn-remove {
+          background-color: #dc3545;
+  
+          &:hover {
+            background-color: #c82333;
+          }
+        }
+  
+        .btn-update {
+          background-color: #007bff;
+  
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
+      }
+    }
+  }

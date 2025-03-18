@@ -1,0 +1,53 @@
+// src/components/rooms/RoomList/style.scss
+.room-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  
+    .room-item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+      input {
+        flex: 1;
+        min-width: 150px;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        transition: border-color 0.3s ease;
+  
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+  
+        &::placeholder {
+          color: #aaa;
+          font-style: italic;
+        }
+      }
+  
+      button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #fff;
+        background-color: #dc3545;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }

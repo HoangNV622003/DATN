@@ -1,14 +1,13 @@
-import { BrowserRouter } from 'react-router-dom';
-import RouterCustom from './Router';
-import { ResetProvider } from './context/ResetContext';
+import { BrowserRouter } from "react-router-dom";
+import RouterCustom from "./Router";
+import { AuthProvider } from "./context/AuthContext";
 function App() {
   return (
-    <BrowserRouter>
-    <ResetProvider>
-
-      <RouterCustom/>
-    </ResetProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <RouterCustom />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

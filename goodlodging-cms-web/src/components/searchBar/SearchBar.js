@@ -1,10 +1,9 @@
-// src/components/searchBar/SearchBar.jsx
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./style.scss";
 import { fetchAllAddress } from "../../apis/address/AddressService";
 import { LuMapPinned } from "react-icons/lu";
-import { IoIosArrowUp } from "react-icons/io";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { ROUTERS } from "../../utils/router/Router";
 
@@ -12,6 +11,7 @@ const SearchBar = ({
   initialProvince = null,
   initialDistricts = [],
   initialWards = [],
+  onSearch, // Thêm prop onSearch để tùy chỉnh hành vi tìm kiếm
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,23 +38,21 @@ const SearchBar = ({
     }
   }, []);
 
+  const handleBack = () => {
+    setSelectedProvince(null);
+    setSelectedDistricts([]); // Xóa các quận đã chọn
+    setSelectedWards([]);    // Xóa các phường đã chọn
+  };
   useEffect(() => {
     handlerLoadAddress();
   }, [handlerLoadAddress]);
 
-  // Chỉ cập nhật state nếu props thay đổi thực sự
   useEffect(() => {
-    if (initialProvince !== selectedProvince) {
-      setSelectedProvince(initialProvince);
-    }
-    if (
-      JSON.stringify(initialDistricts) !== JSON.stringify(selectedDistricts)
-    ) {
+    if (initialProvince !== selectedProvince) setSelectedProvince(initialProvince);
+    if (JSON.stringify(initialDistricts) !== JSON.stringify(selectedDistricts))
       setSelectedDistricts(initialDistricts);
-    }
-    if (JSON.stringify(initialWards) !== JSON.stringify(selectedWards)) {
+    if (JSON.stringify(initialWards) !== JSON.stringify(selectedWards))
       setSelectedWards(initialWards);
-    }
   }, [initialProvince, initialDistricts, initialWards]);
 
   const handleProvinceSelect = (province) => {
@@ -63,7 +61,7 @@ const SearchBar = ({
     setSelectedWards([]);
     setIsDropdownOpen(true);
   };
-
+  
   const handleDistrictSelect = (district) => {
     if (
       selectedDistricts.length < 3 &&
@@ -84,9 +82,7 @@ const SearchBar = ({
       (d) => d.districtId === districtId
     );
     const wardsToRemove = districtToRemove?.wards || [];
-    setSelectedDistricts(
-      selectedDistricts.filter((d) => d.districtId !== districtId)
-    );
+    setSelectedDistricts(selectedDistricts.filter((d) => d.districtId !== districtId));
     setSelectedWards(
       selectedWards.filter(
         (w) => !wardsToRemove.some((ward) => ward.wardsId === w.wardsId)
@@ -102,45 +98,43 @@ const SearchBar = ({
     e.stopPropagation();
 
     let wardsIdList = [];
-
     if (!selectedProvince) {
       wardsIdList = addressData.flatMap((province) =>
         province.districts.flatMap((district) =>
           district.wards.map((ward) => ward.wardsId)
         )
       );
+    } else if (selectedDistricts.length === 0 && selectedWards.length === 0) {
+      wardsIdList = selectedProvince.districts.flatMap((district) =>
+        district.wards.map((ward) => ward.wardsId)
+      );
     } else {
-      if (selectedDistricts.length === 0 && selectedWards.length === 0) {
-        wardsIdList = selectedProvince.districts.flatMap((district) =>
-          district.wards.map((ward) => ward.wardsId)
+      selectedDistricts.forEach((district) => {
+        const districtWards = district.wards.map((ward) => ward.wardsId);
+        const selectedWardsInDistrict = selectedWards
+          .filter((w) => districtWards.includes(w.wardsId))
+          .map((w) => w.wardsId);
+        wardsIdList.push(
+          ...(selectedWardsInDistrict.length > 0 ? selectedWardsInDistrict : districtWards)
         );
-      } else {
-        selectedDistricts.forEach((district) => {
-          const districtWards = district.wards.map((ward) => ward.wardsId);
-          const selectedWardsInDistrict = selectedWards
-            .filter((w) => districtWards.includes(w.wardsId))
-            .map((w) => w.wardsId);
-
-          if (selectedWardsInDistrict.length > 0) {
-            wardsIdList.push(...selectedWardsInDistrict);
-          } else {
-            wardsIdList.push(...districtWards);
-          }
-        });
-      }
+      });
     }
-
     wardsIdList = [...new Set(wardsIdList)];
 
+    const searchData = {
+      wardsId: wardsIdList,
+      selectedProvince,
+      selectedDistricts,
+      selectedWards,
+    };
+
     setIsDropdownOpen(false);
-    navigate(ROUTERS.USER.SEARCH, {
-      state: {
-        wardsId: wardsIdList,
-        selectedProvince,
-        selectedDistricts,
-        selectedWards,
-      },
-    });
+    if (onSearch) {
+      onSearch(searchData); // Gọi callback từ parent
+    } else {
+      // Mặc định nếu không có onSearch (cho tương thích ngược)
+      navigate(ROUTERS.USER.SEARCH, { state: searchData });
+    }
   };
 
   const handleClear = () => {
@@ -158,14 +152,8 @@ const SearchBar = ({
         setIsDropdownOpen(false);
       }
     };
-
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (isDropdownOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
   const renderDistrictSummary = () => {
@@ -174,11 +162,7 @@ const SearchBar = ({
       return (
         <span className="district-summary">
           {selectedDistricts[0].districtName}
-          <button
-            onClick={() =>
-              handleRemoveDistrict(selectedDistricts[0].districtId)
-            }
-          >
+          <button onClick={() => handleRemoveDistrict(selectedDistricts[0].districtId)}>
             ×
           </button>
         </span>
@@ -186,8 +170,7 @@ const SearchBar = ({
     }
     return (
       <span className="district-summary">
-        {selectedDistricts[0].districtName} + {selectedDistricts.length - 1} Địa
-        điểm
+        {selectedDistricts[0].districtName} + {selectedDistricts.length - 1} Địa điểm
       </span>
     );
   };
@@ -219,10 +202,7 @@ const SearchBar = ({
 
   return (
     <div className="search-container" ref={searchContainerRef}>
-      <div
-        className="search-bar-wrapper"
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-      >
+      <div className="search-bar-wrapper" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
         <div className="selected-province">
           {selectedProvince ? (
             <div className="nationwide">
@@ -241,9 +221,7 @@ const SearchBar = ({
           )}
         </div>
         <div className="selected-district">
-          {selectedDistricts.length > 0 &&
-            !isDropdownOpen &&
-            renderDistrictSummary()}
+          {selectedDistricts.length > 0 && !isDropdownOpen && renderDistrictSummary()}
         </div>
         <div className="selected-wards">
           {selectedWards.length > 0 && !isDropdownOpen && renderWardSummary()}
@@ -252,32 +230,29 @@ const SearchBar = ({
           Tìm kiếm
         </button>
       </div>
-      {isDropdownOpen &&
-        (selectedDistricts.length > 0 || selectedWards.length > 0) && (
-          <div className="selected-items">
-            {selectedDistricts.map((district) => (
-              <span key={district.districtId} className="chip district-chip">
-                {district.districtName}
-                <button
-                  onClick={() => handleRemoveDistrict(district.districtId)}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-            {selectedWards.map((ward) => (
-              <span key={ward.wardsId} className="chip ward-chip">
-                {ward.wardsName}
-                <button onClick={() => handleRemoveWard(ward.wardsId)}>
-                  ×
-                </button>
-              </span>
-            ))}
-            <button className="clear-button" onClick={handleClear}>
-              Xóa tất cả
-            </button>
-          </div>
-        )}
+      {isDropdownOpen && (selectedDistricts.length > 0 || selectedWards.length > 0) && (
+        <div className="selected-items">
+          {selectedDistricts.map((district) => (
+            <span key={district.districtId} className="chip district-chip">
+              {district.districtName}
+              <button onClick={() => handleRemoveDistrict(district.districtId)}>
+                ×
+              </button>
+            </span>
+          ))}
+          {selectedWards.map((ward) => (
+            <span key={ward.wardsId} className="chip ward-chip">
+              {ward.wardsName}
+              <button onClick={() => handleRemoveWard(ward.wardsId)}>
+                ×
+              </button>
+            </span>
+          ))}
+          <button className="clear-button" onClick={handleClear}>
+            Xóa tất cả
+          </button>
+        </div>
+      )}
       {isDropdownOpen && (
         <div className="filter-dropdown">
           <div className="filter-section">
@@ -307,10 +282,7 @@ const SearchBar = ({
             ) : (
               <>
                 <div className="filter-header">
-                  <button
-                    className="back-button"
-                    onClick={() => setSelectedProvince(null)}
-                  >
+                  <button className="back-button" onClick={handleBack}>
                     Quay lại
                   </button>
                   <label className="filter-label">Chọn quận (tối đa 3)</label>
@@ -323,9 +295,7 @@ const SearchBar = ({
                       <div
                         key={district.districtId}
                         className={`district-item ${
-                          selectedDistricts.some(
-                            (d) => d.districtId === district.districtId
-                          )
+                          selectedDistricts.some((d) => d.districtId === district.districtId)
                             ? "selected"
                             : ""
                         }`}
@@ -344,11 +314,7 @@ const SearchBar = ({
                         <div
                           key={ward.wardsId}
                           className={`ward-item ${
-                            selectedWards.some(
-                              (w) => w.wardsId === ward.wardsId
-                            )
-                              ? "selected"
-                              : ""
+                            selectedWards.some((w) => w.wardsId === ward.wardsId) ? "selected" : ""
                           }`}
                           onClick={() => handleWardSelect(ward)}
                         >

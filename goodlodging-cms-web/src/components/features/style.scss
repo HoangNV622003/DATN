@@ -1,0 +1,165 @@
+// src/components/FeatureSelector/style.scss
+.feature-selector {
+    margin: 20px 0;
+  
+    h4 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 5px;
+    }
+  
+    .feature-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+  
+      .selected-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+  
+        .selected-item {
+          display: flex;
+          align-items: center;
+          padding: 5px 10px;
+          font-size: 0.9rem;
+          color: #333;
+          background-color: #cce5ff; // Màu xanh dương nhạt cho Khối A
+          border-radius: 4px;
+          white-space: nowrap;
+  
+          .remove-icon {
+            margin-left: 5px;
+            font-size: 1rem;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.3s ease;
+  
+            &:hover {
+              color: #dc3545; // Màu đỏ khi hover
+            }
+          }
+        }
+  
+        .remaining-count {
+          font-size: 0.9rem;
+          color: #555;
+          padding: 5px 10px;
+          background-color: #e0e0e0; // Màu xám nhạt cho số lượng còn lại
+          border-radius: 4px;
+        }
+  
+        span {
+          font-size: 1rem;
+          color: #333;
+        }
+      }
+  
+      .toggle-btn {
+        border: none;
+        background-color: #f9f9f9;
+        font-size: 20px;
+        color: #007bff;
+  
+        svg {
+          cursor: pointer;
+          &.active {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  
+    .selected-features {
+      margin-top: 15px;
+  
+      .selected-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+  
+        .selected-item {
+          display: flex;
+          align-items: center;
+          padding: 5px 10px;
+          font-size: 0.9rem;
+          color: #fff;
+          background-color: #28a745; // Màu xanh lá cho Khối B
+          border-radius: 4px;
+          white-space: nowrap;
+  
+          .remove-icon {
+            margin-left: 5px;
+            font-size: 1rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s ease;
+  
+            &:hover {
+              color: #dc3545; // Màu đỏ khi hover
+            }
+          }
+        }
+      }
+  
+      .clear-all-btn {
+        margin-top: 10px;
+        padding: 5px 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #fff;
+        background-color: #dc3545; // Màu đỏ cho nút xóa tất cả
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #c82333; // Đỏ đậm hơn khi hover
+        }
+      }
+    }
+  
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+      .feature-item {
+        padding: 10px;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #fff;
+        background-color: gray; // Màu xám cho grid
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &.selected {
+          background-color: #28a745; // Màu xanh lá giống Khối B khi được chọn
+          color: #fff;
+        }
+  
+        &:hover {
+          background-color: #e0e0e0; // Hover cho item chưa chọn
+        }
+  
+        &.selected:hover {
+          background-color: #218838; // Hover cho item đã chọn (xanh lá đậm hơn)
+        }
+      }
+    }
+  }

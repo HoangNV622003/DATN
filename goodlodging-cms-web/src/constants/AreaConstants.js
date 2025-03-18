@@ -2,32 +2,32 @@ const areas=[
     {
         id:1,
         name:"Tất cả",
-        minValue:0,
-        maxValue:200,
+        min:0,
+        max:200,
     },
     {
         id:2,
-        name:"Dưới 30m2",
-        minValue:0,
-        maxValue:30,
+        name:<>Dưới 20m&sup2;</>,
+        min:0,
+        max:20,
     },
     {
         id:3,
-        name:"Từ 30m2 - 50m2",
-        minValue:30,
-        maxValue:50,
+        name:<>Từ 20m&sup2; - 30m&sup2;</>,
+        min:20,
+        max:30,
     },
     {
         id:4,
-        name:"Từ 50m2 - 80m2",
-        minValue:50,
-        maxValue:80,
+        name:<>Từ 30m&sup2; - 40m&sup2;</>,
+        min:30,
+        max:40,
     },
     {
         id:5,
-        name:"Trên 80m2",
-        minValue:80,
-        maxValue:200,
+        name:<>Trên 40m&sup2;</>,
+        min:40,
+        max:200,
     }
 ]
 export default areas;
