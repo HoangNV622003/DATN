@@ -10,7 +10,7 @@ import { fetchMyBoardingHouse } from '../../../../../apis/account/UserService';
 import { fetchAllHouse } from '../../../../../apis/house/BoardingHouseService';
 
 const SavePost = () => {
-    const { user, accessToken } = useAuth();
+    const { user, token } = useAuth();
     const { postId } = useParams();
     const navigate = useNavigate();
     const isEditMode = !!postId;
@@ -54,7 +54,7 @@ const SavePost = () => {
                 });
         }else{
             setLoading(true);
-            fetchAllHouse(user.id)
+            fetchAllHouse(user.id,token)
                 .then((data) => {
                     setPost({
                         id: '',
@@ -74,7 +74,7 @@ const SavePost = () => {
                     setLoading(false);
                 });
         }
-    }, [postId, isEditMode, accessToken]);
+    }, [postId, isEditMode, token]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -118,8 +118,8 @@ const SavePost = () => {
 
         try {
             await (isEditMode
-                ? updatePost(postId, formData, accessToken)
-                : createPost(formData, accessToken));
+                ? updatePost(postId, formData, token)
+                : createPost(formData, token));
             navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`);
         } catch (err) {
             setError(err.message || 'Lưu bài đăng thất bại, vui lòng thử lại');

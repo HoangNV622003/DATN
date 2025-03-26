@@ -7,7 +7,7 @@ import { fetchAllHouse } from '../../../../../../apis/house/BoardingHouseService
 import './style.scss';
 
 const ForRentBoardingHouse = () => {
-    const { user, isLogin, loading } = useAuth();
+    const { user, isLogin, loading,token } = useAuth();
     const [boardingHouses, setBoardingHouses] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ const ForRentBoardingHouse = () => {
         } else if (user) {
             const loadBoardingHouses = async () => {
                 try {
-                    const result = await fetchAllHouse(user.id); // Chờ kết quả API
+                    const result = await fetchAllHouse(user.id,token); // Chờ kết quả API
                     setBoardingHouses(result || []);
                     setError(null);
                 } catch (err) {

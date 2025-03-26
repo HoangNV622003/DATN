@@ -1,0 +1,43 @@
+// src/components/FavoritePost/style.scss
+.container__favorite__post {
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+  
+    // Tiêu đề "Bài viết yêu thích"
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c3e50;
+      text-align: center;
+    }
+  
+    // Nút xóa
+    .delete__button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+  
+      &:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+  
+      &:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+    }
+  
+  }
+  

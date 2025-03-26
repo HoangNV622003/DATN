@@ -1,25 +1,38 @@
 import React, { useEffect, useState } from "react";
 import "./PostDetailStyle.scss";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getPost } from "../../../apis/posts/PostService";
 import { FaAngleRight } from "react-icons/fa6";
 import { FaAngleLeft } from "react-icons/fa6";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiPhoneCall } from "react-icons/fi";
 import defaultRoom from "../../../assets/images/defaultRoom.png"
+import { IMAGE_URL } from "../../../utils/ApiUrl";
+import { ROUTERS } from "../../../utils/router/Router";
+import AuthorInformation from "../../../components/authorInformation/AuthorInformation";
 const PostDetail = () => {
     const { id } = useParams();
     const [postDetail, setPostDetail] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
-
     const handleLoadData = async () => {
         try {
             setError("");
             setLoading(true);
-            const data = await getPost(id);
-            setPostDetail(data);
+            const response = await getPost(id);
+            setPostDetail({
+                authorInfo: {
+                    id: response.authorInfo.userId || null,
+                    imageUrl: response.authorInfo.imageUrl || '',
+                    fullName: response.authorInfo.fullName,
+                    email: response.authorInfo.email || '',
+                    phoneNumber: response.authorInfo.phoneNumber || ''
+                },
+                boardingHouse: response.boardingHouse,
+                imageUrl: response.imageUrl || [],
+                title: response.title || ''
+            });
         } catch (error) {
             setError("Có lỗi khi lấy dữ liệu, vui lòng thử lại sau");
             setPostDetail(null);
@@ -101,7 +114,7 @@ const PostDetail = () => {
                             <FaAngleLeft />
                         </button>
                         <img
-                            src={images[currentIndex].src}
+                            src={IMAGE_URL + images[currentIndex].src}
                             alt="Main"
                             className="main-image"
                         />
@@ -117,7 +130,7 @@ const PostDetail = () => {
                                     }`}
                                 onClick={() => handleThumbnailClick(index)}
                             >
-                                <img src={image.src} alt={`Thumbnail ${image.id}`} />
+                                <img src={IMAGE_URL + image.src} alt={`Thumbnail ${image.id}`} />
                             </div>
                         ))}
                     </div>
@@ -179,23 +192,12 @@ const PostDetail = () => {
                     <p>Thông tin mô tả</p>
                     <p>{postDetail.boardingHouse.description}</p>
                 </div>
-                <hr/>
+                <hr />
                 {/* <div className="container__suggestion__post">
                     <p>Dành cho bạn</p>
                 </div> */}
             </div>
-            <div className="container__author__information">
-                <div className="author__avatar">
-                    <img src={postDetail.userProfile.imageUrl?postDetail.userProfile.imageUrl:"https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"} alt="Avatar" />
-                </div>
-                <p>{postDetail.userProfile.fullName}</p>
-                <div className="author__email">
-                    <AiOutlineMail/>
-                    {postDetail.userProfile.email}</div>
-                <div className="author__phone">
-                    <FiPhoneCall/>
-                    {postDetail.userProfile.phoneNumber}</div>
-                </div>
+            <AuthorInformation data={postDetail.authorInfo} />
         </div>
     );
 };

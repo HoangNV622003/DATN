@@ -1,122 +1,73 @@
-// src/components/SaveBoardingHouse/style.scss
 .save-boarding-house {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  
-    h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #333;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-  
-    form {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    > div {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-  
-      > div {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-  
-        label {
-          font-size: 1rem;
-          font-weight: 500;
-          color: #555;
-        }
-  
-        input,
-        textarea {
-          padding: 10px;
-          font-size: 1rem;
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          width: 100%;
-          box-sizing: border-box;
-          transition: border-color 0.3s ease;
-  
-          &:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-          }
-  
-          &::placeholder {
-            color: #aaa;
-            font-style: italic;
-          }
-        }
-  
-        textarea {
-          min-height: 100px;
-          resize: vertical;
-        }
-      }
-  
-      .price-area-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr; // 2 cột đều nhau
-        gap: 20px;
-  
-        @media (max-width: 768px) {
-          grid-template-columns: 1fr; // 1 cột trên màn hình nhỏ
-        }
-      }
-  
-      h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #333;
-        margin: 20px 0 10px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 5px;
-      }
-  
-      .image-section {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-  
-        h4 {
-          font-size: 1.2rem;
-          font-weight: 500;
-          color: #444;
-        }
-  
-        img {
-          border-radius: 6px;
-          margin: 5px;
-          object-fit: cover;
-        }
-  
-        input[type="file"] {
-          padding: 5px 0;
-        }
-      }
-  
-      button[type="submit"] {
-        padding: 12px 20px;
+      gap: 8px;
+
+      label {
         font-size: 1rem;
-        font-weight: 600;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
+        font-weight: 500;
+        color: #555;
+      }
+
+      input,
+      textarea {
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ddd;
         border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: #0056b3;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
         }
+
+        &::placeholder {
+          color: #aaa;
+          font-style: italic;
+        }
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
       }
     }
-  
+
+    .price-area-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
     h3 {
       font-size: 1.5rem;
       font-weight: 600;
@@ -125,4 +76,110 @@
       border-bottom: 1px solid #eee;
       padding-bottom: 5px;
     }
+
+    .image-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #555;
+      }
+
+      .image-previews {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .preview-container {
+          position: relative;
+          display: inline-block;
+
+          img {
+            width: 100px;
+            height: 100px;
+            border-radius: 6px;
+            object-fit: cover;
+          }
+
+          button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #fff;
+            background-color: #dc3545;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: #c82333;
+            }
+          }
+        }
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 5px;
+      }
+
+      input[type="file"] {
+        padding: 5px 0;
+      }
+    }
+
+    button[type="submit"] {
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
   }
+
+  > div {
+    margin-top: 30px;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      margin: 20px 0 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #6c757d;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+
+      &:hover {
+        background-color: #5a6268;
+      }
+    }
+  }
+}

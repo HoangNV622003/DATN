@@ -29,6 +29,11 @@ body{
   .content,.footer{
     width: $width-percentage;
   }
+  .require-login{
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+  }
 }
 
 .header {

@@ -4,6 +4,8 @@ export const ROUTERS = {
       SEARCH:"/search",
       PROFILE: "/profile/*", // Không dùng wildcard
       POST_DETAIL: "/post/:id",
+      FAVORITE_POST:"/favorite-posts",
+      AUTHOR_POST:"/author-posts/:id",
       POST: {
         MANAGEMENT: 'posts',
         CREATE: 'create-post',

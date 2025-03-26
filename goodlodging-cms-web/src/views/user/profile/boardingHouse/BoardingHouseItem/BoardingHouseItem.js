@@ -3,6 +3,7 @@ import defaultRoom from "../../../../../assets/images/defaultRoom.png";
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../utils/router/Router';
 import "./style.scss";
+import { IMAGE_URL } from '../../../../../utils/ApiUrl';
 
 const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost }) => {
     const { id, name, address, description,roomArea, roomRent, electricityPrice, waterPrice, feature, imageUrl } = data;
@@ -30,7 +31,7 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost }) => {
         <div className='boarding__house__item' onClick={handleNavigateToSaveBoardingHouse}>
             <div className="container__image">
                 <img
-                    src={Array.isArray(imageUrl) && imageUrl.length > 0 ? imageUrl[0] : defaultRoom}
+                    src={Array.isArray(imageUrl) && imageUrl.length > 0 ? IMAGE_URL+ imageUrl[0] : defaultRoom}
                     alt={name || "Boarding House"}
                 />
             </div>

@@ -25,7 +25,9 @@ const Header = () => {
     const handleHomeClick = () => {
         navigate("/"); // Điều hướng về trang chủ
     };
-
+    const handleNavigateToFavoritePost=()=>{
+        navigate(ROUTERS.USER.FAVORITE_POST);
+    }
     useEffect(() => {
         console.log("isLogin:", isLogin);
         console.log("user:", user);
@@ -41,7 +43,7 @@ const Header = () => {
                     <p className="header__title">Trọ tốt</p>
                 </Link>
                 <div className="header__buttons">
-                    <button className="header__button">
+                    <button className="header__button" onClick={handleNavigateToFavoritePost}>
                         <CiHeart className="header__icon__like" aria-label="Yêu thích" />
                         <p>Yêu thích</p>
                     </button>

@@ -5,8 +5,6 @@ import "./style.scss";
 import { ROUTERS } from '../../../../utils/router/Router';
 import { loginUser } from '../../../../apis/auth/AuthService';
 import { useAuth } from '../../../../context/AuthContext';
-import { setToken } from '../../../../utils/service/localStorageService';
-
 const JwtLogin = () => {
     const { login } = useAuth();
     const navigate = useNavigate();

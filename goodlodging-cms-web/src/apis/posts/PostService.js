@@ -103,3 +103,11 @@ export const fetchMyPosts=async(userId)=>{
         throw error;
     }
 }
+
+export const fetchAuthorInformation=async(id,page=0)=>{
+    return (await axios.get(`${API_URL}/posts/author/${id}`,{
+        params:{
+            page
+        }
+    })).data;
+}

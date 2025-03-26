@@ -1,10 +1,9 @@
 import axios from "axios";
 import { getToken } from "../../utils/service/localStorageService";
 import { API_URL } from "../../utils/ApiUrl";
-const accessToken = getToken();
-
-export const fetchAllHouse = async (userId) => {
+export const fetchAllHouse = async (userId,accessToken) => {
   try {
+    console.log("accessToken: ",accessToken)
     const response = await axios.get(`${API_URL}/users/${userId}/boarding-house`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -16,7 +15,7 @@ export const fetchAllHouse = async (userId) => {
   }
 };
 
-export const fetchHouse = async (houseId) => {
+export const fetchHouse = async (houseId,accessToken) => {
   try {
     console.log('fetch-house')
     const response = await axios.get(`${API_URL}/boarding-houses/${houseId}`, {
@@ -30,7 +29,7 @@ export const fetchHouse = async (houseId) => {
   }
 };
 
-export const createBoardingHouse = async (houseData) => {
+export const createBoardingHouse = async (houseData,accessToken) => {
   try {
     const response = await axios.post(`${API_URL}/boarding-houses`, houseData, {
       headers: {
@@ -44,7 +43,7 @@ export const createBoardingHouse = async (houseData) => {
   }
 };
 
-export const updateBoardingHouse = async (houseId, houseData) => {
+export const updateBoardingHouse = async (houseId, houseData,accessToken) => {
   try {
     const response = await axios.put(
       `${API_URL}/boarding-houses/${houseId}`,
@@ -62,7 +61,7 @@ export const updateBoardingHouse = async (houseId, houseData) => {
   }
 };
 
-export const deleteBoardingHouse = async (houseId) => {
+export const deleteBoardingHouse = async (houseId,accessToken) => {
   try {
     const response = await axios.delete(
       `${API_URL}/boarding-houses/${houseId}`,
