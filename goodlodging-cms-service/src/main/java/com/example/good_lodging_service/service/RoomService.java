@@ -2,6 +2,7 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
+import com.example.good_lodging_service.dto.request.EntityDelete.EntityDeleteRequest;
 import com.example.good_lodging_service.dto.request.Room.RoomRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
@@ -54,8 +55,8 @@ public class RoomService {
         return roomMapper.toRoomResponseDTO(roomRepository.save(room));
     }
 
-    public CommonResponse deleteRoom(List<Long> roomIds) {
-        List<Room> rooms = roomRepository.findAllById(roomIds);
+    public CommonResponse deleteRoom(EntityDeleteRequest request) {
+        List<Room> rooms = roomRepository.findAllById(request.getIds());
         rooms.forEach(room -> {
             room.setStatus(CommonStatus.DELETED.getValue());
         });

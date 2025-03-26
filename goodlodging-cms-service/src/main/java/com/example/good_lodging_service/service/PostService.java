@@ -5,20 +5,18 @@ import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.Post.PostFilterRequest;
 import com.example.good_lodging_service.dto.request.Post.PostRequest;
-import com.example.good_lodging_service.dto.request.Post.PostUpdateRequest;
+import com.example.good_lodging_service.dto.response.AuthorInfo.AuthorInfo;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Post.*;
 import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
+import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.Address;
-import com.example.good_lodging_service.entity.BoardingHouse;
 import com.example.good_lodging_service.entity.Image;
 import com.example.good_lodging_service.entity.Post;
+import com.example.good_lodging_service.entity.User;
 import com.example.good_lodging_service.exception.AppException;
-import com.example.good_lodging_service.mapper.BoardingHouseMapper;
-import com.example.good_lodging_service.mapper.PostMapper;
-import com.example.good_lodging_service.mapper.ProfileMapper;
-import com.example.good_lodging_service.mapper.RoomMapper;
+import com.example.good_lodging_service.mapper.*;
 import com.example.good_lodging_service.repository.*;
 import com.example.good_lodging_service.utils.ValueUtils;
 import lombok.AccessLevel;
@@ -50,6 +48,7 @@ public class PostService {
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
     private final ImageRepository imageRepository;
+    UserMapper userMapper;
     BoardingHouseRepository bhRepository;
     AddressRepository addressRepository;
 
@@ -78,6 +77,18 @@ public class PostService {
         return postMapper.toPostResponse(post);
     }
 
+    public AuthorInfo getAuthorInformation(Long id, Pageable pageable) {
+        User user = userRepository.findByIdAndStatus(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
+        Address address = addressRepository.findByIdAndStatus(user.getAddressId(), CommonStatus.ACTIVE.getValue()).orElse(null);
+        UserResponseDTO userResponseDTO = userMapper.toUserResponse(user);
+        userResponseDTO.setAddress(address != null ? address.getFullAddress() : "");
+        return AuthorInfo.builder()
+                .authorInfo(userResponseDTO)
+                .posts(getAllMyPosts(id, pageable))
+                .build();
+    }
+
     public PostDetailResponse getPostDetailById(Long id) {
         PostDetailProjection postDetailProjection = postRepository.findByPostIdAndStatusWithQuery(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
@@ -87,7 +98,7 @@ public class PostService {
         List<String> imageUrls = boardingHouseImageUrls.stream().map(Image::getImageUrl).toList();
 
         return PostDetailResponse.builder()
-                .userProfile(ProfileResponse.fromPostDetailProjection(postDetailProjection))
+                .authorInfo(ProfileResponse.fromPostDetailProjection(postDetailProjection))
                 .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(), ""))
                 .floor(ValueUtils.getOrDefault(postDetailProjection.getFloor(), 0))
                 .area(ValueUtils.getOrDefault(postDetailProjection.getArea(), 0F))
@@ -115,7 +126,9 @@ public class PostService {
 
     public MyPostResponse getMyPost(Long postId) {
         Post post = postRepository.findByIdAndStatus(postId, CommonStatus.ACTIVE.getValue()).orElseThrow(() -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
-        List<BoardingHouseResponse> boardingHouses=boardingHouseRepository.findAllByUserIdAndStatus(post.getUserId(), CommonStatus.ACTIVE.getValue()).stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
+        List<BoardingHouseResponse> boardingHouses = boardingHouseRepository.findAllByUserIdAndStatus(post.getUserId(), CommonStatus.ACTIVE.getValue()).stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
+        List<Long> boardingHouseIds = boardingHouses.stream().map(BoardingHouseResponse::getId).toList();
+
         return MyPostResponse.builder().postResponse(postMapper.toPostResponse(post)).boardingHouses(boardingHouses).build();
     }
 

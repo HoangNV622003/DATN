@@ -48,7 +48,7 @@ public class ProfileService {
                     .build());
         });
         boardingHouseDetailResponses.forEach(boardingHouseResponse -> {
-            boardingHouseResponse.setAddress(addressResponseMap.get(boardingHouseResponse.getId()).getFullAddress());
+            boardingHouseResponse.setAddress(addressResponseMap.get(boardingHouseResponse.getId()));
         });
         return boardingHouseDetailResponses;
     }

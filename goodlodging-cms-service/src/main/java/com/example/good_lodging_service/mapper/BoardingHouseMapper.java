@@ -19,7 +19,7 @@ public interface BoardingHouseMapper {
 
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "addressId", ignore = true)
-    void updateBoardingHouse(@MappingTarget BoardingHouse boardingHouse, BoardingHouseUpdateRequest boardingHouseUpdateRequest);
+    void updateBoardingHouse(@MappingTarget BoardingHouse boardingHouse, BoardingHouseRequest boardingHouseUpdateRequest);
 
     @Mapping(target = "imageUrl", ignore = true)
     BoardingHouseResponse toBoardingHouseResponse(BoardingHouse boardingHouse);

@@ -19,13 +19,13 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BoardingHouseController {
     BoardingHouseService boardingHouseService;
-    @PostMapping
-    public ResponseEntity<BoardingHouseDetailResponse> createBoardingHouse(@RequestBody BoardingHouseRequest request) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<BoardingHouseDetailResponse> createBoardingHouse(@ModelAttribute BoardingHouseRequest request) {
         return ResponseEntity.ok(boardingHouseService.createBoardingHouse(request));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BoardingHouseDetailResponse> updateBoardingHouse(@PathVariable Long id, @RequestBody BoardingHouseUpdateRequest request) {
+    @PutMapping(value = "/{id}",consumes = "multipart/form-data")
+    public ResponseEntity<BoardingHouseDetailResponse> updateBoardingHouse(@PathVariable Long id, @ModelAttribute BoardingHouseRequest request) {
         return ResponseEntity.ok(boardingHouseService.updateBoardingHouse(id, request));
     }
 

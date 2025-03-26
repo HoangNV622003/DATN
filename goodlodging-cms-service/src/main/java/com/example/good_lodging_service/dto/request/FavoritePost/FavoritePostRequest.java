@@ -1,8 +1,7 @@
-package com.example.good_lodging_service.dto.request.Image;
+package com.example.good_lodging_service.dto.request.FavoritePost;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -10,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ImageRequest {
-    String imageUrl;
+public class FavoritePostRequest {
+    Long postId;
+    Long userId;
 }

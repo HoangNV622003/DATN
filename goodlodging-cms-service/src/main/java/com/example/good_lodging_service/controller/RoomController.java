@@ -1,5 +1,6 @@
 package com.example.good_lodging_service.controller;
 
+import com.example.good_lodging_service.dto.request.EntityDelete.EntityDeleteRequest;
 import com.example.good_lodging_service.dto.request.Room.RoomRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
@@ -30,8 +31,8 @@ public class RoomController {
     }
 
     @DeleteMapping
-    ResponseEntity<CommonResponse> deleteRoom(@RequestBody List<Long> ids){
-        return ResponseEntity.ok(roomService.deleteRoom(ids));
+    ResponseEntity<CommonResponse> deleteRoom(@RequestBody EntityDeleteRequest request){
+        return ResponseEntity.ok(roomService.deleteRoom(request));
     }
 
     @GetMapping("/{roomId}")

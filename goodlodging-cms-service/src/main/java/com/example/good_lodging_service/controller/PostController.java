@@ -3,6 +3,7 @@ package com.example.good_lodging_service.controller;
 import com.example.good_lodging_service.dto.request.Post.PostFilterRequest;
 import com.example.good_lodging_service.dto.request.Post.PostRequest;
 import com.example.good_lodging_service.dto.request.Post.PostUpdateRequest;
+import com.example.good_lodging_service.dto.response.AuthorInfo.AuthorInfo;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Post.MyPostResponse;
@@ -45,6 +46,12 @@ public class PostController {
         return ResponseEntity.ok(postService.getAllMyPosts(userId, pageable));
     }
 
+    @GetMapping("/author/{id}")
+    public ResponseEntity<AuthorInfo> getAuthorPosts(
+            @PathVariable Long id,
+            @PageableDefault(size = 15,sort = "modifiedDate",direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok(postService.getAuthorInformation(id, pageable));
+    }
     @GetMapping("/my-post/{postId}")
     public ResponseEntity<MyPostResponse> getMyPost(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getMyPost(postId));

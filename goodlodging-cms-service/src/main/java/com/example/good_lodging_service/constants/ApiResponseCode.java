@@ -13,7 +13,7 @@ public enum ApiResponseCode {
     SUCCESS(1000,"SUCCESS",HttpStatus.OK),
     INVALID_KEY(1001, "Invalid Key", HttpStatus.BAD_REQUEST),
     ENTITY_NOT_FOUND(1002, "Entity not found", HttpStatus.BAD_REQUEST),
-    USER_NOT_FOUND(1003, "User not found", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(1003, "Không tìm thấy người dùng", HttpStatus.BAD_REQUEST),
     USER_ALREADY_EXISTS(1004, "User already exists", HttpStatus.BAD_REQUEST),
     INVALID_USERNAME(1005, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1006, "Password invalid", HttpStatus.BAD_REQUEST),
@@ -67,6 +67,7 @@ public enum ApiResponseCode {
     //ROOM
     ROOM_ALREADY_EXITED(8001,"Phòng đã tồn tại, vui lòng chọn tên khác", HttpStatus.BAD_REQUEST),
     ROOM_DELETED_SUCCESSFUL(8002, "Phòng đã được xóa thành công", HttpStatus.OK),
+    ROOM_NOT_FOUND(8003,"Không tìm thấy phòng", HttpStatus.BAD_REQUEST),
 
     //DEVICE
     DEVICE_ALREADY_EXITED(9001, "Thiết bị đã tồn tại", HttpStatus.BAD_REQUEST),
@@ -89,6 +90,10 @@ public enum ApiResponseCode {
 
     //UPLOAD
 
+    //FAVORITE POST
+    ADD_FAVORITE_POST_SUCCESSFUL(1301,"Bài viết đã được thêm mới vào danh sách", HttpStatus.OK),
+    DELETE_FAVORITE_POST_SUCCESSFUL(1032,"Bài viết đã được xóa khỏi danh sách yêu thích",HttpStatus.OK),
+    FAVORITE_POST_ALREADY_EXISTED(1033,"Bài viết đã ở trong danh sách yêu thích", HttpStatus.OK),
     ;
     private final Integer code;
     private final String message;

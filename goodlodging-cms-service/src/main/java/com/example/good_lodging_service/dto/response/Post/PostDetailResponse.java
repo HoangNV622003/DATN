@@ -21,5 +21,5 @@ public class PostDetailResponse {
     Float area;
     List<String> imageUrl;
     BoardingHouseResponse boardingHouse;
-    ProfileResponse userProfile;
+    ProfileResponse authorInfo;
 }
