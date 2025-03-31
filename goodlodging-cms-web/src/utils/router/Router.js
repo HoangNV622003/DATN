@@ -6,6 +6,7 @@ export const ROUTERS = {
       POST_DETAIL: "/post/:id",
       FAVORITE_POST:"/favorite-posts",
       AUTHOR_POST:"/author-posts/:id",
+      CHAT:"/chat",
       POST: {
         MANAGEMENT: 'posts',
         CREATE: 'create-post',
@@ -22,9 +23,9 @@ export const ROUTERS = {
       },
       ROOMS: {
         MANAGEMENT: "rooms",
-        CREATE: "rooms/create",
-        UPDATE: "rooms/update/:roomId",
-        DETAIL: "rooms/detail/:roomId",
+        CREATE: "create-room",
+        UPDATE: "update-room/:id",
+        DETAIL: "room-detail/:id",
       },
     },
     ADMIN: {},

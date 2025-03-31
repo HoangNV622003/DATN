@@ -10,26 +10,25 @@ import { IMAGE_URL } from '../../../../utils/ApiUrl';
 import { deleteFavoritePost } from '../../../../apis/favorite-posts/FavoritePostService';
 import { useAuth } from '../../../../context/AuthContext';
 import { CiHeart } from 'react-icons/ci';
+import { toast } from 'react-toastify';
 
 const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
   const { id, title, imageUrl, area, roomRent, address, modifiedDate } = post;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  const {user}=useAuth();
+  const { user } = useAuth();
   const handleDelete = async () => {
-    try {
-      console.log("delete with id=", id);
-      const payload={
-        userId:user.id,
-        postIds:[id]
-      };
-      await deleteFavoritePost(payload); // Xóa bài viết
+    const payload = {
+      userId: user.id,
+      postIds: [id]
+    }
+    await deleteFavoritePost(payload).then((response) => {
       setIsMenuOpen(false);
       if (onPostDeleted) onPostDeleted(id); // Cập nhật danh sách ở parent
-    } catch (error) {
-      console.error("DELETE ERROR: ", error);
-      alert("Có lỗi khi xóa bài viết yêu thích");
-    }
+      toast.success(response.data.result);
+    }).catch((error) => {
+      toast.error("Có lỗi sảy ra, vui lòng thử lại sau")
+    });
   };
 
   // Ẩn menu khi nhấp ra ngoài
@@ -66,11 +65,16 @@ const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
               <p className="post__date">{formatDate(modifiedDate) || 'Không có ngày'}</p>
             </div>
           </div>
-          
+
         </div>
-        <div className="container__favorite">
-          <CiHeart />
-        </div>
+        {
+          !showMenu && (
+            <div className="container__favorite">
+              <CiHeart />
+            </div>
+          )
+        }
+
         {showMenu && (
           <div className="menu__container" ref={menuRef}>
             <BsThreeDotsVertical

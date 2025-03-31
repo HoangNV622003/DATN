@@ -1,53 +1,148 @@
-// src/components/rooms/RoomList/style.scss
-.room-list {
+// Biến màu sắc và giá trị chung
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$border-color: #e0e0e0;
+$shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$spacing: 20px;
+
+// Container chính
+.save-room {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: $spacing;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+// Phần thông tin phòng
+.room-info {
+  background-color: white;
+  border-radius: 10px;
+  padding: $spacing;
+  box-shadow: $shadow;
+  margin-bottom: $spacing * 2;
+
+  h2 {
+    color: $primary-color;
+    font-size: 28px;
+    margin-bottom: $spacing;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 5px;
+  }
+
+  .room-field {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-  
-    .room-item {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  
-      input {
-        flex: 1;
-        min-width: 150px;
-        padding: 10px;
-        font-size: 1rem;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        transition: border-color 0.3s ease;
-  
-        &:focus {
-          border-color: #007bff;
-          outline: none;
-          box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-  
-        &::placeholder {
-          color: #aaa;
-          font-style: italic;
-        }
-      }
-  
-      button {
-        padding: 10px 15px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #fff;
-        background-color: #dc3545;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: #c82333;
-        }
+    align-items: center;
+    margin: $spacing / 2 0;
+
+    span:first-child {
+      width: 120px;
+      font-weight: 600;
+      color: $secondary-color;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid $border-color;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 5px rgba($primary-color, 0.2);
       }
     }
   }
+
+  .update-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: $spacing;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Phần danh sách người dùng
+.users-section {
+  h2 {
+    color: $primary-color;
+    font-size: 28px;
+    margin-bottom: $spacing;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 5px;
+  }
+
+  .add-user {
+    display: flex;
+    gap: $spacing / 2;
+    margin-bottom: $spacing;
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid $border-color;
+      border-radius: 5px;
+      font-size: 16px;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+      }
+    }
+
+    .add-btn {
+      padding: 10px 20px;
+      background-color: $success-color;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken($success-color, 10%);
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .save-room {
+    padding: $spacing / 2;
+  }
+
+  .room-info,
+  .users-section {
+    .room-field,
+    .add-user {
+      flex-direction: column;
+      align-items: stretch;
+
+      span:first-child {
+        width: auto;
+        margin-bottom: 5px;
+      }
+
+      input,
+      .add-btn {
+        width: 100%;
+      }
+    }
+  }
+}

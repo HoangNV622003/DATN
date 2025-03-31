@@ -13,6 +13,7 @@ export const fetchFavoritePosts = async (id) => {
 };
 
 export const createFavoritePost = async (payload) => {
+    console.log("token:",accessToken)
     return await axios.post(`${API_URL}/favorite-posts`, payload, {
         headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -1,0 +1,219 @@
+$primary-color: #3498db;
+$secondary-color: #2c3e50;
+$border-color: #e0e0e0;
+$background-light: #f9f9f9;
+$white: #ffffff;
+$text-color: #333;
+$label-color: #555;
+$error-color: #e74c3c;
+
+.room-info-container {
+  max-width: 900px;
+  margin: 20px auto;
+  font-family: 'Arial', sans-serif;
+  color: $text-color;
+  text-align: center;
+
+  .section {
+    background: $background-light;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    h2 {
+      color: $secondary-color;
+      font-size: 1.5rem;
+      margin: 0 0 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid $primary-color;
+      text-align: left;
+    }
+
+    .toggle-header {
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .arrow {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        transition: transform 0.3s ease;
+
+        &.down {
+          border-top: 8px solid $secondary-color;
+        }
+
+        &.up {
+          border-bottom: 8px solid $secondary-color;
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    .info-item {
+      margin: 8px 0;
+      font-size: 1rem;
+      text-align: left;
+
+      .label {
+        font-weight: bold;
+        color: $label-color;
+        margin-right: 8px;
+      }
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+
+      th,
+      td {
+        border: 1px solid $border-color;
+        padding: 12px;
+        text-align: left;
+        font-size: 1rem;
+      }
+
+      th {
+        background: $primary-color;
+        color: $white;
+        font-weight: bold;
+      }
+
+      td {
+        background: $white;
+      }
+
+      tr:nth-child(even) td {
+        background: lighten($background-light, 5%);
+      }
+
+      tr:hover td {
+        background: lighten($primary-color, 40%);
+      }
+    }
+
+    .expense-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+
+      th,
+      td {
+        border: 1px solid $border-color;
+        padding: 12px;
+        text-align: left;
+        font-size: 1rem;
+      }
+
+      th {
+        background: $primary-color;
+        color: $white;
+        font-weight: bold;
+      }
+
+      td {
+        background: $white;
+      }
+
+      .total-row {
+        font-weight: bold;
+        background: lighten($secondary-color, 60%);
+      }
+
+      tr:nth-child(even) td {
+        background: lighten($background-light, 5%);
+      }
+
+      tr:hover td {
+        background: lighten($primary-color, 40%);
+      }
+    }
+
+    .expense-list {
+      margin-top: 15px;
+      max-height: 300px; // Giới hạn chiều cao nếu danh sách dài
+      overflow-y: auto; // Thêm thanh cuộn nếu cần
+      animation: slideDown 0.3s ease;
+
+      .expense-item {
+        background: $white;
+        border: 1px solid $border-color;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .container__host {
+      display: flex;
+      gap: 20px;
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .container__host__information {
+        flex: 1;
+        cursor: pointer;
+
+      }
+
+      .btn-send-message {
+        height: 40px;
+        width: 100px;
+        background: $primary-color;
+        color: $white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+
+        &:hover {
+          background: darken($primary-color, 10%);
+        }
+      }
+    }
+  }
+
+  &[data-loading="true"],
+  &[data-error="true"] {
+    font-size: 1.2rem;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  &[data-error="true"] {
+    color: $error-color;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

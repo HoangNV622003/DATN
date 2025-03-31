@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ROUTERS } from '../../../../../utils/router/Router';
+import { useParams } from 'react-router-dom';
 import { createBoardingHouse, fetchHouse, updateBoardingHouse } from '../../../../../apis/house/BoardingHouseService';
 import RoomList from '../rooms/RoomList';
 import AddressSelector from '../../../../../components/address/AddressSelector';
 import FeatureSelector from '../../../../../components/features/FeatureSelector';
 import './style.scss';
 import { IMAGE_URL } from '../../../../../utils/ApiUrl';
+import { toast } from 'react-toastify'; // Import toast
 
 const SaveBoardingHouse = () => {
   const { boardingHouseId } = useParams();
   const { token, isLogin, loading } = useAuth();
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     userId: null,
@@ -31,7 +30,7 @@ const SaveBoardingHouse = () => {
       provinceId: '',
       fullAddress: '',
     },
-    rooms: boardingHouseId ? [] : [{ id: '', boardingHouseId: null, name: '', description: '', area: '', floor: '' }],
+    rooms: boardingHouseId ? [] : [{ id: '', boardingHouseId: null, name: '', description: '', area: '', floor: '', price: '', capacity: '' }],
   });
 
   const [allImages, setAllImages] = useState([]);
@@ -61,8 +60,7 @@ const SaveBoardingHouse = () => {
       console.log('API Response:', data);
       console.log('Address from API:', data.address);
 
-      // Lấy danh sách imageUrls gốc từ API
-      const existingImageUrls = data.images.map(img => img.imageUrl); // Giữ nguyên giá trị từ API
+      const existingImageUrls = data.images.map(img => img.imageUrl);
 
       setFormData({
         userId: data.userId || null,
@@ -88,6 +86,8 @@ const SaveBoardingHouse = () => {
           description: room.description || '',
           area: room.area || '',
           floor: room.floor || '',
+          price: room.price || '',
+          capacity: room.capacity || '',
         })) || [],
       });
 
@@ -95,6 +95,7 @@ const SaveBoardingHouse = () => {
       setCombinedImagePreviews(existingImageUrls.map(url => `${IMAGE_URL}${url}`));
     } catch (error) {
       console.error('Error fetching boarding house:', error);
+      toast.error('Lỗi khi tải dữ liệu nhà trọ!');
     }
   };
 
@@ -128,6 +129,7 @@ const SaveBoardingHouse = () => {
     const invalidFiles = files.filter(file => !validImageTypes.includes(file.type));
     if (invalidFiles.length > 0) {
       setImageError('Chỉ chấp nhận các định dạng ảnh: JPEG, PNG, GIF, WebP.');
+      toast.warn('Chỉ chấp nhận các định dạng ảnh: JPEG, PNG, GIF, WebP.');
       return;
     }
 
@@ -138,6 +140,7 @@ const SaveBoardingHouse = () => {
       setImageError(`Vui lòng chọn thêm ${5 - totalImages} ảnh để đủ tối thiểu 5 ảnh.`);
     } else if (totalImages > 10) {
       setImageError(`Bạn đã chọn quá ${totalImages - 10} ảnh. Tối đa 10 ảnh.`);
+      toast.warn(`Bạn đã chọn quá ${totalImages - 10} ảnh. Tối đa 10 ảnh.`);
       return;
     } else {
       setImageError('');
@@ -167,21 +170,22 @@ const SaveBoardingHouse = () => {
     } else {
       setImageError('');
     }
+    toast.success('Đã xóa ảnh!');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isLogin) {
-      alert('Vui lòng đăng nhập để lưu nhà trọ!');
+      toast.warn('Vui lòng đăng nhập để lưu nhà trọ!');
       return;
     }
 
     const totalImages = allImages.length;
     if (totalImages < 5) {
-      alert(`Tổng số ảnh (${totalImages}) phải ít nhất 5!`);
+      toast.warn(`Tổng số ảnh (${totalImages}) phải ít nhất 5!`);
       return;
     } else if (totalImages > 10) {
-      alert(`Tổng số ảnh (${totalImages}) vượt quá tối đa 10!`);
+      toast.warn(`Tổng số ảnh (${totalImages}) vượt quá tối đa 10!`);
       return;
     }
 
@@ -208,9 +212,8 @@ const SaveBoardingHouse = () => {
       const imageFiles = allImages.filter(item => typeof item !== 'string');
 
       if (boardingHouseId) {
-        // Gửi imageUrls với giá trị gốc từ API
         imageUrls.forEach((url, index) => {
-          submitData.append(`imageUrls[${index}].imageUrl`, url); // Giữ nguyên giá trị ban đầu
+          submitData.append(`imageUrls[${index}].imageUrl`, url);
         });
         imageFiles.forEach((file, index) => {
           submitData.append(`imageFiles[${index}].imageFile`, file);
@@ -223,9 +226,9 @@ const SaveBoardingHouse = () => {
 
       let response;
       if (boardingHouseId) {
-        console.log('Submitting imageUrls:', imageUrls); // Log để kiểm tra
+        console.log('Submitting imageUrls:', imageUrls);
         response = await updateBoardingHouse(boardingHouseId, submitData, token);
-        alert('Cập nhật thành công!');
+        toast.success('Cập nhật nhà trọ thành công!');
       } else {
         response = await createBoardingHouse(submitData, token);
         newBoardingHouseId = response.data.id;
@@ -233,7 +236,7 @@ const SaveBoardingHouse = () => {
           ...prev,
           rooms: prev.rooms.map(room => ({ ...room, boardingHouseId: newBoardingHouseId })),
         }));
-        alert('Tạo mới thành công!');
+        toast.success('Tạo nhà trọ mới thành công!');
       }
 
       const updatedImages = response.data.images.map(img => img.imageUrl);
@@ -242,7 +245,6 @@ const SaveBoardingHouse = () => {
       setSavedBoardingHouseId(newBoardingHouseId);
     } catch (error) {
       console.error('Error saving boarding house:', error);
-      alert('Lưu thất bại!');
     }
   };
 

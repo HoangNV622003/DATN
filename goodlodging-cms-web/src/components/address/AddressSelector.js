@@ -218,15 +218,6 @@ const AddressSelector = ({
           </select>
         </div>
         <div className="form-group">
-          <label>Tên đường:</label>
-          <input
-            type="text"
-            value={streetName}
-            onChange={handleStreetNameChange}
-            placeholder="Tên đường"
-          />
-        </div>
-        <div className="form-group">
           <label>Số nhà:</label>
           <input
             type="text"
@@ -235,6 +226,16 @@ const AddressSelector = ({
             placeholder="Số nhà"
           />
         </div>
+        <div className="form-group">
+          <label>Tên đường:</label>
+          <input
+            type="text"
+            value={streetName}
+            onChange={handleStreetNameChange}
+            placeholder="Tên đường"
+          />
+        </div>
+        
       </div>
       <div className="form-group full-address">
         <label>Địa chỉ đầy đủ:</label>

@@ -9,8 +9,10 @@ import { Link } from "react-router-dom";
 import "./style.scss";
 import { ROUTERS } from "../../utils/router/Router";
 import { useAuth } from "../../context/AuthContext";
+import { useChat } from "../../context/ChatContext";
 
 const Header = () => {
+    const {openChat}=useChat();
     const { user, isLogin, loading } = useAuth(); // Thêm loading để kiểm tra
     const navigate = useNavigate();
 
@@ -22,6 +24,9 @@ const Header = () => {
         navigate(ROUTERS.USER.PROFILE.replace("/*", ""));
     };
 
+    const handleNavigateToMessagePage=()=>{
+        openChat();
+    }
     const handleHomeClick = () => {
         navigate("/"); // Điều hướng về trang chủ
     };
@@ -50,7 +55,7 @@ const Header = () => {
                     <button className="header__button">Đăng Tin</button>
                     {isLogin && user ? (
                         <div className="header__buttons">
-                            <button className="header__button">
+                            <button className="header__button" onClick={handleNavigateToMessagePage}>
                                 <AiOutlineMessage className="header__icon__message" />
                                 <p>Tin nhắn</p>
                             </button>

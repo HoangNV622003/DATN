@@ -1,0 +1,13 @@
+// Biến màu sắc và các giá trị chung
+$primary-color: #007bff;
+$border-color: #ccc;
+$background-hover: #f5f5f5;
+$spacing: 10px;
+
+// Container cho UserList
+.container__user__list {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing;
+}

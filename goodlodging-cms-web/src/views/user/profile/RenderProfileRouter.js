@@ -5,6 +5,7 @@ import profileRouter from '../../profileRouter';
 import ProfileContent from './profileContent/ProfileContent';
 import { useAuth } from '../../../context/AuthContext';
 import { ROUTERS } from '../../../utils/router/Router';
+import ChatPopUp from '../../../components/chat/ChatPopUp';
 const RenderProfileRouter = () => {
   const navigate=useNavigate();
   const {user,isLogin}=useAuth();
@@ -18,7 +19,10 @@ const RenderProfileRouter = () => {
         <Route 
           element={
             <ProfileLayout>
-              <Outlet/>
+              <div className="profile_content" style={{maxWidth:'900px'}}>
+
+                <Outlet/>
+              </div>
             </ProfileLayout>
           } 
         >
@@ -28,6 +32,8 @@ const RenderProfileRouter = () => {
             <Route key={index} path={item.path} element={item.element} />
           ))
         }
+                <Route path="/chat" element={<ChatPopUp />} />
+
         <Route path="*" element={<div>Trang con không tìm thấy trong Profile</div>} />
         </Route>
       </Routes>

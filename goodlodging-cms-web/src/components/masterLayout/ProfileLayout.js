@@ -6,7 +6,9 @@ import { Outlet } from 'react-router-dom';
 const ProfileLayout = ({ children }) => {
   return (
     <div className='profile_layout'>
-      <ProfileMenu />
+      <div className="container_profile_menu">
+        <ProfileMenu />
+      </div>
       <div className="container_profile_content">
 
         <Outlet/>

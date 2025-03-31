@@ -35,7 +35,9 @@ const ProfileMenu = () => { // Không cần nhận props nữa
     logout();
     navigate(`/${ROUTERS.AUTH.LOGIN}`);
   };
-
+const handleNavigateToChatPage=()=>{
+        navigate(ROUTERS.USER.MESSAGE)
+    }
   if (!user) return null; // Không render nếu không có user
 
   return (
@@ -85,6 +87,7 @@ const ProfileMenu = () => { // Không cần nhận props nữa
           </li>
         </ul>
       </nav>
+      <button className="btn-chat" onClick={handleNavigateToChatPage}>Tin nhắn</button>
       <button onClick={handleNavigateLogout}>Đăng xuất</button>
     </div>
   );

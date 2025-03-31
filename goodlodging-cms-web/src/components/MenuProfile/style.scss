@@ -8,6 +8,8 @@ $border-radius: 8px;
 $spacing: 15px;
 
 .profile-menu {
+  margin-top: 20px;
+  position: fixed;
   width: 280px;
   background: #ffffff;
   border-radius: $border-radius;
@@ -179,7 +181,6 @@ $spacing: 15px;
       }
     }
   }
-
   // Button Đăng xuất
   button {
     width: 100%;
@@ -196,6 +197,12 @@ $spacing: 15px;
 
     &:hover {
       background-color: $hover-color;
+    }
+  }
+  .btn-chat{
+    background-color: greenyellow;
+    &:hover{
+      background-color: rgb(105, 156, 28);
     }
   }
 }

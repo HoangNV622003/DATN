@@ -53,7 +53,7 @@ $favorite-color: orangered;
   align-items: stretch; // Đảm bảo các phần tử con kéo dài đều
   .image__item {
     width: 35%;
-    height: auto; // Để hình ảnh tự điều chỉnh theo tỷ lệ
+    height: 250px; // Để hình ảnh tự điều chỉnh theo tỷ lệ
     object-fit: cover;
     transition: transform 0.3s ease;
     border-top-left-radius: 12px; // Bo góc ảnh cho đồng bộ
