@@ -3,6 +3,8 @@ package com.example.good_lodging_service.controller;
 import com.example.good_lodging_service.dto.request.EntityDelete.EntityDeleteRequest;
 import com.example.good_lodging_service.dto.request.Room.RoomRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
+import com.example.good_lodging_service.dto.response.Room.MyRoomResponse;
+import com.example.good_lodging_service.dto.response.Room.RoomDetailResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.service.RoomService;
 import lombok.AccessLevel;
@@ -36,8 +38,12 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    ResponseEntity<RoomResponse> getRoom(@PathVariable Long roomId){
+    ResponseEntity<RoomDetailResponse> getRoom(@PathVariable Long roomId){
         return ResponseEntity.ok(roomService.getRoomDetail(roomId));
     }
 
+    @GetMapping("/my-room/{userId}")
+    ResponseEntity<MyRoomResponse> getMyRoom(@PathVariable Long userId){
+        return ResponseEntity.ok(roomService.getMyRoom(userId));
+    }
 }

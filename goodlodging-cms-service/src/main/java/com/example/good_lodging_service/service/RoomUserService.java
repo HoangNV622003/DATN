@@ -2,6 +2,7 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
+import com.example.good_lodging_service.dto.request.RoomUser.RoomUserDeleteRequest;
 import com.example.good_lodging_service.dto.request.RoomUser.RoomUserRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
@@ -34,36 +35,28 @@ public class RoomUserService {
                 .stream().map(userMapper::toUserResponse).toList();
     }
 
-    public CommonResponse addUser(RoomUserRequest request) {
-        if (!findByUserIdAndRoomId(request.getUserId(), request.getRoomId()))
-            throw new AppException(ApiResponseCode.ENTITY_NOT_FOUND);
+    public UserResponseDTO addUser(RoomUserRequest request) {
+        Room room = roomRepository.findByIdAndStatus(request.getRoomId(), CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.ROOM_NOT_FOUND));
+        User user = userRepository.findByUsernameAndStatus(request.getUsername(), CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
+        if (roomUserRepository.existsByUserIdAndRoomIdAndStatus(user.getId(), room.getId(), CommonStatus.ACTIVE.getValue())) {
+            throw new AppException(ApiResponseCode.USER_ALREADY_EXISTS);
+        }
         roomUserRepository.save(RoomUser.builder()
-                .roomId(request.getRoomId())
-                .userId(request.getUserId())
+                .roomId(room.getId())
+                .userId(user.getId())
                 .status(CommonStatus.ACTIVE.getValue())
                 .build());
-        return CommonResponse.builder().status(200).result("Add user successful").build();
+        return userMapper.toUserResponse(user);
     }
 
-    public CommonResponse removeUser(RoomUserRequest request) {
-        if (!findByUserIdAndRoomId(request.getUserId(), request.getRoomId()))
-            throw new AppException(ApiResponseCode.ENTITY_NOT_FOUND);
-
+    public CommonResponse removeUser(RoomUserDeleteRequest request) {
         RoomUser roomUser = roomUserRepository.findByUserIdAndRoomIdAndStatus(request.getUserId(), request.getRoomId(), CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
 
         roomUser.setStatus(CommonStatus.DELETED.getValue());
         roomUserRepository.save(roomUser);
-        return CommonResponse.builder().status(200).result("Remove user successful").build();
-    }
-
-    private boolean findByUserIdAndRoomId(Long userId, Long roomId) {
-        User user = userRepository.findByIdAndStatus(userId, CommonStatus.ACTIVE.getValue()).orElseThrow(
-                () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
-
-        Room room = roomRepository.findByIdAndStatus(roomId, CommonStatus.ACTIVE.getValue()).orElseThrow(
-                () -> new AppException(ApiResponseCode.ROOM_NOT_FOUND));
-
-        return user != null && room != null;
+        return CommonResponse.builder().status(200).result(ApiResponseCode.DELETE_ROOM_USER_SUCCESSFUL.getMessage()).build();
     }
 }

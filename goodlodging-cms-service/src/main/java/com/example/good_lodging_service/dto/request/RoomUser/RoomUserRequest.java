@@ -13,5 +13,5 @@ import lombok.*;
 @AllArgsConstructor
 public class RoomUserRequest {
     Long roomId;
-    Long userId;
+    String username;
 }

@@ -1,6 +1,7 @@
 package com.example.good_lodging_service.dto.response.Room;
 
 import com.example.good_lodging_service.entity.Device;
+import com.example.good_lodging_service.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,9 +15,10 @@ import java.util.List;
 public class RoomResponse {
     Long id;
     Long boardingHouseId;
-    List<String> urlImage;
     String name;
     String description;
+    Integer capacity;
+    Float price;
     Float area;
     Integer floor;
 }

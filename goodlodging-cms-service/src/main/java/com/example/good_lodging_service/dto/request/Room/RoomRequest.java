@@ -14,6 +14,8 @@ public class RoomRequest {
     Long boardingHouseId;
     String name;
     String description;
+    Float price;
     Float area;
+    Integer capacity;
     Integer floor;
 }

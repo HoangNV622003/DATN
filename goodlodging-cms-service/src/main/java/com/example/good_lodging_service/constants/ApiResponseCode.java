@@ -94,6 +94,9 @@ public enum ApiResponseCode {
     ADD_FAVORITE_POST_SUCCESSFUL(1301,"Bài viết đã được thêm mới vào danh sách", HttpStatus.OK),
     DELETE_FAVORITE_POST_SUCCESSFUL(1032,"Bài viết đã được xóa khỏi danh sách yêu thích",HttpStatus.OK),
     FAVORITE_POST_ALREADY_EXISTED(1033,"Bài viết đã ở trong danh sách yêu thích", HttpStatus.OK),
+
+    //ROOM_USER
+    DELETE_ROOM_USER_SUCCESSFUL(1043,"Đã xóa người dùng khỏi phòng trọ", HttpStatus.OK),
     ;
     private final Integer code;
     private final String message;
