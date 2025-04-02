@@ -22,8 +22,13 @@ public class BoardingHouseUpdateRequest {
     String description;
     Float electricityPrice;
     Float waterPrice;
+    Float otherPrice;
     Float roomRent;
+    Float maxRent;
+    Float minRent;
     Float roomArea;
+    Float maxArea;
+    Float minArea;
     String features;
     List<ImageRequest> imageUrls;
     List<ImageFileRequest> imageFiles;

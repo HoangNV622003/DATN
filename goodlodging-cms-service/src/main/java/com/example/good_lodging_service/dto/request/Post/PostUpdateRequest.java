@@ -14,7 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostUpdateRequest {
     String title;
     MultipartFile imageUrl;
-    Float area;
-    Float roomRent;
+    Float maxArea;
+    Float minArea;
+    Float maxRent;
+    Float minRent;
+    Float electricityPrice;
+    Float waterPrice;
+    Float otherPrice;
     String address;
 }

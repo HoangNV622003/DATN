@@ -13,8 +13,10 @@ public interface PostProjection {
     Long getId();
     String getTitle();
     String getImageUrl();
-    Float getArea();
-    Float getRoomRent();
+    Float getMaxArea();
+    Float getMinArea();
+    Float getMaxRent();
+    Float getMinRent();
     String getAddress();
     Long getBoardingHouseId();
     Long getUserId();

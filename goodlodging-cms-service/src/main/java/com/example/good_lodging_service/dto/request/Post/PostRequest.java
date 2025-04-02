@@ -17,8 +17,13 @@ public class PostRequest {
     String title;
     @JsonIgnore // Bỏ qua khi serialize
     MultipartFile imageUrl;
-    Float area;
-    Float roomRent;
+    Float maxArea;
+    Float minArea;
+    Float maxRent;
+    Float minRent;
+    Float electricityPrice;
+    Float waterPrice;
+    Float otherPrice;
     Long userId;
     Long boardingHouseId;
 }

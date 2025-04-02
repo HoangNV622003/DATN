@@ -23,27 +23,27 @@ public class RoomController {
     RoomService roomService;
 
     @PostMapping
-    ResponseEntity<RoomResponse> createRoom(@RequestBody RoomRequest request){
+    ResponseEntity<RoomResponse> createRoom(@RequestBody RoomRequest request) {
         return ResponseEntity.ok(roomService.createRoom(request));
     }
 
     @PutMapping("/{roomId}")
-    ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId, @RequestBody RoomRequest request){
+    ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId, @RequestBody RoomRequest request) {
         return ResponseEntity.ok(roomService.updateRoom(roomId, request));
     }
 
     @DeleteMapping
-    ResponseEntity<CommonResponse> deleteRoom(@RequestBody EntityDeleteRequest request){
-        return ResponseEntity.ok(roomService.deleteRoom(request));
+    ResponseEntity<CommonResponse> deleteRoom(@RequestBody EntityDeleteRequest request, @RequestParam(name = "boardingHouseId") Long boardingHouseId) {
+        return ResponseEntity.ok(roomService.deleteRoom(boardingHouseId, request));
     }
 
     @GetMapping("/{roomId}")
-    ResponseEntity<RoomDetailResponse> getRoom(@PathVariable Long roomId){
+    ResponseEntity<RoomDetailResponse> getRoom(@PathVariable Long roomId) {
         return ResponseEntity.ok(roomService.getRoomDetail(roomId));
     }
 
     @GetMapping("/my-room/{userId}")
-    ResponseEntity<MyRoomResponse> getMyRoom(@PathVariable Long userId){
+    ResponseEntity<MyRoomResponse> getMyRoom(@PathVariable Long userId) {
         return ResponseEntity.ok(roomService.getMyRoom(userId));
     }
 }

@@ -17,8 +17,13 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostDetailResponse {
     String title;
-    Integer floor;
-    Float area;
+    Float maxArea;
+    Float minArea;
+    Float maxRent;
+    Float minRent;
+    Float electricityPrice;
+    Float waterPrice;
+    Float otherPrice;
     List<String> imageUrl;
     BoardingHouseResponse boardingHouse;
     ProfileResponse authorInfo;

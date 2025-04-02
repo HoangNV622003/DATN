@@ -27,8 +27,13 @@ public class Post extends AbstractAuditingEntity implements Serializable {
     Long id;
     String title;
     String imageUrl;
-    Float area;
-    Float roomRent;
+    Float maxArea;
+    Float minArea;
+    Float maxRent;
+    Float minRent;
+    Float electricityPrice;
+    Float waterPrice;
+    Float otherPrice;
     String address;
     Long boardingHouseId;
     Long userId;

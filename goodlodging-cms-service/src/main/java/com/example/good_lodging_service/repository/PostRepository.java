@@ -23,8 +23,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT DISTINCT 
             p.id                AS id,
             p.title             AS title,
-            p.area              AS area,
-            p.room_rent         AS roomRent,
+             p.max_area              AS maxArea,
+            p.min_area AS minArea,
+            p.max_rent         AS maxRent,
+            p.min_rent         AS minRent,
             p.user_id           AS userId,
             p.image_url         AS imageUrl,
             p.address           AS address,
@@ -42,8 +44,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             SELECT DISTINCT 
             p.id                AS id,
             p.title             AS title,
-            p.area              AS area,
-            p.room_rent         AS roomRent,
+            p.max_area              AS maxArea,
+            p.min_area AS minArea,
+            p.max_rent         AS maxRent,
+            p.min_rent         AS minRent,
             p.user_id           AS userId,
             p.image_url         AS imageUrl,
             p.address           AS address,
@@ -62,8 +66,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         SELECT DISTINCT 
             p.id                AS id,
             p.title             AS title,
-            p.area              AS area,
-            p.room_rent         AS roomRent,
+            p.max_area              AS maxArea,
+            p.min_area AS minArea,
+            p.max_rent         AS maxRent,
+            p.min_rent         AS minRent,
             p.user_id           AS userId,
             p.image_url         AS imageUrl,
             p.address           AS address,
@@ -80,8 +86,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             -- Lọc theo địa chỉ
             AND (a.wards_id IN :wardsIds)
             -- Lọc theo các tiêu chí khác
-            AND (p.room_rent BETWEEN COALESCE(:minRoomRent, p.room_rent) AND COALESCE(:maxRoomRent, p.room_rent))
-            AND (p.area BETWEEN COALESCE(:minArea, p.area) AND COALESCE(:maxArea, p.area))
+            AND NOT (p.max_area < :minArea OR p.min_area > :maxArea)
+            AND NOT (p.max_rent < :minRent OR p.min_rent > :maxRent)
             AND (bh.electricity_price BETWEEN COALESCE(:minElectricityPrice, bh.electricity_price) 
                                       AND COALESCE(:maxElectricityPrice, bh.electricity_price))
             AND (bh.water_price BETWEEN COALESCE(:minWaterPrice, bh.water_price) 
@@ -100,8 +106,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         WHERE
             p.status = 1
             AND (a.wards_id IN :wardsIds)
-            AND (p.room_rent BETWEEN COALESCE(:minRoomRent, p.room_rent) AND COALESCE(:maxRoomRent, p.room_rent))
-            AND (p.area BETWEEN COALESCE(:minArea, p.area) AND COALESCE(:maxArea, p.area))
+            AND NOT (p.max_area < :minArea OR p.min_area > :maxArea)
+            AND NOT (p.max_rent < :minRent OR p.min_rent > :maxRent)
             AND (bh.electricity_price BETWEEN COALESCE(:minElectricityPrice, bh.electricity_price) 
                                       AND COALESCE(:maxElectricityPrice, bh.electricity_price))
             AND (bh.water_price BETWEEN COALESCE(:minWaterPrice, bh.water_price) 
@@ -112,8 +118,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     )
     Page<PostProjection> findAllByAddressAndFeaturesWithQuery(
             @Param("wardsIds") List<Long> wardsId,
-            @Param("minRoomRent") Float minRoomRent,
-            @Param("maxRoomRent") Float maxRoomRent,
+            @Param("minRent") Float minRent,
+            @Param("maxRent") Float maxRent,
             @Param("minArea") Float minArea,
             @Param("maxArea") Float maxArea,
             @Param("minElectricityPrice") Float minElectricityPrice,
@@ -123,6 +129,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("features") String features,
             @Param("description") String description,
             Pageable pageable);
+
     @Query(nativeQuery = true,value = """
             
             SELECT
@@ -134,20 +141,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 u.url_avatar AS urlAvatar,
                 u.email AS email,
                 u.phone AS phoneNumber,
-                r.area AS area,
-                r.floor AS floor,
+                p.max_area AS maxArea,
+                p.min_area AS minArea,
+                p.max_rent AS maxRent,
+                p.min_rent AS minRent,
                 bh.id AS boardingHouseId,
                 bh.name as boardingHouseName,
                 bh.features AS features,
                 bh.description AS description,
-                bh.room_rent AS roomRent,
-                bh.water_price AS waterPrice,
-                bh.electricity_price AS electricityPrice,
+                p.water_price AS waterPrice,
+                p.electricity_price AS electricityPrice,
+                p.other_price AS otherPrice,
                 p.date_updated as modifiedDate
             FROM post p
             INNER JOIN user u ON p.user_id=u.id AND u.status=:status
             INNER JOIN boarding_house bh ON bh.id=p.boarding_house_id AND bh.status=:status
-            INNER JOIN room r ON r.id=p.room_id AND r.status=:status
             WHERE p.id=:postId AND p.status=:status
             """)
     Optional<PostDetailProjection> findByPostIdAndStatusWithQuery(@Param("postId")Long postId,@Param("status") Integer status);

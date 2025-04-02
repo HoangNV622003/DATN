@@ -14,12 +14,14 @@ public interface PostDetailProjection {
     String getDescription();
     String getFullName();
     String getEmail();
-    Float getArea();
-    Float getRoomRent();
+    Float getMaxArea();
+    Float getMinArea();
+    Float getMaxRent();
+    Float getMinRent();
     String getPhoneNumber();
     String getFeatures();
     Float getWaterPrice();
     Float getElectricityPrice();
-    Integer getFloor();
+    Float getOtherPrice();
     Instant getModifiedDate();
 }

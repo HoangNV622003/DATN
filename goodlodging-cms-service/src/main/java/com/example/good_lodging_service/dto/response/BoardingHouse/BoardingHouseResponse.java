@@ -18,10 +18,13 @@ public class BoardingHouseResponse {
     String name;
     String address;
     String description;
-    Float roomArea;
-    Float roomRent;
+    Float maxArea;
+    Float minArea;
+    Float maxRent;
+    Float minRent;
     Float electricityPrice;
     Float waterPrice;
+    Float otherPrice;
     String features;
     public static BoardingHouseResponse fromPostDetailProjection(PostDetailProjection postDetailProjection) {
         return BoardingHouseResponse.builder()
@@ -29,10 +32,14 @@ public class BoardingHouseResponse {
                 .name(postDetailProjection.getBoardingHouseName())
                 .address(postDetailProjection.getAddress())
                 .description(postDetailProjection.getDescription())
-                .roomRent(postDetailProjection.getRoomRent())
+                .maxRent(postDetailProjection.getMaxRent())
+                .minRent(postDetailProjection.getMinRent())
+                .maxArea(postDetailProjection.getMaxArea())
+                .minArea(postDetailProjection.getMinArea())
                 .electricityPrice(postDetailProjection.getElectricityPrice())
                 .waterPrice(postDetailProjection.getWaterPrice())
                 .features(postDetailProjection.getFeatures())
+                .otherPrice(postDetailProjection.getOtherPrice())
                 .build();
     }
 }

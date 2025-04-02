@@ -34,9 +34,9 @@ public class BoardingHouseController {
         return ResponseEntity.ok(boardingHouseService.getDetailBoardingHouse(id));
     }
 
-    @DeleteMapping
-    public ResponseEntity<CommonResponse> deleteBoardingHouse(@RequestBody List<Long> ids) {
-        return ResponseEntity.ok(boardingHouseService.deleteBoardingHouse(ids));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse> deleteBoardingHouse(@PathVariable Long id) {
+        return ResponseEntity.ok(boardingHouseService.deleteBoardingHouse(List.of(id)));
     }
 
 

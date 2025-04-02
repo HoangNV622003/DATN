@@ -74,7 +74,13 @@ public class BoardingHouseService {
 
         //save image
         imageRepository.saveAll(uploadFiles(boardingHouse.getId(), EntityType.BOARDING_HOUSE.getValue(), request.getImageFiles()));
-        return boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
+        BoardingHouseDetailResponse boardingHouseDetailResponse = boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
+        boardingHouseDetailResponse.setRooms(new ArrayList<>());
+        //get image
+        List<ImageResponse> images = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(boardingHouse.getId(), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue())
+                .stream().map(imageMapper::toImageResponse).toList();
+        boardingHouseDetailResponse.setImages(ValueUtils.getOrDefault(images, new ArrayList<>()));
+        return boardingHouseDetailResponse;
     }
 
 
@@ -117,7 +123,27 @@ public class BoardingHouseService {
 
         //save boarding house
         boardingHouse = boardingHouseRepository.save(boardingHouse);
-        return boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
+
+
+        return convertToDtoAndReturn(boardingHouse);
+    }
+
+    BoardingHouseDetailResponse convertToDtoAndReturn(BoardingHouse boardingHouse) {
+        //get rooms
+        List<RoomResponse> rooms = roomRepository.findAllByBoardingHouseIdAndStatus(boardingHouse.getId(), CommonStatus.ACTIVE.getValue())
+                .stream().map(roomMapper::toRoomResponseDTO).toList();
+        BoardingHouseDetailResponse response = boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
+        response.setRooms(ValueUtils.getOrDefault(rooms, new ArrayList<>()));
+
+        //get images
+        List<ImageResponse> images = imageRepository.findAllByEntityIdInAndEntityTypeAndStatus(List.of(boardingHouse.getId()), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue())
+                .stream().map(imageMapper::toImageResponse).toList();
+        response.setImages(ValueUtils.getOrDefault(images, new ArrayList<>()));
+
+        BoardingHouseDetailResponse boardingHouseDetailResponse = boardingHouseMapper.toBoardingHouseDetailResponseDTO(boardingHouse);
+        boardingHouseDetailResponse.setRooms(ValueUtils.getOrDefault(rooms, new ArrayList<>()));
+        boardingHouseDetailResponse.setImages(ValueUtils.getOrDefault(images, new ArrayList<>()));
+        return boardingHouseDetailResponse;
     }
 
     void updateImage(Long boardingHouseId, List<ImageFileRequest> imageFiles, List<ImageRequest> imageUrls) {
@@ -149,7 +175,7 @@ public class BoardingHouseService {
                 try {
                     Files.delete(filePath);
                 } catch (IOException e) {
-                    log.error("REMOVE FILE ERROR: ",e);
+                    log.error("REMOVE FILE ERROR: ", e);
                     throw new AppException(ApiResponseCode.BAD_REQUEST);
                 }
             }
@@ -171,7 +197,7 @@ public class BoardingHouseService {
                     String fileName = UUID.randomUUID() + "_" + sanitizedFileName;
 
                     // Đường dẫn lưu file (có thể thay đổi)
-                    File uploadFile = new File(uploadDir+fileName);
+                    File uploadFile = new File(uploadDir + fileName);
 
                     // Tạo thư mục nếu chưa tồn tại
                     new File(uploadDir).mkdirs();
@@ -191,7 +217,7 @@ public class BoardingHouseService {
             return images;
 
         } catch (Exception e) {
-            log.error("UPLOAD FILE ERROR: ",e);
+            log.error("UPLOAD FILE ERROR: ", e);
             throw new AppException(ApiResponseCode.BAD_REQUEST);
         }
 

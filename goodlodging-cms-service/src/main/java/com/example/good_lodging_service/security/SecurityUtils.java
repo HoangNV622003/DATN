@@ -24,7 +24,7 @@ public final class SecurityUtils {
     }
 
     public static Optional<Long> getCurrentUserIdLogin() {
-        Long userId= (Long) getClaim("userId");
+        Long userId= (Long) getClaim("user_id");
 
         return userId == null ? Optional.empty() : Optional.of(userId);
     }

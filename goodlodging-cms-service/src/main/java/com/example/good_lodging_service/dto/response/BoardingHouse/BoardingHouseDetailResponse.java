@@ -19,8 +19,12 @@ public class BoardingHouseDetailResponse {
     Long userId;
     String name;
     String description;
-    Float roomRent;
+    Float maxRent;
+    Float minRent;
+    Float maxArea;
+    Float minArea;
     Float electricityPrice;
+    Float otherPrice;
     Float waterPrice;
     String features;
     AddressResponse address;

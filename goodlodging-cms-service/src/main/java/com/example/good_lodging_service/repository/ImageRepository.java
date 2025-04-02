@@ -16,6 +16,27 @@ import java.util.Optional;
 @Transactional
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findAllByEntityIdAndEntityTypeAndStatus(Long entityId, Integer entityType, Integer status);
+
     Optional<Image> findByIdAndStatus(Long id, Integer status);
+
     List<Image> findAllByEntityIdInAndEntityTypeAndStatus(List<Long> entityId, Integer entityType, Integer status);
+
+    @Query("""
+                SELECT i 
+                FROM Image i 
+                WHERE i.id IN (
+                    SELECT MIN(i2.id) 
+                    FROM Image i2 
+                    WHERE i2.entityType = :entityType 
+                    AND i2.entityId IN :ids 
+                    GROUP BY i2.entityId
+                ) 
+                AND i.status = :status
+            """)
+    List<Image> findAllBackgroundByEntityIdInAndEntityTypeAndStatusWithQuery(
+            @Param("ids") List<Long> ids,
+            @Param("entityType") Integer entityType,
+            @Param("status") Integer status
+    );
+
 }

@@ -5,16 +5,14 @@ import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.Post.PostFilterRequest;
 import com.example.good_lodging_service.dto.request.Post.PostRequest;
+import com.example.good_lodging_service.dto.response.Address.AddressProjection;
 import com.example.good_lodging_service.dto.response.AuthorInfo.AuthorInfo;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Post.*;
 import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
-import com.example.good_lodging_service.entity.Address;
-import com.example.good_lodging_service.entity.Image;
-import com.example.good_lodging_service.entity.Post;
-import com.example.good_lodging_service.entity.User;
+import com.example.good_lodging_service.entity.*;
 import com.example.good_lodging_service.exception.AppException;
 import com.example.good_lodging_service.mapper.*;
 import com.example.good_lodging_service.repository.*;
@@ -31,9 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -100,8 +96,13 @@ public class PostService {
         return PostDetailResponse.builder()
                 .authorInfo(ProfileResponse.fromPostDetailProjection(postDetailProjection))
                 .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(), ""))
-                .floor(ValueUtils.getOrDefault(postDetailProjection.getFloor(), 0))
-                .area(ValueUtils.getOrDefault(postDetailProjection.getArea(), 0F))
+                .maxArea(ValueUtils.getOrDefault(postDetailProjection.getMaxArea(), 0F))
+                .minArea(ValueUtils.getOrDefault(postDetailProjection.getMinArea(), 0F))
+                .maxRent(ValueUtils.getOrDefault(postDetailProjection.getMaxRent(), 0F))
+                .minRent(ValueUtils.getOrDefault(postDetailProjection.getMinRent(), 0F))
+                .electricityPrice(ValueUtils.getOrDefault(postDetailProjection.getElectricityPrice(),0F))
+                .waterPrice(ValueUtils.getOrDefault(postDetailProjection.getWaterPrice(),0F))
+                .otherPrice(ValueUtils.getOrDefault(postDetailProjection.getOtherPrice(),0F))
                 .boardingHouse(BoardingHouseResponse.fromPostDetailProjection(postDetailProjection))
                 .imageUrl(imageUrls)
                 .build();
@@ -125,17 +126,48 @@ public class PostService {
     }
 
     public MyPostResponse getMyPost(Long postId) {
-        Post post = postRepository.findByIdAndStatus(postId, CommonStatus.ACTIVE.getValue()).orElseThrow(() -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
-        List<BoardingHouseResponse> boardingHouses = boardingHouseRepository.findAllByUserIdAndStatus(post.getUserId(), CommonStatus.ACTIVE.getValue()).stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
-        List<Long> boardingHouseIds = boardingHouses.stream().map(BoardingHouseResponse::getId).toList();
+        Post post = postRepository.findByIdAndStatus(postId, CommonStatus.ACTIVE.getValue()).orElseThrow(()
+                -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        //get boarding house by userid
+        List<BoardingHouse> boardingHouses = boardingHouseRepository.findAllByUserIdAndStatus(post.getUserId(), CommonStatus.ACTIVE.getValue());
 
-        return MyPostResponse.builder().postResponse(postMapper.toPostResponse(post)).boardingHouses(boardingHouses).build();
+        //get list boardingHouse ids
+        List<Long> boardingHouseIds = boardingHouses.stream().map(BoardingHouse::getId).toList();
+
+        //get address
+        List<AddressProjection> addresses = addressRepository.findAllByBoardingHouseIdInWithQuery(boardingHouseIds);
+
+        //get list images
+        List<Image> images = imageRepository.findAllByEntityIdInAndEntityTypeAndStatus(boardingHouseIds, EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
+
+        return MyPostResponse.builder().postResponse(postMapper.toPostResponse(post)).boardingHouses(convertToBoardingHouseResponse(boardingHouses, images, addresses)).build();
+    }
+
+    private List<BoardingHouseResponse> convertToBoardingHouseResponse(List<BoardingHouse> boardingHouses, List<Image> images, List<AddressProjection> addresses) {
+        //map image
+        Map<Long, List<String>> imageMap = new HashMap<>();
+        images.forEach(image -> {
+            imageMap.computeIfAbsent(image.getEntityId(), _ -> new ArrayList<>()).add(image.getImageUrl());
+        });
+
+        //map address
+        Map<Long, String> addressMap = new HashMap<>();
+        addresses.forEach(address -> {
+            addressMap.put(address.getBoardingHouseId(), address.getFullAddress());
+        });
+
+        //convert boardingHouse to boardingHouseResponse
+        List<BoardingHouseResponse> boardingHouseResponses = boardingHouses.stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
+        boardingHouseResponses.forEach(boardingHouseResponse -> {
+            boardingHouseResponse.setImageUrl(imageMap.get(boardingHouseResponse.getId()));
+            boardingHouseResponse.setAddress(addressMap.get(boardingHouseResponse.getId()));
+        });
+        return boardingHouseResponses;
     }
 
     private Post findById(Long id) {
         return postRepository.findByIdAndStatus(id, CommonStatus.ACTIVE.getValue()).orElseThrow(() -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
     }
-
 
     public Page<PostProjection> searchPosts(PostFilterRequest request, Pageable pageable) {
 

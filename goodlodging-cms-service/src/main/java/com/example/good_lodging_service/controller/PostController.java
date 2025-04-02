@@ -56,6 +56,8 @@ public class PostController {
     public ResponseEntity<MyPostResponse> getMyPost(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getMyPost(postId));
     }
+
+    //bài viết để người dùng xem
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailResponse> getPostDetail(
             @PathVariable Long id) {
