@@ -6,8 +6,9 @@ import { useAuth } from '../../../../../context/AuthContext';
 import { createPost, updatePost, fetchMyPost } from '../../../../../apis/posts/PostService';
 import { IMAGE_URL } from '../../../../../utils/ApiUrl';
 import ListBoardingHouse from '../../boardingHouse/listBoardingHouse/ListBoardingHouse';
-import { fetchMyBoardingHouse } from '../../../../../apis/account/UserService';
 import { fetchAllHouse } from '../../../../../apis/house/BoardingHouseService';
+import { getArea, getPrice } from '../../../../../utils/BoardingHouseConfig';
+import { toast } from 'react-toastify';
 
 const SavePost = () => {
     const { user, token } = useAuth();
@@ -19,11 +20,15 @@ const SavePost = () => {
         id: null,
         title: '',
         imageUrl: '',
-        area: '',
-        roomRent: '',
+        minArea: '',
+        maxArea: '',
+        minRent: '',
+        maxRent: '',
+        electricityPrice: '',
+        waterPrice: '',
+        otherPrice: '',
         userId: '',
         boardingHouseId: '',
-        address: '',
         boardingHouses: [],
     });
     const [file, setFile] = useState(null);
@@ -31,6 +36,11 @@ const SavePost = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        if (!user || !user.id) {
+            setError('Vui lòng đăng nhập để tiếp tục');
+            setLoading(false);
+            return;
+        }
         if (isEditMode) {
             setLoading(true);
             fetchMyPost(postId)
@@ -39,11 +49,15 @@ const SavePost = () => {
                         id: data.postResponse.id,
                         title: data.postResponse.title || '',
                         imageUrl: data.postResponse.imageUrl || '',
-                        area: data.postResponse.area || '',
-                        roomRent: data.postResponse.roomRent || '',
+                        minArea: data.postResponse.minArea || '',
+                        maxArea: data.postResponse.maxArea || '',
+                        minRent: data.postResponse.minRent || '',
+                        maxRent: data.postResponse.maxRent || '',
+                        electricityPrice: data.postResponse.electricityPrice || '',
+                        waterPrice: data.postResponse.waterPrice || '',
+                        otherPrice: data.postResponse.otherPrice || '',
                         userId: data.postResponse.userId || '',
                         boardingHouseId: data.postResponse.boardingHouseId || '',
-                        address: data.postResponse.address || '',
                         boardingHouses: Array.isArray(data.boardingHouses) ? data.boardingHouses : [],
                     });
                     setLoading(false);
@@ -52,19 +66,23 @@ const SavePost = () => {
                     setError('Không thể tải dữ liệu bài đăng');
                     setLoading(false);
                 });
-        }else{
+        } else {
             setLoading(true);
-            fetchAllHouse(user.id,token)
+            fetchAllHouse(user.id, token)
                 .then((data) => {
                     setPost({
                         id: '',
                         title: '',
                         imageUrl: '',
-                        area:  '',
-                        roomRent:  '',
+                        minArea: '',
+                        maxArea: '',
+                        minRent: '',
+                        maxRent: '',
+                        electricityPrice: '',
+                        waterPrice: '',
+                        otherPrice: '',
                         userId: '',
                         boardingHouseId: '',
-                        address: '',
                         boardingHouses: Array.isArray(data) ? data : [],
                     });
                     setLoading(false);
@@ -74,16 +92,13 @@ const SavePost = () => {
                     setLoading(false);
                 });
         }
-    }, [postId, isEditMode, token]);
+    }, [postId, isEditMode, token, user]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setPost((prev) => ({
             ...prev,
-            [name]:
-                name === 'area' || name === 'roomRent' || name === 'boardingHouseId'
-                    ? parseFloat(value) || ''
-                    : value,
+            [name]: ['boardingHouseId'].includes(name) ? parseInt(value, 10) || '' : value,
         }));
     };
 
@@ -95,9 +110,13 @@ const SavePost = () => {
         setPost((prev) => ({
             ...prev,
             boardingHouseId: boardingHouse.id,
-            roomRent: boardingHouse.roomRent || '',
-            area: boardingHouse.roomArea || boardingHouse.area || '',
-            address: boardingHouse.address || '', // Cập nhật địa chỉ từ BoardingHouse
+            minRent: boardingHouse.minRent || '',
+            maxRent: boardingHouse.maxRent || '',
+            minArea: boardingHouse.minArea || '',
+            maxArea: boardingHouse.maxArea || '',
+            electricityPrice: boardingHouse.electricityPrice || '',
+            waterPrice: boardingHouse.waterPrice || '',
+            otherPrice: boardingHouse.otherPrice || '',
         }));
     };
 
@@ -108,21 +127,29 @@ const SavePost = () => {
 
         const formData = new FormData();
         formData.append('title', post.title);
-        formData.append('area', post.area);
-        formData.append('roomRent', post.roomRent);
+        formData.append('minArea', post.minArea || '');
+        formData.append('maxArea', post.maxArea || '');
+        formData.append('minRent', post.minRent || '');
+        formData.append('maxRent', post.maxRent || '');
+        formData.append('electricityPrice', post.electricityPrice || '');
+        formData.append('waterPrice', post.waterPrice || '');
+        formData.append('otherPrice', post.otherPrice || '');
         formData.append('userId', user.id);
-        formData.append('boardingHouseId', post.boardingHouseId);
-        formData.append('address', post.address);
-        if (isEditMode) formData.append('id', post.id);
+        formData.append('boardingHouseId', post.boardingHouseId || '');
         if (file) formData.append('imageUrl', file);
 
         try {
             await (isEditMode
-                ? updatePost(postId, formData, token)
-                : createPost(formData, token));
-            navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`);
-        } catch (err) {
-            setError(err.message || 'Lưu bài đăng thất bại, vui lòng thử lại');
+                ? updatePost(postId, formData)
+                : createPost(formData));
+                toast.success(`${isEditMode ? 'Cập nhật' : 'Tạo mới'} bài viết thành công`, {
+                    autoClose:2000,
+                    onClose: () => {
+                        navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`);
+                    },
+                });        } catch (err) {
+            setError('Lưu bài viết thất bại, vui lòng thử lại');
+            toast.error('Lưu bài viết thất bại, vui lòng thử lại');
         } finally {
             setLoading(false);
         }
@@ -155,17 +182,6 @@ const SavePost = () => {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="address">Địa chỉ</label>
-                    <input
-                        type="text"
-                        id="address"
-                        name="address"
-                        value={post.address}
-                        onChange={handleInputChange}
-                        disabled                        
-                    />
-                </div>
-                <div className="form-group">
                     <label htmlFor="imageUrl">Hình ảnh</label>
                     {isEditMode && post.imageUrl && (
                         <div className="current-image">
@@ -180,28 +196,49 @@ const SavePost = () => {
                         onChange={handleFileChange}
                     />
                 </div>
+                
                 <div className="form-group">
                     <label htmlFor="area">Diện tích phòng (m²)</label>
                     <input
-                        type="number"
+                        type="text"
                         id="area"
-                        name="area"
-                        value={post.area}
-                        onChange={handleInputChange}
-                        step="0.1"
-                        min="0"
+                        value={getArea(post.minArea, post.maxArea)}
                         disabled
                     />
                 </div>
                 <div className="form-group">
                     <label htmlFor="roomRent">Tiền thuê (VNĐ)</label>
                     <input
-                        type="number"
+                        type="text"
                         id="roomRent"
-                        name="roomRent"
-                        value={post.roomRent}
-                        onChange={handleInputChange}
-                        min="0"
+                        value={getPrice(post.minRent, post.maxRent)}
+                        disabled
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="electricityPrice">Tiền điện (VNĐ)</label>
+                    <input
+                        type="text"
+                        id="electricityPrice"
+                        value={post.electricityPrice}
+                        disabled
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="waterPrice">Tiền nước (VNĐ)</label>
+                    <input
+                        type="text"
+                        id="waterPrice"
+                        value={post.waterPrice}
+                        disabled
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="otherPrice">Chi phí khác (VNĐ)</label>
+                    <input
+                        type="text"
+                        id="otherPrice"
+                        value={post.otherPrice}
                         disabled
                     />
                 </div>
@@ -214,14 +251,6 @@ const SavePost = () => {
                         value={post.boardingHouseId}
                         onChange={handleInputChange}
                         disabled
-                    />
-                </div>
-                <div className="container__house__list">
-                    <ListBoardingHouse
-                        boardingHouses={post.boardingHouses}
-                        onSelect={handleBoardingHouseSelect}
-                        selectedId={post.boardingHouseId}
-                        isSavePost={true}
                     />
                 </div>
                 <div className="form-buttons">
@@ -237,6 +266,15 @@ const SavePost = () => {
                         Hủy
                     </button>
                 </div>
+                <div className="container__house__list">
+                    <ListBoardingHouse
+                        boardingHouses={post.boardingHouses}
+                        onSelect={handleBoardingHouseSelect}
+                        selectedId={post.boardingHouseId}
+                        isSavePost={true}
+                    />
+                </div>
+                
             </form>
         </div>
     );

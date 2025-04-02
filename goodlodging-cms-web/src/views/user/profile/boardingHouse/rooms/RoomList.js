@@ -4,11 +4,12 @@ import { createRoom, deleteRoom } from '../../../../../apis/room/RoomService';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../utils/router/Router';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from '../../../../../context/AuthContext';
 
 const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
   const [isAddingRoom, setIsAddingRoom] = useState(false);
   const navigate = useNavigate();
+  const {token}=useAuth();
   const [newRoom, setNewRoom] = useState({
     id: '',
     name: '',
@@ -29,15 +30,22 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
   };
 
   const handleCreateRoom = async () => {
+    if (!boardingHouseId) {
+      toast.warn('Vui lòng tạo nhà trọ trước khi thêm phòng!');
+      return;
+    }
     if (!newRoom.name) {
       toast.warn('Vui lòng nhập tên phòng!');
       return;
     }
     try {
-      const response = (await createRoom(newRoom)).data;
-      const createdRoom = { ...newRoom, id: response.id };
+      const response = await createRoom(newRoom,token);
+      if (!response.data || !response.data.id) {
+        throw new Error('Invalid response from createRoom API');
+      }
+      const createdRoom = { ...newRoom, id: response.data.id };
       const updatedRooms = [...rooms, createdRoom];
-      if (onRoomChange) onRoomChange(updatedRooms);
+      if (onRoomChange) onRoomChange(updatedRooms); // Truyền danh sách phòng mới lên cha
       setNewRoom({ name: '', description: '', price: '', area: '', capacity: '', floor: '', boardingHouseId });
       setIsAddingRoom(false);
       toast.success('Đã thêm phòng mới!');
@@ -53,13 +61,15 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
   };
 
   const handleRemoveRoom = async (roomId) => {
+    if (!roomId) {
+      toast.warn('ID phòng không hợp lệ!');
+      return;
+    }
     try {
-      if (roomId) {
-        await deleteRoom(roomId);
-        const updatedRooms = rooms.filter((room) => room.id !== roomId);
-        if (onRoomChange) onRoomChange(updatedRooms);
-        toast.success('Đã xóa phòng!');
-      }
+      await deleteRoom(boardingHouseId, roomId,token);
+      const updatedRooms = rooms.filter((room) => room.id !== roomId);
+      if (onRoomChange) onRoomChange(updatedRooms); // Truyền danh sách phòng mới lên cha
+      toast.success('Đã xóa phòng!');
     } catch (error) {
       console.error('Error deleting room:', error.response?.data || error);
       toast.error(error.response?.data?.message || 'Không thể xóa phòng!');
@@ -67,6 +77,10 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
   };
 
   const handleNavigateToRoomDetail = async (roomId) => {
+    if (!roomId) {
+      toast.warn('Không thể điều hướng: ID phòng không hợp lệ!');
+      return;
+    }
     navigate(ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.ROOMS.UPDATE.replace(":id", roomId));
   };
 

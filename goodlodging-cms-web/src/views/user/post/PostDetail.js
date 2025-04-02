@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./PostDetailStyle.scss";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getPost } from "../../../apis/posts/PostService";
 import { FaAngleRight } from "react-icons/fa6";
 import { FaAngleLeft } from "react-icons/fa6";
-import { AiOutlineMail } from "react-icons/ai";
-import { FiPhoneCall } from "react-icons/fi";
 import defaultRoom from "../../../assets/images/defaultRoom.png"
 import { IMAGE_URL } from "../../../utils/ApiUrl";
-import { ROUTERS } from "../../../utils/router/Router";
+import {getArea, getPrice} from "../../../utils/BoardingHouseConfig"
 import AuthorInformation from "../../../components/authorInformation/AuthorInformation";
 const PostDetail = () => {
     const { id } = useParams();
@@ -31,7 +29,15 @@ const PostDetail = () => {
                 },
                 boardingHouse: response.boardingHouse,
                 imageUrl: response.imageUrl || [],
-                title: response.title || ''
+                title: response.title || '',
+                maxArea:response.maxArea || 0,
+                minArea:response.minArea || 0,
+                maxRent:response.maxRent || 0,
+                minRent:response.minRent || 0,
+                otherPrice:response.otherPrice || 0,
+                electricityPrice:response.electricityPrice || 0,
+                waterPrice:response.waterPrice || 0,
+
             });
         } catch (error) {
             setError("Có lỗi khi lấy dữ liệu, vui lòng thử lại sau");
@@ -142,16 +148,15 @@ const PostDetail = () => {
                 <div className="main__post">
                     <div className="house__area">
                         <p>Diện tích</p>
-                        <b>{postDetail.area}m&sup2;</b>
+                        <b>{getArea(postDetail.minArea,postDetail.maxArea)}m&sup2;</b>
                     </div>
                     <div className="house__price">
                         <p>Mức giá</p>
-                        <b>{postDetail.boardingHouse.roomRent.toLocaleString("vi-VN")}đ</b>
+                        <b>{getPrice(postDetail.minRent,postDetail.maxRent)}đ</b>
                     </div>
-                    <div className="room__floor">
-                        <p>Vị trí</p>
-                        <b>Tầng {postDetail.floor}</b>
-                    </div>
+                </div>
+                <div className="list__room">
+                    <p>Danh sách phòng trống:</p>
                 </div>
                 <table className="expect_costs">
                     <tr className="title">
@@ -164,27 +169,17 @@ const PostDetail = () => {
                     </tr>
                     <tr>
                         <td>Tiền điện</td>
-                        <td>{postDetail.boardingHouse.electricityPrice}đ</td>
+                        <td>{postDetail.electricityPrice}đ</td>
                         <td>1kWh</td>
                     </tr>
                     <tr>
                         <td>Tiền nước</td>
-                        <td>{postDetail.boardingHouse.waterPrice}đ</td>
+                        <td>{postDetail.waterPrice}đ</td>
                         <td>1m&sup3;</td>
                     </tr>
                     <tr>
-                        <td>Tiền gửi xe</td>
-                        <td>đ</td>
-                        <td>1 Tháng</td>
-                    </tr>
-                    <tr>
-                        <td>Internet</td>
-                        <td>đ</td>
-                        <td>1 Tháng</td>
-                    </tr>
-                    <tr>
                         <td>Dịch vụ khác</td>
-                        <td>đ</td>
+                        <td>{postDetail.otherPrice}đ</td>
                         <td>1 Tháng</td>
                     </tr>
                 </table>

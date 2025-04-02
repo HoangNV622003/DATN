@@ -13,7 +13,7 @@ import { CiHeart } from 'react-icons/ci';
 import { toast } from 'react-toastify';
 
 const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
-  const { id, title, imageUrl, area, roomRent, address, modifiedDate } = post;
+  const { id, title, imageUrl, maxArea,minArea, maxRent,minRent, address, modifiedDate } = post;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const { user } = useAuth();
@@ -43,15 +43,21 @@ const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  const getPrice = (minPrice, maxPrice) => {
+    return minPrice === maxPrice ? minPrice : minPrice + ' - ' + maxPrice;
+  }
+  const getArea = (minArea, maxArea) => {
+    return minArea === maxArea ? minArea : minArea + ' - ' + maxArea;
 
+  }
   return (
     <Link className="search__post__item" to={ROUTERS.USER.POST_DETAIL.replace(':id', id)}>
       <div className="post__content">
         <img className="image__item" src={`${IMAGE_URL}${imageUrl}`} alt={title || 'Hình ảnh'} />
         <div className="post__details">
           <p className="post__title">{title || 'Không có tiêu đề'}</p>
-          <p className="post__price">{roomRent ? `${roomRent} VNĐ` : 'Không có giá'}</p>
-          <p className="post__area">{area ? `${area} m²` : 'Không có diện tích'}</p>
+          <p className="post__price">{maxRent && minRent ? `${getPrice(minRent, maxRent)} VNĐ` : 'Không có giá'}</p>
+          <p className="post__area">{maxArea && minArea ? `${getArea(minArea, maxArea)} m²` : 'Không có diện tích'}</p>
           <div className="post__address">
             <LuMapPin />
             <p>{address || 'Không có địa chỉ'}</p>

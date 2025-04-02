@@ -7,7 +7,7 @@ import { fetchAllHouse } from '../../../../../../apis/house/BoardingHouseService
 import './style.scss';
 
 const ForRentBoardingHouse = () => {
-    const { user, isLogin, loading,token } = useAuth();
+    const { user, isLogin, loading, token } = useAuth();
     const [boardingHouses, setBoardingHouses] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -17,19 +17,24 @@ const ForRentBoardingHouse = () => {
             alert("Vui lòng đăng nhập");
             navigate(`/${ROUTERS.AUTH.LOGIN}`);
         } else if (user) {
-            const loadBoardingHouses = async () => {
-                try {
-                    const result = await fetchAllHouse(user.id,token); // Chờ kết quả API
-                    setBoardingHouses(result || []);
-                    setError(null);
-                } catch (err) {
-                    setError("Có lỗi khi lấy dữ liệu, vui lòng thử lại");
-                    setBoardingHouses([]);
-                }
-            };
             loadBoardingHouses();
         }
-    }, [isLogin, user, loading, navigate]); // Loại bỏ boardingHouses khỏi dependencies
+    }, [isLogin, user, loading, navigate]);
+
+    const loadBoardingHouses = async () => {
+        try {
+            const result = await fetchAllHouse(user.id, token);
+            setBoardingHouses(result || []);
+            setError(null);
+        } catch (err) {
+            setError("Có lỗi khi lấy dữ liệu, vui lòng thử lại");
+            setBoardingHouses([]);
+        }
+    };
+
+    const handleDeleteBoardingHouse = (deletedId) => {
+        setBoardingHouses(prev => prev.filter(house => house.id !== deletedId));
+    };
 
     if (loading) {
         return <div className="loading">Đang tải thông tin...</div>;
@@ -41,8 +46,11 @@ const ForRentBoardingHouse = () => {
 
     return (
         <div className='container__for__rent'>
-                {error && <div className="error">{error}</div>}
-                <ListBoardingHouse boardingHouses={boardingHouses} />
+            {error && <div className="error">{error}</div>}
+            <ListBoardingHouse
+                boardingHouses={boardingHouses}
+                onDelete={handleDeleteBoardingHouse} // Truyền callback xuống
+            />
         </div>
     );
 };

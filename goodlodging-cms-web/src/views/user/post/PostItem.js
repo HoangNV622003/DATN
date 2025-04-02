@@ -25,19 +25,26 @@ const PostItem = ({ post }) => {
         postId: id,
       };
       createFavoritePost(payload)
-        .then((response) => { toast.success(response.data.result||response.data.message) })
+        .then((response) => { toast.success(response.data.result || response.data.message) })
         .catch((error) => { toast.error(error || "Có lỗi sảy ra, vui lòng thử lại sau") });
     }
   }
-  const { id, title, imageUrl, area, roomRent, address, modifiedDate } = post;
+  const getPrice = (minPrice, maxPrice) => {
+    return minPrice === maxPrice ? minPrice : minPrice + ' - ' + maxPrice;
+  }
+  const getArea = (minArea, maxArea) => {
+    return minArea === maxArea ? minArea : minArea + ' - ' + maxArea;
+
+  }
+  const { id, title, imageUrl, maxArea, minArea, maxRent, minRent, address, modifiedDate } = post;
   return (
     <div className="post__item">
       <div className="post__content" onClick={handleNavigateToDetailPost}>
         <img className="image__item" src={IMAGE_URL + imageUrl} alt={title || 'Hình ảnh'} />
         <div className="post__details">
           <p className="post__title">{title || 'Không có tiêu đề'}</p>
-          <p className="post__price">{roomRent ? `${roomRent} VNĐ` : 'Không có giá'}</p>
-          <p className="post__area">{area ? `${area} m²` : 'Không có diện tích'}</p>
+          <p className="post__price">{maxRent && minRent ? `${getPrice(minRent, maxRent)} VNĐ` : 'Không có giá'}</p>
+          <p className="post__area">{maxArea && minArea ? `${getArea(minArea, maxArea)} m²` : 'Không có diện tích'}</p>
           <p className="post__address">{address || 'Không có địa chỉ'}</p>
         </div>
       </div>

@@ -30,22 +30,16 @@ export const fetchHouse = async (houseId,accessToken) => {
 };
 
 export const createBoardingHouse = async (houseData,accessToken) => {
-  try {
-    const response = await axios.post(`${API_URL}/boarding-houses`, houseData, {
+    return await axios.post(`${API_URL}/boarding-houses`, houseData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${accessToken}`,
       },
-    });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
+    });  
 };
 
 export const updateBoardingHouse = async (houseId, houseData,accessToken) => {
-  try {
-    const response = await axios.put(
+  return await axios.put(
       `${API_URL}/boarding-houses/${houseId}`,
       houseData,
       {
@@ -55,15 +49,10 @@ export const updateBoardingHouse = async (houseId, houseData,accessToken) => {
         },
       }
     );
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
 };
 
 export const deleteBoardingHouse = async (houseId,accessToken) => {
-  try {
-    const response = await axios.delete(
+  return await axios.delete(
       `${API_URL}/boarding-houses/${houseId}`,
       {
         headers: {
@@ -71,8 +60,4 @@ export const deleteBoardingHouse = async (houseId,accessToken) => {
         },
       }
     );
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
 };

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import BoardingHouseItem from '../BoardingHouseItem/BoardingHouseItem';
 import './style.scss';
 
-const ListBoardingHouse = ({ boardingHouses, onSelect, selectedId, isSavePost }) => {
+const ListBoardingHouse = ({ boardingHouses, onSelect, selectedId, isSavePost, onDelete }) => {
     return (
         <div className='list__boarding__house'>
             {boardingHouses.length > 0 ? (
@@ -13,6 +13,7 @@ const ListBoardingHouse = ({ boardingHouses, onSelect, selectedId, isSavePost })
                         onSelect={onSelect}
                         isSelected={selectedId === item.id}
                         isSavePost={isSavePost}
+                        onDelete={onDelete} // Truyền callback xuống BoardingHouseItem
                     />
                 ))
             ) : (

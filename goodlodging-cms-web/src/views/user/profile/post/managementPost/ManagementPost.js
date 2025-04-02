@@ -31,7 +31,7 @@ const ManagementPost = () => {
     return (
         <div className='container__my__post'>
             <div className="error">{error}</div>
-            <MyPostList posts={myPosts}/>
+            <MyPostList initialPosts={myPosts}/>
         </div>
     );
 };

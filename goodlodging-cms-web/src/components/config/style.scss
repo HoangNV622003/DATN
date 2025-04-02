@@ -1,5 +1,6 @@
 // src/pages/ConfigView/style.scss
 .container-config-view {
+    position: fixed;
     box-sizing: border-box;
     background: #ffffff; // Nền trắng
     border: 1px solid #e0e0e0; // Viền nhẹ
@@ -7,6 +8,8 @@
     padding: 20px; // Khoảng cách bên trong
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); // Bóng đổ nhẹ
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow:auto;
+    height: 550px;
     h3 {
         font-size: 18px;
         font-weight: 600;

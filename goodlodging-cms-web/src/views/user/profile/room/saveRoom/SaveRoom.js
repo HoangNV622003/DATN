@@ -5,6 +5,7 @@ import { getRoom, updateRoom, addUserToRoom, removeUserFromRoom } from '../../..
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from '../../../../../context/AuthContext';
 
 function SaveRoom() {
   const [savedRoom, setSavedRoom] = useState({ id: '', name: '', description: '', price: null, capacity: '', area: '', floor: '' }); // Dữ liệu đã lưu
@@ -12,10 +13,10 @@ function SaveRoom() {
   const [users, setUsers] = useState([]);
   const [newUsername, setNewUsername] = useState('');
   const { id } = useParams();
-
+  const {token}=useAuth();
   // Load dữ liệu phòng khi component mount
   useEffect(() => {
-    getRoom(id)
+    getRoom(id,token)
       .then(response => {
         setSavedRoom(response.data.room); // Lưu dữ liệu đã lưu
         setRoom(response.data.room); // Dữ liệu để chỉnh sửa
@@ -44,7 +45,7 @@ function SaveRoom() {
       return;
     }
 
-    updateRoom(id, updatedRoom)
+    updateRoom(id, updatedRoom,token)
       .then(() => {
         setSavedRoom(updatedRoom); // Cập nhật dữ liệu đã lưu khi thành công
         setRoom(updatedRoom);
@@ -71,7 +72,7 @@ function SaveRoom() {
       roomId: id,
       username: newUsername,
     };
-    addUserToRoom(payload)
+    addUserToRoom(payload,token)
       .then(response => {
         setUsers([...users, response.data]);
         setNewUsername('');
@@ -94,7 +95,7 @@ function SaveRoom() {
       userId: userId,
       roomId: id,
     };
-    removeUserFromRoom(payload)
+    removeUserFromRoom(payload,token)
       .then(() => {
         setUsers(users.filter(user => user.id !== userId));
         toast.success('Đã xóa người dùng khỏi phòng!');

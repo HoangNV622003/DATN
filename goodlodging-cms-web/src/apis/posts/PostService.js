@@ -37,7 +37,7 @@ export const createPost=async(payload)=>{
         const response=await axios.post(`${API_URL}/posts`,payload,{
             headers:{
                 "Content-Type":'multipart/form-data',
-                //Authorization:`Bearer ${accessToken}`
+                Authorization:`Bearer ${accessToken}`
             }
         })
         return response.data;
