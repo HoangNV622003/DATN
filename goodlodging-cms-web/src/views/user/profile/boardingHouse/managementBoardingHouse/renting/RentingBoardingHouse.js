@@ -3,21 +3,26 @@ import './style.scss';
 import { fetchMyRoom } from '../../../../../../apis/room/RoomService';
 import { useAuth } from '../../../../../../context/AuthContext';
 import defaultAvatar from '../../../../../../assets/images/defaultAvatar.jpg';
-import { BsArrowDown, BsArrowUp, BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../../utils/router/Router';
-
+import { toast } from 'react-toastify';
+import FindRoommatePopup from '../../../../../../components/popup/findRoomMatePopup/FindRoomMatePopup';
+import { findRoomMate } from '../../../../../../apis/posts/PostService';
 const RentingBoardingHouse = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isExpenseListVisible, setIsExpenseListVisible] = useState(false); // Trạng thái hiển thị danh sách chi phí
-  const { user } = useAuth();
-    const navigate=useNavigate();
- useEffect(() => {
+  const [isExpenseListVisible, setIsExpenseListVisible] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Thêm state loading cho request
+  const { user, token } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetchMyRoom(user.id);
+        const result = await fetchMyRoom(user.id, token);
         setData(result.data);
       } catch (err) {
         setError(err.message);
@@ -27,7 +32,7 @@ const RentingBoardingHouse = () => {
     };
 
     fetchData();
-  }, [user.id]);
+  }, [user.id, token]);
 
   if (loading) {
     return <div className="room-info-container">Đang tải dữ liệu...</div>;
@@ -50,14 +55,55 @@ const RentingBoardingHouse = () => {
   const toggleExpenseList = () => {
     setIsExpenseListVisible(!isExpenseListVisible);
   };
-const handleNavigateToAuthorPosts=()=>{
-            navigate(ROUTERS.USER.AUTHOR_POST.replace(':id',host.id))
+
+  const handleNavigateToAuthorPosts = () => {
+    navigate(ROUTERS.USER.AUTHOR_POST.replace(':id', host.id));
+  };
+
+  const handleFindRoommate = () => {
+    const currentUsers = roomDetail.users.length;
+    const maxCapacity = roomDetail.room.capacity;
+
+    if (currentUsers >= maxCapacity) {
+      toast.error('Phòng đã đủ người, không thể tìm thêm thành viên!');
+    } else {
+      setIsPopupOpen(true);
     }
+  };
+
+  const handleSubmitPost = async ({title,image}) => {
+    setIsLoading(true); // Bật loading
+    const payload=new FormData();
+    payload.append('title', title);
+    payload.append('roomId', roomDetail.room.id);
+    payload.append('userId', host.id);
+    payload.append('boardingHouseId', boardingHouse.id);
+    payload.append('imageFile', image);
+    console.log('Payload:', [...payload]); // Kiểm tra toàn bộ FormData
+    try {
+      const response=await findRoomMate(payload,token);
+      toast.success("Đã đăng tin tìm người ở ghép thành công "||response.data.result);
+      console.log('Tiêu đề bài viết:', title);
+    } catch (error) {
+      toast.error(error.message||'Đăng tin thất bại!');
+    } finally {
+      setIsLoading(false); // Tắt loading
+      setIsPopupOpen(false); // Đóng popup sau khi hoàn tất
+    }
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
   return (
     <div className="room-info-container">
       {/* Thông tin phòng */}
       <section className="section">
-        <h2>Thông tin phòng</h2>
+        <h1 className="room-title">
+          <h2>Thông tin phòng</h2>
+          <button onClick={handleFindRoommate}>Tìm người ở ghép</button>
+        </h1>
         <div className="info-item"><span className="label">ID:</span> {roomDetail.room.id}</div>
         <div className="info-item"><span className="label">Tên phòng:</span> {roomDetail.room.name}</div>
         <div className="info-item"><span className="label">Mô tả:</span> {roomDetail.room.description}</div>
@@ -65,7 +111,7 @@ const handleNavigateToAuthorPosts=()=>{
         <div className="info-item"><span className="label">Diện tích:</span> {roomDetail.room.area} m²</div>
         <div className="info-item"><span className="label">Tầng:</span> {roomDetail.room.floor}</div>
         <div className="info-item"><span className="label">Tiện ích:</span> {boardingHouse.features}</div>
-        <div className="info-item"><span className="label">Thời gian bắt đầu thuê</span></div>
+        <div className="info-item"><span className="label">Thời gian bắt đầu thuê:</span></div>
       </section>
 
       {/* Chi phí sinh hoạt */}
@@ -142,7 +188,7 @@ const handleNavigateToAuthorPosts=()=>{
       {/* Thông tin chủ trọ */}
       <section className="section">
         <h2>Thông tin chủ trọ</h2>
-        <div className="container__host" >
+        <div className="container__host">
           <img src={host.imageUrl || defaultAvatar} alt="Host Avatar" />
           <div className="container__host__information" onClick={handleNavigateToAuthorPosts}>
             <div className="info-item"><span className="label">Tên:</span> {host.firstName} {host.lastName}</div>
@@ -157,10 +203,7 @@ const handleNavigateToAuthorPosts=()=>{
       <section className="section">
         <h2 onClick={toggleExpenseList} className="toggle-header">
           Thống kê chi phí
-          {
-            isExpenseListVisible?<BsChevronUp/>:<BsChevronDown/>
-          }
-          
+          {isExpenseListVisible ? <BsChevronUp /> : <BsChevronDown />}
         </h2>
         {isExpenseListVisible && (
           <div className="expense-list">
@@ -172,12 +215,20 @@ const handleNavigateToAuthorPosts=()=>{
                 <div className="info-item"><span className="label">Ngày thanh toán:</span> {new Date(expense.paymentDate).toLocaleDateString('vi-VN')}</div>
                 <div className="info-item"><span className="label">Hạn thanh toán:</span> {new Date(expense.dueDate).toLocaleDateString('vi-VN')}</div>
                 <div className="info-item"><span className="label">Ghi chú:</span> {expense.notes}</div>
-                <div className="info-item"><span className="label">Trạng thái:</span> {expense.status === 1 ? <span style={{color:'blue'}}>Đã thanh toán</span> : <span style={{color:'red'}}>Chưa thanh toán</span>}</div>
+                <div className="info-item"><span className="label">Trạng thái:</span> {expense.status === 1 ? <span style={{ color: 'blue' }}>Đã thanh toán</span> : <span style={{ color: 'red' }}>Chưa thanh toán</span>}</div>
               </div>
             ))}
           </div>
         )}
       </section>
+
+      {/* Popup tìm người ở ghép */}
+      <FindRoommatePopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        onSubmit={handleSubmitPost}
+        isLoading={isLoading} // Truyền state loading vào popup
+      />
     </div>
   );
 };

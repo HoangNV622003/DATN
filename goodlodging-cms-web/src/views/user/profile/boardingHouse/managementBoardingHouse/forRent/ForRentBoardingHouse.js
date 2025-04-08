@@ -36,6 +36,10 @@ const ForRentBoardingHouse = () => {
         setBoardingHouses(prev => prev.filter(house => house.id !== deletedId));
     };
 
+    const handleTransferSuccess = (transferredId) => {
+        setBoardingHouses(prev => prev.filter(house => house.id !== transferredId));
+    };
+
     if (loading) {
         return <div className="loading">Đang tải thông tin...</div>;
     }
@@ -49,7 +53,8 @@ const ForRentBoardingHouse = () => {
             {error && <div className="error">{error}</div>}
             <ListBoardingHouse
                 boardingHouses={boardingHouses}
-                onDelete={handleDeleteBoardingHouse} // Truyền callback xuống
+                onDelete={handleDeleteBoardingHouse}
+                onTransferSuccess={handleTransferSuccess}
             />
         </div>
     );

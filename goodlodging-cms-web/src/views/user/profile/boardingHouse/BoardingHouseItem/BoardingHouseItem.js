@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import defaultRoom from "../../../../../assets/images/defaultRoom.png";
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../utils/router/Router';
@@ -6,13 +6,17 @@ import "./style.scss";
 import { IMAGE_URL } from '../../../../../utils/ApiUrl';
 import { getArea, getPrice } from '../../../../../utils/BoardingHouseConfig';
 import { toast } from 'react-toastify';
-import { deleteBoardingHouse } from '../../../../../apis/house/BoardingHouseService';
+import { changeOwner, deleteBoardingHouse } from '../../../../../apis/house/BoardingHouseService';
 import { useAuth } from '../../../../../context/AuthContext';
+import TransferPopup from '../../../../../components/popup/TransferPopup/TransferPopup';
 
-const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete }) => {
+const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete, onTransferSuccess }) => {
     const { id, name, address, minArea, maxArea, otherPrice, minRent, maxRent, electricityPrice, waterPrice, imageUrl } = data;
     const navigate = useNavigate();
     const { token } = useAuth();
+    const [username, setUsername] = useState(data.username);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isTransferring, setIsTransferring] = useState(false); // Thêm state loading
 
     const handleNavigateToSaveBoardingHouse = () => {
         navigate(ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.BOARDING_HOUSE.UPDATE.replace(":boardingHouseId", id));
@@ -24,7 +28,7 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete })
             .then(response => {
                 toast.success(response.data.result || "Xóa nhà trọ thành công");
                 if (onDelete) {
-                    onDelete(id); // Gọi callback để cập nhật danh sách
+                    onDelete(id);
                 }
             })
             .catch(error => {
@@ -36,6 +40,31 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete })
         if (onSelect) {
             onSelect(data);
         }
+    };
+
+    const handleChangeOwner = () => {
+        setIsTransferring(true); // Bật loading
+        changeOwner(id, username, token)
+            .then(response => {
+                toast.success(response.data.result || "Chuyển nhượng nhà trọ thành công");
+                setIsPopupOpen(false);
+                if (onTransferSuccess) {
+                    onTransferSuccess(id);
+                }
+            })
+            .catch(error => {
+                toast.error(error.message || "Chuyển nhượng nhà trọ thất bại");
+            })
+            .finally(() => setIsTransferring(false)); // Tắt loading
+    };
+
+    const handleOpenPopup = (e) => {
+        e.stopPropagation();
+        setIsPopupOpen(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
     };
 
     return (
@@ -64,10 +93,23 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete })
                     onClick={(e) => e.stopPropagation()}
                 />
             ) : (
-                <button className='btn-delete' onClick={handleDeleteBoardingHouse}>
-                    Xóa
-                </button>
+                <div className="container-button">
+                    <button className='btn-delete' onClick={handleDeleteBoardingHouse}>
+                        Xóa
+                    </button>
+                    <button className='btn-change-owner' onClick={handleOpenPopup}>
+                        Chuyển nhượng
+                    </button>
+                </div>
             )}
+            <TransferPopup
+                isOpen={isPopupOpen}
+                onClose={handleClosePopup}
+                onTransfer={handleChangeOwner}
+                initialUsername={username}
+                setUsername={setUsername}
+                isLoading={isTransferring} // Truyền prop để disable nút trong popup nếu cần
+            />
         </div>
     );
 };

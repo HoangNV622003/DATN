@@ -4,7 +4,7 @@ import { fetchMyPosts } from '../../../../../apis/posts/PostService';
 import { useAuth } from '../../../../../context/AuthContext';
 import MyPostList from './myPost/MyPostList';
 const ManagementPost = () => {
-    //const {user}=useAuth();
+    const {user}=useAuth();
     const [myPosts,setMyPosts]=useState([]);
     const [error,setError]=useState(null);
     const [loading,setLoading]=useState(false);
@@ -22,7 +22,7 @@ const ManagementPost = () => {
         }
     }
     useEffect(()=>{
-        handleLoadMyPosts(1);
+        handleLoadMyPosts(user.id);
     },[]);
 
     if (loading) {

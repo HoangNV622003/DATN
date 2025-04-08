@@ -14,7 +14,13 @@ export const fetchAllHouse = async (userId,accessToken) => {
     console.error(error);
   }
 };
-
+export const changeOwner= async (houseId, username,accessToken) => {
+    return await axios.patch(`${API_URL}/boarding-houses/${houseId}/change-owner`, {username}, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+}
 export const fetchHouse = async (houseId,accessToken) => {
   try {
     console.log('fetch-house')

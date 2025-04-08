@@ -8,6 +8,7 @@ import { IMAGE_URL } from '../../../utils/ApiUrl';
 import { toast } from 'react-toastify';
 import { createFavoritePost } from '../../../apis/favorite-posts/FavoritePostService';
 import { useAuth } from '../../../context/AuthContext';
+import { getTile, getTitle } from '../../../utils/PostUtils';
 
 const PostItem = ({ post }) => {
   const { user } = useAuth();
@@ -36,13 +37,13 @@ const PostItem = ({ post }) => {
     return minArea === maxArea ? minArea : minArea + ' - ' + maxArea;
 
   }
-  const { id, title, imageUrl, maxArea, minArea, maxRent, minRent, address, modifiedDate } = post;
+  const { id,type, title, imageUrl, maxArea, minArea, maxRent, minRent, address, modifiedDate } = post;
   return (
     <div className="post__item">
       <div className="post__content" onClick={handleNavigateToDetailPost}>
         <img className="image__item" src={IMAGE_URL + imageUrl} alt={title || 'Hình ảnh'} />
         <div className="post__details">
-          <p className="post__title">{title || 'Không có tiêu đề'}</p>
+          <p className="post__title">{getTitle(type,title)}</p>
           <p className="post__price">{maxRent && minRent ? `${getPrice(minRent, maxRent)} VNĐ` : 'Không có giá'}</p>
           <p className="post__area">{maxArea && minArea ? `${getArea(minArea, maxArea)} m²` : 'Không có diện tích'}</p>
           <p className="post__address">{address || 'Không có địa chỉ'}</p>

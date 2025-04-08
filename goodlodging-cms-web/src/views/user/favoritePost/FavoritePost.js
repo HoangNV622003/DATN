@@ -6,7 +6,7 @@ import SearchPostList from '../searchPage/post/SearchPostList';
 import './style.scss';
 
 const FavoritePost = () => {
-    const { user, isLogin } = useAuth();
+    const { user, isLogin,token } = useAuth();
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ const FavoritePost = () => {
     const handleLoadData = async (id) => {
       try {
         setLoading(true);
-        const response = (await fetchFavoritePosts(id)).data;
+        const response = (await fetchFavoritePosts(id,token)).data;
         if (!Array.isArray(response)) {
           throw new Error("Dữ liệu không hợp lệ từ server");
         }

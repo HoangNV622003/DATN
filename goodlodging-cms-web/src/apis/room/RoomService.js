@@ -63,12 +63,12 @@ export const removeUserFromRoom=async(payload,token)=>{
     });
 }
 
-export const fetchMyRoom=async(userId)=>{
-    console.log("accessToken:",accessToken)
+export const fetchMyRoom=async(userId,token)=>{
+    console.log("accessToken:",token)
     return axios.get(`${API_URL}/rooms/my-room/${userId}`,
         {
             headers:{
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
         }

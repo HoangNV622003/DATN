@@ -43,10 +43,12 @@ const SavePost = () => {
         }
         if (isEditMode) {
             setLoading(true);
-            fetchMyPost(postId)
+            fetchMyPost(postId,token)
                 .then((data) => {
                     setPost({
                         id: data.postResponse.id,
+                        roomId: data.postResponse.roomId || '',
+                        type: data.postResponse.type || '',
                         title: data.postResponse.title || '',
                         imageUrl: data.postResponse.imageUrl || '',
                         minArea: data.postResponse.minArea || '',
@@ -86,6 +88,7 @@ const SavePost = () => {
                         boardingHouses: Array.isArray(data) ? data : [],
                     });
                     setLoading(false);
+                    console.log('boardingHouses', data);
                 })
                 .catch((err) => {
                     setError('Không thể tải dữ liệu bài đăng');
@@ -140,14 +143,15 @@ const SavePost = () => {
 
         try {
             await (isEditMode
-                ? updatePost(postId, formData)
-                : createPost(formData));
-                toast.success(`${isEditMode ? 'Cập nhật' : 'Tạo mới'} bài viết thành công`, {
-                    autoClose:2000,
-                    onClose: () => {
-                        navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`);
-                    },
-                });        } catch (err) {
+                ? updatePost(postId, formData,token)
+                : createPost(formData,token));
+            toast.success(`${isEditMode ? 'Cập nhật' : 'Tạo mới'} bài viết thành công`, {
+                autoClose: 2000,
+                onClose: () => {
+                    navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`);
+                },
+            });
+        } catch (err) {
             setError('Lưu bài viết thất bại, vui lòng thử lại');
             toast.error('Lưu bài viết thất bại, vui lòng thử lại');
         } finally {
@@ -196,7 +200,7 @@ const SavePost = () => {
                         onChange={handleFileChange}
                     />
                 </div>
-                
+
                 <div className="form-group">
                     <label htmlFor="area">Diện tích phòng (m²)</label>
                     <input
@@ -260,21 +264,26 @@ const SavePost = () => {
                     <button
                         type="button"
                         className="cancel"
-                        onClick={() => navigate(`${ROUTERS.USER.PROFILE.replace('/*', '')}${ROUTERS.USER.POST.MANAGEMENT}`)}
+                        onClick={() => navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`)}
                         disabled={loading}
                     >
                         Hủy
                     </button>
                 </div>
-                <div className="container__house__list">
-                    <ListBoardingHouse
-                        boardingHouses={post.boardingHouses}
-                        onSelect={handleBoardingHouseSelect}
-                        selectedId={post.boardingHouseId}
-                        isSavePost={true}
-                    />
-                </div>
-                
+                {
+                    post.type === 1 && (
+                        <div className="container__house__list">
+                            <ListBoardingHouse
+                                boardingHouses={post.boardingHouses}
+                                onSelect={handleBoardingHouseSelect}
+                                selectedId={post.boardingHouseId}
+                                isSavePost={true}
+                            />
+                        </div>
+                    )
+                }
+
+
             </form>
         </div>
     );

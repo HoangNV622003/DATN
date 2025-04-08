@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../../../../../context/AuthContext';
+import { findRoomMate } from '../../../../../apis/posts/PostService';
+import FindRoommatePopup from '../../../../../components/popup/findRoomMatePopup/FindRoomMatePopup';
 
 function SaveRoom() {
   const [savedRoom, setSavedRoom] = useState({ id: '', name: '', description: '', price: null, capacity: '', area: '', floor: '' }); // Dữ liệu đã lưu
@@ -13,7 +15,10 @@ function SaveRoom() {
   const [users, setUsers] = useState([]);
   const [newUsername, setNewUsername] = useState('');
   const { id } = useParams();
-  const {token}=useAuth();
+  const {user,token}=useAuth();
+  const [isExpenseListVisible, setIsExpenseListVisible] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   // Load dữ liệu phòng khi component mount
   useEffect(() => {
     getRoom(id,token)
@@ -88,7 +93,41 @@ function SaveRoom() {
         console.error('Lỗi khi thêm người dùng:', error);
       });
   };
+const handleFindRoommate = () => {
+    const currentUsers = users.length;
+    const maxCapacity = room.capacity;
 
+    if (currentUsers >= maxCapacity) {
+      toast.error('Phòng đã đủ người, không thể tìm thêm thành viên!');
+    } else {
+      setIsPopupOpen(true);
+    }
+  };
+
+  const handleSubmitPost = async ({title,image}) => {
+    setIsLoading(true); // Bật loading
+    const payload=new FormData();
+    payload.append('title', title);
+    payload.append('roomId', id);
+    payload.append('userId', user.id);
+    payload.append('boardingHouseId', room.boardingHouseId);
+    payload.append('imageFile', image);
+    console.log('Payload:', [...payload]); // Kiểm tra toàn bộ FormData
+    try {
+      const response=await findRoomMate(payload,token);
+      toast.success("Đã đăng tin tìm người ở ghép thành công "||response.data.result);
+      console.log('Tiêu đề bài viết:', title);
+    } catch (error) {
+      toast.error(error.message||'Đăng tin thất bại!');
+    } finally {
+      setIsLoading(false); // Tắt loading
+      setIsPopupOpen(false); // Đóng popup sau khi hoàn tất
+    }
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
   // Xử lý xóa người dùng
   const handleDeleteUser = (userId) => {
     const payload = {
@@ -155,7 +194,11 @@ function SaveRoom() {
       </div>
 
       <div className="users-section">
-        <h2>Danh sách người thuê ({users.length}/{savedRoom.capacity || 0})</h2> {/* Hiển thị capacity đã lưu */}
+        <div className="container-title">
+
+        <h2>Danh sách người thuê ({users.length}/{savedRoom.capacity || 0})</h2> 
+        <button onClick={handleFindRoommate}>Tìm người ở ghép</button>
+        </div>
         <div className="add-user">
           <input
             type="text"
@@ -174,6 +217,12 @@ function SaveRoom() {
         </div>
         <UserList users={users} onDelete={handleDeleteUser} />
       </div>
+      <FindRoommatePopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        onSubmit={handleSubmitPost}
+        isLoading={isLoading}
+      />
       <ToastContainer />
     </div>
   );

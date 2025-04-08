@@ -2,11 +2,11 @@ import axios from "axios";
 import { API_URL } from "../../utils/ApiUrl";
 import { getToken } from "../../utils/service/localStorageService";
 const accessToken = getToken();
-export const fetchFavoritePosts = async (id) => {
-    console.log('accessToken:',accessToken)
+export const fetchFavoritePosts = async (id,token) => {
+    console.log('accessToken:',token)
     return await axios.get(`${API_URL}/favorite-posts/${id}`, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
         },
     });
