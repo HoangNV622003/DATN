@@ -37,5 +37,7 @@ public class Post extends AbstractAuditingEntity implements Serializable {
     String address;
     Long boardingHouseId;
     Long userId;
+    Integer type;
+    Long roomId;
     Integer status;
 }

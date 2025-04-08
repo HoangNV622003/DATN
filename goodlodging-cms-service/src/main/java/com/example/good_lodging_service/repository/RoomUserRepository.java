@@ -26,7 +26,7 @@ public interface RoomUserRepository extends JpaRepository<RoomUser, Long> {
     List<User> findAllByRoomIdAndStatusWithQuery(Long roomId, Integer status);
 
     boolean existsByUserIdAndRoomIdAndStatus(Long userId, Long roomId, Integer status);
-
+    boolean existsByUserIdAndStatus(Long userId, Integer status);
     Optional<RoomUser> findByUserIdAndRoomIdAndStatus(Long userId, Long roomId, Integer status);
 
     @Query(nativeQuery = true, value = """

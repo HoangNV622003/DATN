@@ -31,7 +31,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.image_url         AS imageUrl,
             p.address           AS address,
             p.boarding_house_id AS boardingHouseId,
-            p.date_updated      AS modifiedDate
+            p.date_updated      AS modifiedDate,
+            p.type AS type
+
         FROM post p WHERE p.status=:status
         """,
         countQuery = """
@@ -52,7 +54,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.image_url         AS imageUrl,
             p.address           AS address,
             p.boarding_house_id AS boardingHouseId,
-            p.date_updated      AS modifiedDate
+            p.date_updated      AS modifiedDate,
+            p.type AS type
 
         FROM post p WHERE p.status=:status AND p.user_id=:userId
         """,
@@ -74,7 +77,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.image_url         AS imageUrl,
             p.address           AS address,
             p.boarding_house_id AS boardingHouseId,
-            p.date_updated      AS modifiedDate
+            p.date_updated      AS modifiedDate,
+            p.type AS type
         FROM
             post p
         INNER JOIN
@@ -152,12 +156,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 p.water_price AS waterPrice,
                 p.electricity_price AS electricityPrice,
                 p.other_price AS otherPrice,
-                p.date_updated as modifiedDate
+                p.date_updated as modifiedDate,
+                p.type AS type
+
             FROM post p
             INNER JOIN user u ON p.user_id=u.id AND u.status=:status
             INNER JOIN boarding_house bh ON bh.id=p.boarding_house_id AND bh.status=:status
             WHERE p.id=:postId AND p.status=:status
             """)
     Optional<PostDetailProjection> findByPostIdAndStatusWithQuery(@Param("postId")Long postId,@Param("status") Integer status);
+
+    List<Post> findAllByBoardingHouseIdAndStatus(Long boardingHouseId, Integer status);
 }
 

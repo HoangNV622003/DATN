@@ -5,15 +5,14 @@ import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseRequest;
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseUpdateRequest;
+import com.example.good_lodging_service.dto.request.BoardingHouse.ChangeOwnerRequest;
 import com.example.good_lodging_service.dto.request.Image.ImageFileRequest;
 import com.example.good_lodging_service.dto.request.Image.ImageRequest;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseDetailResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Image.ImageResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
-import com.example.good_lodging_service.entity.Address;
-import com.example.good_lodging_service.entity.BoardingHouse;
-import com.example.good_lodging_service.entity.Image;
+import com.example.good_lodging_service.entity.*;
 import com.example.good_lodging_service.exception.AppException;
 import com.example.good_lodging_service.mapper.AddressMapper;
 import com.example.good_lodging_service.mapper.BoardingHouseMapper;
@@ -52,6 +51,8 @@ public class BoardingHouseService {
     ImageMapper imageMapper;
     RoomMapper roomMapper;
     RoomRepository roomRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
     @Value("${upload.uploadDir}")
     @NonFinal
     String uploadDir;
@@ -242,4 +243,17 @@ public class BoardingHouseService {
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
     }
 
+    public CommonResponse changeBoardingHouseOwner(Long id, ChangeOwnerRequest request) {
+        BoardingHouse boardingHouse = findById(id);
+        User user = userRepository.findByUsernameAndStatus(request.getUsername(), CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
+        boardingHouse.setUserId(user.getId());
+        boardingHouseRepository.save(boardingHouse);
+        List<Post> posts = postRepository.findAllByBoardingHouseIdAndStatus(boardingHouse.getId(), CommonStatus.ACTIVE.getValue());
+        posts.forEach(post -> {
+            post.setUserId(user.getId());
+        });
+        postRepository.saveAll(posts);
+        return CommonResponse.builder().status(200).result(ApiResponseCode.CHANGE_BOARDING_HOUSE_OWNER_SUCCESSFUL.getMessage()).build();
+    }
 }

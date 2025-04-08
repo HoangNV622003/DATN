@@ -3,6 +3,8 @@ package com.example.good_lodging_service.service;
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.EntityType;
+import com.example.good_lodging_service.constants.PostType;
+import com.example.good_lodging_service.dto.request.Post.FindRoomMateRequest;
 import com.example.good_lodging_service.dto.request.Post.PostFilterRequest;
 import com.example.good_lodging_service.dto.request.Post.PostRequest;
 import com.example.good_lodging_service.dto.response.Address.AddressProjection;
@@ -40,14 +42,12 @@ public class PostService {
     BoardingHouseMapper boardingHouseMapper;
     PostMapper postMapper;
     UserRepository userRepository;
-    ProfileMapper profileMapper;
-    private final RoomRepository roomRepository;
-    private final RoomMapper roomMapper;
-    private final ImageRepository imageRepository;
+    RoomRepository roomRepository;
+    ImageRepository imageRepository;
     UserMapper userMapper;
     BoardingHouseRepository bhRepository;
     AddressRepository addressRepository;
-
+    UploadService uploadService;
     @Value("${upload.uploadDir}")
     @NonFinal
     private String uploadDir;
@@ -59,6 +59,7 @@ public class PostService {
         post.setStatus(CommonStatus.ACTIVE.getValue());
         post.setAddress(address != null ? address.getFullAddress() : "");
         post.setImageUrl(uploadImage(request.getImageUrl()));
+        post.setType(PostType.NORMAL.getValue());
         post = postRepository.save(post);
         return postMapper.toPostResponse(post);
     }
@@ -100,15 +101,42 @@ public class PostService {
                 .minArea(ValueUtils.getOrDefault(postDetailProjection.getMinArea(), 0F))
                 .maxRent(ValueUtils.getOrDefault(postDetailProjection.getMaxRent(), 0F))
                 .minRent(ValueUtils.getOrDefault(postDetailProjection.getMinRent(), 0F))
-                .electricityPrice(ValueUtils.getOrDefault(postDetailProjection.getElectricityPrice(),0F))
-                .waterPrice(ValueUtils.getOrDefault(postDetailProjection.getWaterPrice(),0F))
-                .otherPrice(ValueUtils.getOrDefault(postDetailProjection.getOtherPrice(),0F))
+                .electricityPrice(ValueUtils.getOrDefault(postDetailProjection.getElectricityPrice(), 0F))
+                .waterPrice(ValueUtils.getOrDefault(postDetailProjection.getWaterPrice(), 0F))
+                .otherPrice(ValueUtils.getOrDefault(postDetailProjection.getOtherPrice(), 0F))
                 .boardingHouse(BoardingHouseResponse.fromPostDetailProjection(postDetailProjection))
                 .imageUrl(imageUrls)
                 .build();
 
     }
 
+    public CommonResponse findRoomMate(FindRoomMateRequest request) {
+        BoardingHouse boardingHouse = boardingHouseRepository.findByIdAndStatus(request.getBoardingHouseId(), CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        Address address = addressRepository.findByIdAndStatus(boardingHouse.getAddressId(), CommonStatus.ACTIVE.getValue()).orElse(null);
+        Room room = roomRepository.findByIdAndStatus(request.getRoomId(), CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.ROOM_NOT_FOUND));
+        Post post = Post.builder()
+                .boardingHouseId(boardingHouse.getId())
+                .address(address != null ? address.getFullAddress() : "")
+                .title(request.getTitle())
+                .userId(request.getUserId())
+                .roomId(request.getRoomId())
+                .type(PostType.FIND_ROOM_MATE.getValue())
+                .electricityPrice(boardingHouse.getElectricityPrice())
+                .waterPrice(boardingHouse.getWaterPrice())
+                .otherPrice(boardingHouse.getOtherPrice())
+                .status(CommonStatus.ACTIVE.getValue())
+                .maxRent(room.getPrice())
+                .minRent(room.getPrice())
+                .maxArea(room.getArea())
+                .minArea(room.getArea())
+                .imageUrl(uploadImage(request.getImageFile()))
+                .build();
+
+        postRepository.save(post);
+        return CommonResponse.builder().status(200).result(ApiResponseCode.FIND_ROOM_MATE_SUCCESSFUL.getMessage()).build();
+    }
 
     public CommonResponse deletePost(Long id) {
         Post post = findById(id);
@@ -140,7 +168,10 @@ public class PostService {
         //get list images
         List<Image> images = imageRepository.findAllByEntityIdInAndEntityTypeAndStatus(boardingHouseIds, EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
 
-        return MyPostResponse.builder().postResponse(postMapper.toPostResponse(post)).boardingHouses(convertToBoardingHouseResponse(boardingHouses, images, addresses)).build();
+        return MyPostResponse.builder()
+                .postResponse(postMapper.toPostResponse(post))
+                .boardingHouses(convertToBoardingHouseResponse(boardingHouses, images, addresses))
+                .build();
     }
 
     private List<BoardingHouseResponse> convertToBoardingHouseResponse(List<BoardingHouse> boardingHouses, List<Image> images, List<AddressProjection> addresses) {

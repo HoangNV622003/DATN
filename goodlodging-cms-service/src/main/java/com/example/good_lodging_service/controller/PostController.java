@@ -1,5 +1,6 @@
 package com.example.good_lodging_service.controller;
 
+import com.example.good_lodging_service.dto.request.Post.FindRoomMateRequest;
 import com.example.good_lodging_service.dto.request.Post.PostFilterRequest;
 import com.example.good_lodging_service.dto.request.Post.PostRequest;
 import com.example.good_lodging_service.dto.request.Post.PostUpdateRequest;
@@ -33,6 +34,10 @@ import java.util.List;
 public class PostController {
     PostService postService;
 
+    @PostMapping(consumes = "multipart/form-data",value = "/find-room-mate")
+    public ResponseEntity<CommonResponse> findRoomMate(@ModelAttribute FindRoomMateRequest request) {
+        return ResponseEntity.ok(postService.findRoomMate(request));
+    }
     @GetMapping
     public ResponseEntity<Page<PostProjection>> getPosts(
             @PageableDefault(size = 20, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {

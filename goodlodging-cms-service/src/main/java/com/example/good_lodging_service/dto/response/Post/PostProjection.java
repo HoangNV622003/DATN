@@ -21,4 +21,5 @@ public interface PostProjection {
     Long getBoardingHouseId();
     Long getUserId();
     Instant getModifiedDate();
+    Integer getType();
 }

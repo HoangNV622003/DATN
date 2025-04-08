@@ -61,6 +61,7 @@ public enum ApiResponseCode {
     //BOARDING_HOUSE
     BOARDING_HOUSE_DELETED_SUCCESSFUL(6001, "Nhà trọ đã được xóa thành công", HttpStatus.OK),
     BOARDING_HOUSE_ALREADY_EXISTED(6002, "Nhà trọ đã tồn tại, vui lòng chọn tên khác", HttpStatus.BAD_REQUEST),
+    CHANGE_BOARDING_HOUSE_OWNER_SUCCESSFUL(6003,"Nhà trọ đã được chuyển nhượng thành công", HttpStatus.OK),
     //ADDRESS
     ADDRESS_NOT_FOUND(7001, "Không tìm thấy địa chỉ", HttpStatus.BAD_REQUEST),
 
@@ -75,7 +76,7 @@ public enum ApiResponseCode {
 
     //POST
     POST_DELETED_SUCCESSFUL(1101,"Bài viết đã được xóa thành công", HttpStatus.OK),
-
+    FIND_ROOM_MATE_SUCCESSFUL(1102,"Đăng bài tìm người ở ghép thành công",HttpStatus.OK),
 
     //FILTER
 

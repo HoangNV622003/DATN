@@ -40,9 +40,10 @@ public class RoomUserService {
                 () -> new AppException(ApiResponseCode.ROOM_NOT_FOUND));
         User user = userRepository.findByUsernameAndStatus(request.getUsername(), CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
-        if (roomUserRepository.existsByUserIdAndRoomIdAndStatus(user.getId(), room.getId(), CommonStatus.ACTIVE.getValue())) {
+        if (roomUserRepository.existsByUserIdAndStatus(user.getId(), CommonStatus.ACTIVE.getValue())) {
             throw new AppException(ApiResponseCode.USER_ALREADY_EXISTS);
         }
+
         roomUserRepository.save(RoomUser.builder()
                 .roomId(room.getId())
                 .userId(user.getId())

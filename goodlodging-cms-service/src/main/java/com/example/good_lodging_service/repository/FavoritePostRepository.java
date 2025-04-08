@@ -18,13 +18,17 @@ public interface FavoritePostRepository extends JpaRepository<FavoritePost, Long
                 SELECT DISTINCT 
                 p.id                AS id,
                 p.title             AS title,
-                p.area              AS area,
-                p.room_rent         AS roomRent,
+                p.max_area          AS maxArea,
+                p.min_area          AS minArea,
+                p.max_rent          AS maxRent,
+                p.min_rent          AS minRent,
                 p.user_id           AS userId,
                 p.image_url         AS imageUrl,
                 p.address           AS address,
                 p.boarding_house_id AS boardingHouseId,
-                p.date_updated      AS modifiedDate
+                p.date_updated      AS modifiedDate,
+                p.type              AS type,
+                p.room_id           AS roomId
             FROM post p INNER JOIN favorite_post fp ON fp.post_id=p.id 
             WHERE  p.status=:status AND fp.status=:status AND fp.user_id=:userId
             """)

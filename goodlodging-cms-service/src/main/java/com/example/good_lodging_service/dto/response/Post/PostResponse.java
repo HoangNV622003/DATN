@@ -26,4 +26,8 @@ public class PostResponse {
     String address;
     Long boardingHouseId;
     Long userId;
+    Long roomId;
+    Integer type;
+
+
 }
