@@ -2,13 +2,12 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
-import com.example.good_lodging_service.constants.EntityType;
-import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseRequest;
+import com.example.good_lodging_service.constants.PaymentStatus;
 import com.example.good_lodging_service.dto.request.EntityDelete.EntityDeleteRequest;
 import com.example.good_lodging_service.dto.request.Room.RoomRequest;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
-import com.example.good_lodging_service.dto.response.Expenses.ExpensesResponse;
+import com.example.good_lodging_service.dto.response.PaymentTransaction.PaymentTransactionResponse;
 import com.example.good_lodging_service.dto.response.Room.MyRoomResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomConfigProjection;
 import com.example.good_lodging_service.dto.response.Room.RoomDetailResponse;
@@ -16,10 +15,11 @@ import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.dto.response.RoomUser.RoomUserProjection;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.BoardingHouse;
+import com.example.good_lodging_service.entity.PaymentTransaction;
 import com.example.good_lodging_service.entity.Room;
+import com.example.good_lodging_service.entity.User;
 import com.example.good_lodging_service.exception.AppException;
-import com.example.good_lodging_service.mapper.BoardingHouseMapper;
-import com.example.good_lodging_service.mapper.ExpensesMapper;
+import com.example.good_lodging_service.mapper.PaymentTransactionMapper;
 import com.example.good_lodging_service.mapper.RoomMapper;
 import com.example.good_lodging_service.mapper.UserMapper;
 import com.example.good_lodging_service.repository.*;
@@ -29,7 +29,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -40,18 +42,17 @@ public class RoomService {
     RoomUserRepository roomUserRepository;
     RoomMapper roomMapper;
     UserMapper userMapper;
-    ExpensesMapper expensesMapper;
     UserRepository userRepository;
-    ExpensesRepository expensesRepository;
     private final BoardingHouseRepository boardingHouseRepository;
-    private final BoardingHouseMapper boardingHouseMapper;
+    PaymentTransactionRepository paymentTransactionRepository;
+    PaymentTransactionMapper paymentTransactionMapper;
 
     public RoomResponse createRoom(RoomRequest request) {
         if (roomRepository.existsByNameAndBoardingHouseIdAndStatus(request.getName(), request.getBoardingHouseId(), CommonStatus.ACTIVE.getValue()))
             throw new AppException(ApiResponseCode.ROOM_ALREADY_EXITED);
         Room room = roomMapper.toRoom(request);
         room.setStatus(CommonStatus.ACTIVE.getValue());
-        room=roomRepository.save(room);
+        room = roomRepository.save(room);
         updateBoardingHouse(room.getBoardingHouseId());
         return roomMapper.toRoomResponseDTO(room);
     }
@@ -100,6 +101,25 @@ public class RoomService {
         return CommonResponse.builder().result(ApiResponseCode.ROOM_DELETED_SUCCESSFUL.getMessage()).build();
     }
 
+    private PaymentTransactionResponse convertToPaymentTransactionResponse(User user, PaymentTransaction paymentTransaction) {
+        PaymentTransactionResponse paymentTransactionResponse = paymentTransactionMapper.toPaymentTransactionResponse(paymentTransaction);
+        paymentTransactionResponse.setPayerName(user != null ? user.getFirstName() + " " + user.getLastName() : "");
+        return paymentTransactionResponse;
+    }
+
+    public List<PaymentTransactionResponse> findAllPaymentByRoomId(Long roomId) {
+        List<PaymentTransaction> paymentTransactions = paymentTransactionRepository.findAllByRoomIdAndStatusNot(roomId, PaymentStatus.DELETED.getValue());
+
+        List<Long> payerIds = paymentTransactions.stream().map(PaymentTransaction::getPayerId).toList();
+        List<User> users = userRepository.findAllByIdInAndStatus(payerIds, CommonStatus.ACTIVE.getValue());
+        Map<Long, User> userMap = new HashMap<>();
+        users.forEach(user -> {
+            userMap.put(user.getId(), user);
+        });
+        return paymentTransactions.stream().map(paymentTransaction
+                -> convertToPaymentTransactionResponse(userMap.get(paymentTransaction.getPayerId()), paymentTransaction)).toList();
+    }
+
     public MyRoomResponse getMyRoom(Long userId) {
         RoomUserProjection roomUserProjection = roomUserRepository.findByUserIdAndStatusWithQuery(userId, CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
@@ -122,14 +142,10 @@ public class RoomService {
                 .build();
         boardingHouse.setAddress(roomUserProjection.getAddress());
 
-        //get expenses
-        List<ExpensesResponse> expenses = expensesRepository.findByEntityIdAndEntityTypeAndStatusOrderByDateUpdatedDesc(roomUserProjection.getRoomId(), EntityType.ROOM.getValue(), CommonStatus.ACTIVE.getValue())
-                .stream().map(expensesMapper::toExpensesResponse).toList();
-
         return MyRoomResponse.builder()
                 .host(user)
                 .roomDetail(roomDetail)
-                .expenses(expenses)
+                .payments(findAllPaymentByRoomId(roomUserProjection.getRoomId()))
                 .boardingHouse(boardingHouse)
                 .build();
     }

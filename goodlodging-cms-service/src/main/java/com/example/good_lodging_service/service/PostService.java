@@ -13,6 +13,7 @@ import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouse
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Post.*;
 import com.example.good_lodging_service.dto.response.Profile.ProfileResponse;
+import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.*;
 import com.example.good_lodging_service.exception.AppException;
@@ -23,6 +24,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,9 +48,8 @@ public class PostService {
     RoomRepository roomRepository;
     ImageRepository imageRepository;
     UserMapper userMapper;
-    BoardingHouseRepository bhRepository;
     AddressRepository addressRepository;
-    UploadService uploadService;
+    RoomMapper roomMapper;
     @Value("${upload.uploadDir}")
     @NonFinal
     private String uploadDir;
@@ -89,11 +91,13 @@ public class PostService {
     public PostDetailResponse getPostDetailById(Long id) {
         PostDetailProjection postDetailProjection = postRepository.findByPostIdAndStatusWithQuery(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        log.info("boardingHouseId:{}", postDetailProjection.getBoardingHouseId());
         List<Image> boardingHouseImageUrls = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getBoardingHouseId(), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
         List<Image> roomImageUrls = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getRoomId(), EntityType.ROOM.getValue(), CommonStatus.ACTIVE.getValue());
         boardingHouseImageUrls.addAll(roomImageUrls);
         List<String> imageUrls = boardingHouseImageUrls.stream().map(Image::getImageUrl).toList();
-
+        List<RoomResponse> rooms=roomRepository.findAllByBoardingHouseIdAndStatusWithQuery(postDetailProjection.getBoardingHouseId(),CommonStatus.ACTIVE.getValue())
+                .stream().map(roomMapper::toRoomResponseDTO).toList();
         return PostDetailResponse.builder()
                 .authorInfo(ProfileResponse.fromPostDetailProjection(postDetailProjection))
                 .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(), ""))
@@ -104,8 +108,11 @@ public class PostService {
                 .electricityPrice(ValueUtils.getOrDefault(postDetailProjection.getElectricityPrice(), 0F))
                 .waterPrice(ValueUtils.getOrDefault(postDetailProjection.getWaterPrice(), 0F))
                 .otherPrice(ValueUtils.getOrDefault(postDetailProjection.getOtherPrice(), 0F))
-                .boardingHouse(BoardingHouseResponse.fromPostDetailProjection(postDetailProjection))
+                .description(ValueUtils.getOrDefault(postDetailProjection.getDescription(), ""))
+                .address(ValueUtils.getOrDefault(postDetailProjection.getAddress(), ""))
+                .type(postDetailProjection.getType())
                 .imageUrl(imageUrls)
+                .emptyRooms(rooms)
                 .build();
 
     }

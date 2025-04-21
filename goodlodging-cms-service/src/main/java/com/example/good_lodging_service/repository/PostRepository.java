@@ -3,6 +3,7 @@ package com.example.good_lodging_service.repository;
 import com.example.good_lodging_service.dto.response.Post.PostDetailProjection;
 import com.example.good_lodging_service.dto.response.Post.PostProjection;
 import com.example.good_lodging_service.entity.Post;
+import com.example.good_lodging_service.entity.Room;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -165,7 +166,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             WHERE p.id=:postId AND p.status=:status
             """)
     Optional<PostDetailProjection> findByPostIdAndStatusWithQuery(@Param("postId")Long postId,@Param("status") Integer status);
-
     List<Post> findAllByBoardingHouseIdAndStatus(Long boardingHouseId, Integer status);
 }
 

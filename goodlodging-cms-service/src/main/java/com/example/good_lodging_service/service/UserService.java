@@ -10,10 +10,7 @@ import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
-import com.example.good_lodging_service.entity.Address;
-import com.example.good_lodging_service.entity.Image;
-import com.example.good_lodging_service.entity.Role;
-import com.example.good_lodging_service.entity.User;
+import com.example.good_lodging_service.entity.*;
 import com.example.good_lodging_service.exception.AppException;
 import com.example.good_lodging_service.mapper.AddressMapper;
 import com.example.good_lodging_service.mapper.BoardingHouseMapper;
@@ -46,6 +43,7 @@ public class UserService {
     ImageRepository imageRepository;
     BoardingHouseRepository boardingHouseRepository;
     BoardingHouseMapper boardingHouseMapper;
+
     public UserResponseDTO createUser(UserCreateRequest request) {
         // find user by username, email, phone
         if (userRepository.existByUsernameOrEmailOrPhoneWithQuery(request.getUsername(), request.getEmail(), request.getPhone(), CommonStatus.ACTIVE.getValue()) > 0) {
@@ -121,26 +119,56 @@ public class UserService {
     }
 
     public List<BoardingHouseResponse> getMyBoardingHouses(Long userId) {
-        //get my boarding house
-        List<BoardingHouseResponse> boardingHouseResponses = boardingHouseRepository.findAllByUserIdAndStatus(userId,CommonStatus.ACTIVE.getValue())
-                .stream().map(boardingHouseMapper::toBoardingHouseResponse).toList();
+        // Lấy danh sách nhà trọ đang hoạt động
+        List<BoardingHouse> boardingHouses = boardingHouseRepository.findAllByUserIdAndStatus(userId, CommonStatus.ACTIVE.getValue());
+        if (boardingHouses.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        //get list boardingHouse id
-        List<Long> boardingHouseIds = boardingHouseResponses.stream().map(BoardingHouseResponse::getId).toList();
+        // Lấy danh sách ID
+        List<Long> boardingHouseIds = boardingHouses.stream()
+                .map(BoardingHouse::getId)
+                .collect(Collectors.toList());
 
-        //get list image
-        List<Image> images = imageRepository.findAllByEntityIdInAndEntityTypeAndStatus(boardingHouseIds, EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
+        Set<Long> addressIds = boardingHouses.stream()
+                .map(BoardingHouse::getAddressId)
+                .collect(Collectors.toSet());
+
+        // Lấy hình ảnh và nhóm theo ID nhà trọ
+        List<Image> images = imageRepository.findAllByEntityIdInAndEntityTypeAndStatus(
+                boardingHouseIds, EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
+
         Map<Long, List<String>> imageUrlMap = images.stream()
                 .collect(Collectors.groupingBy(
-                        Image::getEntityId, // Nhóm theo entityId
-                        Collectors.mapping(Image::getImageUrl, Collectors.toList()) // Lấy imageUrl thành List<String>
+                        Image::getEntityId,
+                        Collectors.mapping(Image::getImageUrl, Collectors.toList())
                 ));
 
-        // Gán danh sách imageUrl vào từng BoardingHouseResponse
-        boardingHouseResponses.forEach(response -> {
-            List<String> imageUrls = imageUrlMap.getOrDefault(response.getId(), Collections.emptyList());
-            response.setImageUrl(imageUrls);
+        // Lấy địa chỉ và ánh xạ theo ID
+        Map<Long, Address> addressMap = addressRepository.findAllById(addressIds).stream()
+                .collect(Collectors.toMap(Address::getId, address -> address));
+
+        return convertToListBoardingHouseResponse(boardingHouses, imageUrlMap, addressMap);
+    }
+
+    private List<BoardingHouseResponse> convertToListBoardingHouseResponse(List<BoardingHouse> boardingHouses, Map<Long, List<String>> imageUrlMap, Map<Long, Address> addressMap) {
+        // Chuyển đổi sang DTO
+        List<BoardingHouseResponse> responses = boardingHouses.stream()
+                .map(boardingHouseMapper::toBoardingHouseResponse)
+                .toList();
+
+        Map<Long, BoardingHouse> boardingHouseMap = new HashMap<>();
+        boardingHouses.forEach(boardingHouse -> {
+            boardingHouseMap.put(boardingHouse.getId(), boardingHouse);
         });
-        return boardingHouseResponses;
+        // Gán hình ảnh và địa chỉ vào response
+        responses.forEach(response -> {
+            response.setImageUrl(imageUrlMap.getOrDefault(response.getId(), Collections.emptyList()));
+            BoardingHouse boardingHouse = boardingHouseMap.get(response.getId());
+            Long addressId = boardingHouse != null ? boardingHouse.getAddressId() : null;
+            Address address = addressId != null ? addressMap.get(addressId) : null;
+            response.setAddress(address != null ? address.getFullAddress() : "");
+        });
+        return responses;
     }
 }

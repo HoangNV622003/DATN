@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameAndStatus(String username, Integer status);
     Optional<User> findByIdAndStatus(Long id, Integer status);
-
+    List<User> findAllByIdInAndStatus(List<Long> ids, Integer status);
     @Query(nativeQuery = true, value = """
                 SELECT EXISTS (
                     SELECT 1 FROM user u 
@@ -40,6 +40,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                                                   @Param("phone") String phone,
                                                   @Param("status") Integer status,
                                                   @Param("id") Long id);
-
+    @Query(value = "SELECT u FROM User u INNER JOIN RoomUser ru ON ru.userId=u.id WHERE ru.roomId=:roomId AND ru.status=:status AND u.status=:status")
+    List<User> findAllByRoomIdAndStatusWithQuery(@Param("roomId")Long roomId,@Param("status")Integer status);
     List<User> findAllByStatus(Integer status, Pageable pageable);
 }

@@ -24,7 +24,10 @@ public class PostDetailResponse {
     Float electricityPrice;
     Float waterPrice;
     Float otherPrice;
+    String address;
+    Integer type;
+    String description;
     List<String> imageUrl;
-    BoardingHouseResponse boardingHouse;
+    List<RoomResponse> emptyRooms;
     ProfileResponse authorInfo;
 }

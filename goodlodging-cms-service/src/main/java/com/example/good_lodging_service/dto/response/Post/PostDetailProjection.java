@@ -23,5 +23,6 @@ public interface PostDetailProjection {
     Float getWaterPrice();
     Float getElectricityPrice();
     Float getOtherPrice();
+    Integer getType();
     Instant getModifiedDate();
 }

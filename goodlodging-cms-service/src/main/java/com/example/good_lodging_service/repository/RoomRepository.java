@@ -33,5 +33,13 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
                 WHERE bh.id = :id AND bh.status = 1 AND r.status =1;
             """)
     Optional<RoomConfigProjection> findRoomConfigProjectionByBoardingHouseIdAndStatusWithQuery(@Param("id") Long id);
-
+    @Query(value = """
+                SELECT r FROM Room r LEFT JOIN RoomUser ru ON r.id = ru.roomId 
+                WHERE ru.roomId IS NULL 
+                    AND r.boardingHouseId=:boardingHouseId
+                    AND r.status=:status 
+            """)
+    List<Room> findAllByBoardingHouseIdAndStatusWithQuery(@Param("boardingHouseId") Long boardingHouseId,@Param("status") Integer status);
+    @Query(value = "SELECT r FROM Room r INNER JOIN RoomUser ru ON r.id = ru.roomId WHERE ru.userId=:userId AND ru.status=:status AND r.status=:status order by r.id limit 1")
+    Optional<Room> findByUserIdAndStatusWithQuery(@Param("userId") Long userId,@Param("status") Integer status);
 }
