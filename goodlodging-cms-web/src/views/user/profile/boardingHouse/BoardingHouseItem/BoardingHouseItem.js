@@ -77,12 +77,12 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete, o
             </div>
             <div className="container__house__information">
                 <p>{name}</p>
-                <p>Địa chỉ: {address}</p>
                 <p>Tiền phòng: {getPrice(minRent, maxRent)}đ</p>
                 <p>Diện tích phòng: {getArea(minArea, maxArea)}m²</p>
                 <p>Tiền điện: {electricityPrice}đ</p>
                 <p>Tiền nước: {waterPrice}đ</p>
                 <p>Chi phí khác: {otherPrice}đ</p>
+                <p>Địa chỉ: {address}</p>
             </div>
             {isSavePost ? (
                 <input

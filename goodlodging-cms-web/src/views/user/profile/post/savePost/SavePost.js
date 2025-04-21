@@ -11,7 +11,7 @@ import { getArea, getPrice } from '../../../../../utils/BoardingHouseConfig';
 import { toast } from 'react-toastify';
 
 const SavePost = () => {
-    const { user, token } = useAuth();
+    const { user, token,isLogin,loading } = useAuth();
     const { postId } = useParams();
     const navigate = useNavigate();
     const isEditMode = !!postId;
@@ -32,17 +32,24 @@ const SavePost = () => {
         boardingHouses: [],
     });
     const [file, setFile] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!user || !user.id) {
-            setError('Vui lòng đăng nhập để tiếp tục');
-            setLoading(false);
-            return;
+       
+        if (!loading) {
+            if (!isLogin || !user) {
+                toast.error("Vui lòng đăng nhập để tiếp tục")
+                navigate(`/${ROUTERS.AUTH.LOGIN}`);
+            }else{
+                handleFetchData();
+            }
         }
+        
+    }, [postId, isEditMode, token, user]);
+    const handleFetchData=async()=>{
         if (isEditMode) {
-            setLoading(true);
+            setLoadingData(true);
             fetchMyPost(postId,token)
                 .then((data) => {
                     setPost({
@@ -62,14 +69,14 @@ const SavePost = () => {
                         boardingHouseId: data.postResponse.boardingHouseId || '',
                         boardingHouses: Array.isArray(data.boardingHouses) ? data.boardingHouses : [],
                     });
-                    setLoading(false);
+                    setLoadingData(false);
                 })
                 .catch((err) => {
                     setError('Không thể tải dữ liệu bài đăng');
-                    setLoading(false);
+                    setLoadingData(false);
                 });
         } else {
-            setLoading(true);
+            setLoadingData(true);
             fetchAllHouse(user.id, token)
                 .then((data) => {
                     setPost({
@@ -87,16 +94,15 @@ const SavePost = () => {
                         boardingHouseId: '',
                         boardingHouses: Array.isArray(data) ? data : [],
                     });
-                    setLoading(false);
+                    setLoadingData(false);
                     console.log('boardingHouses', data);
                 })
                 .catch((err) => {
                     setError('Không thể tải dữ liệu bài đăng');
-                    setLoading(false);
+                    setLoadingData(false);
                 });
         }
-    }, [postId, isEditMode, token, user]);
-
+    }
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setPost((prev) => ({
@@ -125,7 +131,7 @@ const SavePost = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setLoadingData(true);
         setError(null);
 
         const formData = new FormData();
@@ -155,11 +161,11 @@ const SavePost = () => {
             setError('Lưu bài viết thất bại, vui lòng thử lại');
             toast.error('Lưu bài viết thất bại, vui lòng thử lại');
         } finally {
-            setLoading(false);
+            setLoadingData(false);
         }
     };
 
-    if (loading) {
+    if (loadingData) {
         return <div className="loading">Đang tải...</div>;
     }
 
@@ -258,20 +264,20 @@ const SavePost = () => {
                     />
                 </div>
                 <div className="form-buttons">
-                    <button type="submit" disabled={loading}>
-                        {loading ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo mới')}
+                    <button type="submit" disabled={loadingData}>
+                        {loadingData ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo mới')}
                     </button>
                     <button
                         type="button"
                         className="cancel"
                         onClick={() => navigate(`${ROUTERS.USER.PROFILE.replace('*', '')}${ROUTERS.USER.POST.MANAGEMENT}`)}
-                        disabled={loading}
+                        disabled={loadingData}
                     >
                         Hủy
                     </button>
                 </div>
                 {
-                    post.type === 1 && (
+                    post.type !== 2 && (
                         <div className="container__house__list">
                             <ListBoardingHouse
                                 boardingHouses={post.boardingHouses}

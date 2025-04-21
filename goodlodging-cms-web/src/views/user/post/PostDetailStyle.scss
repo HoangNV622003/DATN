@@ -21,7 +21,9 @@ $border-color: #ccc;
         background: white;
         border-radius: 8px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-
+        .list__room{
+            margin: 20px 0px;
+        }
         .post__title {
             padding-top: 10px;
             font-size: 28px;

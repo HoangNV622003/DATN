@@ -1,19 +1,15 @@
 import axios from "axios";
 import { API_URL } from "../../utils/ApiUrl";
-import { getToken } from "../../utils/service/localStorageService";
-const accessToken = getToken();
-export const fetchFavoritePosts = async (id,token) => {
-    console.log('accessToken:',token)
+export const fetchFavoritePosts = async (id,accessToken) => {
     return await axios.get(`${API_URL}/favorite-posts/${id}`, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
         },
     });
 };
 
-export const createFavoritePost = async (payload) => {
-    console.log("token:",accessToken)
+export const createFavoritePost = async (payload,accessToken) => {
     return await axios.post(`${API_URL}/favorite-posts`, payload, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -21,10 +17,7 @@ export const createFavoritePost = async (payload) => {
         },
     });
 };
-export const deleteFavoritePost = async (payload) => {
-    console.log("delete")
-    console.log("userId:",payload.userId);
-    console.log("postIds:",payload.postIds);
+export const deleteFavoritePost = async (payload,accessToken) => {
     return await axios.delete(`${API_URL}/favorite-posts`, {
         data: payload,
         headers: {

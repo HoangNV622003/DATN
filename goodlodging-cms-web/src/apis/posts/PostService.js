@@ -1,8 +1,6 @@
 import axios from "axios";
-import { getToken } from "../../utils/service/localStorageService";
 
 import { API_URL } from "../../utils/ApiUrl";
-const accessToken = getToken();
 export const searchPost = async (page = 0, payload) => {
     try {
         const response = await axios.post(`${API_URL}/posts/search`, payload, {
@@ -32,12 +30,12 @@ export const fetchAllPost = async (page = 0) => {
         throw error;
     }
 }
-export const createPost = async (payload,token) => {
+export const createPost = async (payload,accessToken) => {
     try {
         const response = await axios.post(`${API_URL}/posts`, payload, {
             headers: {
                 "Content-Type": 'multipart/form-data',
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         })
         return response.data;
@@ -45,12 +43,12 @@ export const createPost = async (payload,token) => {
         throw error;
     }
 }
-export const updatePost = async (id, payload,token) => {
+export const updatePost = async (id, payload,accessToken) => {
     try {
         const response = await axios.put(`${API_URL}/posts/${id}`, payload, {
             headers: {
                 "Content-Type": 'multipart/form-data',
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         })
         return response.data;
@@ -58,11 +56,11 @@ export const updatePost = async (id, payload,token) => {
         throw error;
     }
 }
-export const deletePost = async (payload,token) => {
+export const deletePost = async (payload,accessToken) => {
     try {
         const response = await axios.delete(`${API_URL}/posts/${payload}`, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         })
         return response.data;
@@ -80,12 +78,7 @@ export const findRoomMate = async (payload, token) => {
     })
 }
 export const getPost = async (id) => {
-    try {
-        const response = await axios.get(`${API_URL}/posts/${id}`)
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+    return await axios.get(`${API_URL}/posts/${id}`);
 }
 export const fetchMyPost = async (postId) => {
     try {

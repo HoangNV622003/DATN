@@ -75,6 +75,13 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
       toast.error(error.response?.data?.message || 'Không thể xóa phòng!');
     }
   };
+  const handlePaymentHistory = async (roomId) => {
+    if (!roomId) {
+      toast.warn('Không thể điều hướng: ID phòng không hợp lệ!');
+      return;
+    }
+    navigate(ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.ROOMS.PAYMENT_HISTORY.replace(":id", roomId));
+  }
 
   const handleNavigateToRoomDetail = async (roomId) => {
     if (!roomId) {
@@ -194,6 +201,7 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
           <div className="button-group">
             <button type="button" className="room-btn-remove" onClick={() => handleRemoveRoom(room.id)}>Xóa phòng</button>
             <button type="button" className="room-btn-update" onClick={() => handleNavigateToRoomDetail(room.id)}>Cập nhật</button>
+            <button type="button" className='room-btn-payment' onClick={() => handlePaymentHistory(room.id)}>Lịch sử thanh toán</button>
           </div>
         </div>
       ))}

@@ -1,28 +1,25 @@
 import axios from "axios";
 import { API_URL } from "../../utils/ApiUrl"
-import { getToken } from "../../utils/service/localStorageService"
-const accessToken = getToken();
-export const createRoom = async (payload,token) => {
+export const createRoom = async (payload,accessToken) => {
     console.log("token:",accessToken)
     return await axios.post(`${API_URL}/rooms`, payload, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         }
     });
 }
 
-export const updateRoom = async (roomId, payload,token) => {
+export const updateRoom = async (roomId, payload,accessToken) => {
     return await axios.put(`${API_URL}/rooms/${roomId}`, payload, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         }
     });
 }
 
-export const deleteRoom = async (boardingHouseId, roomId,token) => {
-    console.log("accessToken", token)
+export const deleteRoom = async (boardingHouseId, roomId,accessToken) => {
     const roomIds = [roomId];
     return await axios.delete(`${API_URL}/rooms`, {
         data: {
@@ -37,38 +34,37 @@ export const deleteRoom = async (boardingHouseId, roomId,token) => {
     });
 }
 
-export const getRoom = async (roomId,token) => {
+export const getRoom = async (roomId,accessToken) => {
     return axios.get(`${API_URL}/rooms/${roomId}`, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         }
     });
 }
-export const addUserToRoom = async (payload,token) => {
+export const addUserToRoom = async (payload,accessToken) => {
     return axios.post(`${API_URL}/room-user`, payload, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         }
     });
 }
-export const removeUserFromRoom=async(payload,token)=>{
+export const removeUserFromRoom=async(payload,accessToken)=>{
     return axios.delete(`${API_URL}/room-user`,{
         headers:{
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json"
         },
         data:payload
     });
 }
 
-export const fetchMyRoom=async(userId,token)=>{
-    console.log("accessToken:",token)
+export const fetchMyRoom=async(userId,accessToken)=>{
     return axios.get(`${API_URL}/rooms/my-room/${userId}`,
         {
             headers:{
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
                 "Content-Type": "application/json"
             },
         }

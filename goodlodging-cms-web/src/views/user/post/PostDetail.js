@@ -8,9 +8,14 @@ import defaultRoom from "../../../assets/images/defaultRoom.png"
 import { IMAGE_URL } from "../../../utils/ApiUrl";
 import {getArea, getPrice} from "../../../utils/BoardingHouseConfig"
 import AuthorInformation from "../../../components/authorInformation/AuthorInformation";
+import ListRoomEmpty from "../../../components/room/ListRoomEmpty";
+import { type } from "@testing-library/user-event/dist/type";
+import { getTitle } from "../../../utils/PostUtils";
 const PostDetail = () => {
     const { id } = useParams();
     const [postDetail, setPostDetail] = useState(null);
+    const [emptyRooms, setEmptyRooms] = useState([]);
+    const [authorInfo, setAuthorInfo] = useState(null)
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,27 +23,30 @@ const PostDetail = () => {
         try {
             setError("");
             setLoading(true);
-            const response = await getPost(id);
+            const response = (await getPost(id)).data;
             setPostDetail({
-                authorInfo: {
-                    id: response.authorInfo.userId || null,
-                    imageUrl: response.authorInfo.imageUrl || '',
-                    fullName: response.authorInfo.fullName,
-                    email: response.authorInfo.email || '',
-                    phoneNumber: response.authorInfo.phoneNumber || ''
-                },
-                boardingHouse: response.boardingHouse,
+                address: response.address || '',
+                emptyRooms: response.emptyRooms || [],
                 imageUrl: response.imageUrl || [],
                 title: response.title || '',
                 maxArea:response.maxArea || 0,
                 minArea:response.minArea || 0,
                 maxRent:response.maxRent || 0,
                 minRent:response.minRent || 0,
+                description: response.description || '',
                 otherPrice:response.otherPrice || 0,
                 electricityPrice:response.electricityPrice || 0,
                 waterPrice:response.waterPrice || 0,
-
+                type:response.type || 0
             });
+            setEmptyRooms(response.emptyRooms || []);
+            setAuthorInfo({
+                id: response.authorInfo.userId || null,
+                imageUrl: response.authorInfo.imageUrl || '',
+                fullName: response.authorInfo.fullName,
+                email: response.authorInfo.email || '',
+                phoneNumber: response.authorInfo.phoneNumber || ''
+            })
         } catch (error) {
             setError("Có lỗi khi lấy dữ liệu, vui lòng thử lại sau");
             setPostDetail(null);
@@ -102,7 +110,7 @@ const PostDetail = () => {
                         {postDetail?.title || "Không có tiêu đề"}
                     </p>
                     <p className="post__address">
-                        {postDetail?.boardingHouse?.address || "Không có địa chỉ"}
+                        {postDetail?.address || "Không có địa chỉ"}
                     </p>
                     <div className="container__suggestion__post"></div>
                 </div>
@@ -141,9 +149,9 @@ const PostDetail = () => {
                         ))}
                     </div>
                 </div>
-                <p className="post__title">{postDetail?.title || "Không có tiêu đề"}</p>
+                <p className="post__title">{getTitle(postDetail.type,postDetail.title) || "Không có tiêu đề"}</p>
                 <p className="post__address">
-                    {postDetail?.boardingHouse?.address || "Không có địa chỉ"}
+                    {postDetail?.address || "Không có địa chỉ"}
                 </p>
                 <div className="main__post">
                     <div className="house__area">
@@ -157,6 +165,7 @@ const PostDetail = () => {
                 </div>
                 <div className="list__room">
                     <p>Danh sách phòng trống:</p>
+                    <ListRoomEmpty rooms={emptyRooms}/>
                 </div>
                 <table className="expect_costs">
                     <tr className="title">
@@ -185,14 +194,14 @@ const PostDetail = () => {
                 </table>
                 <div className="post__description__information">
                     <p>Thông tin mô tả</p>
-                    <p>{postDetail.boardingHouse.description}</p>
+                    <p>{postDetail.description}</p>
                 </div>
                 <hr />
                 {/* <div className="container__suggestion__post">
                     <p>Dành cho bạn</p>
                 </div> */}
             </div>
-            <AuthorInformation data={postDetail.authorInfo} />
+            <AuthorInformation data={authorInfo} />
         </div>
     );
 };

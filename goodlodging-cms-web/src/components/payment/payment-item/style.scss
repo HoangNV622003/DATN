@@ -1,0 +1,182 @@
+.payment-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.card-id {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.card-due-date {
+  color: #555;
+  font-size: 14px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.usage-info,
+.financial-info {
+  display: flex;
+  gap: 16px; /* Giảm gap từ 24px xuống 16px cho đồng đều */
+}
+
+.usage-info span,
+.financial-info span {
+  flex: 1; /* Mỗi span chiếm không gian đều nhau */
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between; /* Căn chỉnh nhãn và giá trị */
+  align-items: center;
+  padding: 4px 8px; /* Thêm padding để tạo không gian */
+  border-radius: 4px;
+  background: #f8f9fa; /* Nền nhẹ để phân biệt */
+}
+
+.description span {
+  font-size: 14px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.description span:hover {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.status {
+  font-size: 14px;
+}
+
+.paid-status {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.unpaid-status {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pay-button,
+.edit-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.pay-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.pay-button:hover {
+  background-color: #0056b3;
+}
+
+.edit-button {
+  background-color: #ffc107;
+  color: black;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .payment-card {
+    padding: 12px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .card-id {
+    font-size: 14px;
+  }
+
+  .card-due-date {
+    font-size: 12px;
+  }
+
+  .usage-info,
+  .financial-info {
+    flex-direction: column;
+    gap: 12px; /* Tăng gap từ 8px lên 12px cho rõ ràng */
+  }
+
+  .usage-info span,
+  .financial-info span {
+    font-size: 12px;
+    padding: 4px 6px; /* Giảm padding nhẹ */
+    justify-content: space-between; /* Giữ căn chỉnh nhãn và giá trị */
+  }
+
+  .description span {
+    font-size: 12px;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .status {
+    font-size: 12px;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .pay-button,
+  .edit-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

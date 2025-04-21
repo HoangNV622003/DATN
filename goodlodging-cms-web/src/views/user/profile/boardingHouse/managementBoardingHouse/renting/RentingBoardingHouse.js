@@ -3,7 +3,6 @@ import './style.scss';
 import { fetchMyRoom } from '../../../../../../apis/room/RoomService';
 import { useAuth } from '../../../../../../context/AuthContext';
 import defaultAvatar from '../../../../../../assets/images/defaultAvatar.jpg';
-import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../../utils/router/Router';
 import { toast } from 'react-toastify';
@@ -11,32 +10,31 @@ import FindRoommatePopup from '../../../../../../components/popup/findRoomMatePo
 import { findRoomMate } from '../../../../../../apis/posts/PostService';
 const RentingBoardingHouse = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpenseListVisible, setIsExpenseListVisible] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Thêm state loading cho request
-  const { user, token } = useAuth();
+  const { user, token,isLogin,loading } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await fetchMyRoom(user.id, token);
-        setData(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user.id, token]);
-
-  if (loading) {
-    return <div className="room-info-container">Đang tải dữ liệu...</div>;
+  const handleFetchData=async(userId,accessToken)=>{
+    try {
+      const result = await fetchMyRoom(userId, accessToken);
+      setData(result.data);
+    } catch (err) {
+      setError(err.message);
+    }
   }
+  useEffect(() => {
+    if(!loading){
+      if(!user||!isLogin){
+        toast.error("Vui lòng đăng nhập để tiếp tục")
+        navigate(`/${ROUTERS.AUTH.LOGIN}`);
+
+      }else{
+        handleFetchData(user.id,token);
+      }
+    }
+  }, [isLogin,loading, user, navigate]);
 
   if (error) {
     return <div className="room-info-container">Lỗi: {error}</div>;
@@ -46,7 +44,7 @@ const RentingBoardingHouse = () => {
     return <div className="room-info-container">Không có dữ liệu để hiển thị</div>;
   }
 
-  const { roomDetail, host, boardingHouse, expenses } = data;
+  const { roomDetail, host, boardingHouse, payments } = data;
 
   const totalExpenses = () => {
     return roomDetail.room.price + boardingHouse.waterPrice + boardingHouse.electricityPrice;
@@ -197,29 +195,6 @@ const RentingBoardingHouse = () => {
           </div>
           <button className="btn-send-message">Nhắn tin</button>
         </div>
-      </section>
-
-      {/* Thống kê chi phí với mũi tên */}
-      <section className="section">
-        <h2 onClick={toggleExpenseList} className="toggle-header">
-          Thống kê chi phí
-          {isExpenseListVisible ? <BsChevronUp /> : <BsChevronDown />}
-        </h2>
-        {isExpenseListVisible && (
-          <div className="expense-list">
-            {expenses.map((expense) => (
-              <div key={expense.id} className="expense-item">
-                <div className="info-item"><span className="label">Mã chi phí:</span> {expense.id}</div>
-                <div className="info-item"><span className="label">Tên:</span> {expense.name}</div>
-                <div className="info-item"><span className="label">Số tiền:</span> {expense.amount.toLocaleString('vi-VN')} VND</div>
-                <div className="info-item"><span className="label">Ngày thanh toán:</span> {new Date(expense.paymentDate).toLocaleDateString('vi-VN')}</div>
-                <div className="info-item"><span className="label">Hạn thanh toán:</span> {new Date(expense.dueDate).toLocaleDateString('vi-VN')}</div>
-                <div className="info-item"><span className="label">Ghi chú:</span> {expense.notes}</div>
-                <div className="info-item"><span className="label">Trạng thái:</span> {expense.status === 1 ? <span style={{ color: 'blue' }}>Đã thanh toán</span> : <span style={{ color: 'red' }}>Chưa thanh toán</span>}</div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* Popup tìm người ở ghép */}

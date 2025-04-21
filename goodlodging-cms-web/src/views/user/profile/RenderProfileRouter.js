@@ -8,12 +8,16 @@ import { ROUTERS } from '../../../utils/router/Router';
 import ChatPopUp from '../../../components/chat/ChatPopUp';
 const RenderProfileRouter = () => {
   const navigate=useNavigate();
-  const {user,isLogin}=useAuth();
-  useEffect(()=>{
-    if(!user||!isLogin){
-      navigate(`/${ROUTERS.AUTH.LOGIN}`)
+  const {user,loading,isLogin}=useAuth();
+  useEffect(() => {
+    // Chỉ chạy logic sau khi loading hoàn tất
+    if (!loading) {
+        if (!isLogin || !user) {
+            alert("Vui lòng đăng nhập");
+            navigate(`/${ROUTERS.AUTH.LOGIN}`);
+        }
     }
-  })
+}, [isLogin, user, loading, navigate]);
   return (
       <Routes>
         <Route 

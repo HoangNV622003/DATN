@@ -28,7 +28,6 @@ const JwtLogin = () => {
             const response = await loginUser(payload);
             if (response.result) {
                 const accessToken = response.result.accessToken;
-                console.log("token: ",accessToken)
                 login(accessToken);
                 navigate(`${ROUTERS.USER.HOME}`);
             }

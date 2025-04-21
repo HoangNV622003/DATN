@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../utils/router/Router';
-import { MdOutlineModeEdit } from "react-icons/md";
 import "./style.scss";
 import defaultAvatar from "../../../../assets/images/defaultAvatar.jpg";
 
@@ -11,8 +10,12 @@ const ProfileContent = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!loading && (!isLogin || !user)) {
-            navigate(`/${ROUTERS.AUTH.LOGIN}`);
+        // Chỉ chạy logic sau khi loading hoàn tất
+        if (!loading) {
+            if (!isLogin || !user) {
+                alert("Vui lòng đăng nhập");
+                navigate(`/${ROUTERS.AUTH.LOGIN}`);
+            }
         }
     }, [isLogin, user, loading, navigate]);
 
@@ -42,11 +45,6 @@ const ProfileContent = () => {
             </div>
             <label htmlFor="phone">Số điện thoại</label>
             <input type="text" name='phone' defaultValue={user.phone || ""} />
-                <label htmlFor="container__address">Địa chỉ</label>
-            <div className="container__address">
-                <input type="text" name='address' defaultValue={user.address || ""} />
-                <button type="button">Cập nhật</button>
-            </div>
             <label>Giới tính</label>
             <div className="container__gender">
                 <input type="radio" name="gender" value="male" defaultChecked={user.gender === "male"} /> Nam

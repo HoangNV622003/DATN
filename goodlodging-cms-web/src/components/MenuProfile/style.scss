@@ -72,7 +72,8 @@ $spacing: 15px;
 
     // Dropdown menu styling (post-nav và boarding-house-nav)
     &.post-nav,
-    &.boarding-house-nav {
+    &.boarding-house-nav,
+    &.payment-nav {
       > div {
         display: flex;
         align-items: center;

@@ -1,0 +1,156 @@
+/* Biến màu sắc */
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$error-color: #ff4d4f;
+$border-color: #e8e8e8;
+$text-color: #333;
+$background-color: #fff;
+$hover-color: #40a9ff;
+
+/* Biến khoảng cách */
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+/* Biến font */
+$font-size-base: 16px;
+$font-size-lg: 18px;
+
+.list-payment {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-md;
+
+  .title {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $text-color;
+    margin-bottom: $spacing-lg;
+  }
+
+  .payment-item {
+    background: $background-color;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: $spacing-md;
+    margin-bottom: $spacing-lg;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    .payment-id {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $text-color;
+      margin-bottom: $spacing-sm;
+    }
+
+    .due-date {
+      color: lighten($text-color, 20%);
+      margin-bottom: $spacing-md;
+    }
+
+    /* Sắp xếp 2 cột bằng Flexbox */
+    .payment-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-md;
+
+      /* Mỗi trường chiếm 50% chiều rộng, trừ margin */
+      > div {
+        flex: 1 1 calc(50% - #{$spacing-md});
+        min-width: 200px;
+
+        label {
+          display: block;
+          font-weight: 500;
+          color: $text-color;
+          margin-bottom: $spacing-sm;
+        }
+
+        input {
+          width: 100%;
+          max-width: 200px; /* Giới hạn chiều rộng cho input, đặc biệt là Ghi chú */
+          padding: $spacing-sm;
+          border: 1px solid $border-color;
+          border-radius: 4px;
+          font-size: $font-size-base;
+          transition: border-color 0.3s;
+
+          &:focus {
+            border-color: $primary-color;
+            outline: none;
+          }
+        }
+
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        p {
+          margin: 0;
+          color: $text-color;
+        }
+
+        span {
+          margin-left: $spacing-sm;
+          color: lighten($text-color, 10%);
+        }
+      }
+    }
+
+    .status-note {
+      font-weight: 500;
+      margin-top: $spacing-md;
+    }
+
+    .unpaid .status-note {
+      color: $error-color;
+    }
+
+    .paid .status-note {
+      color: $success-color;
+    }
+
+    .pay-btn {
+      background-color: $primary-color;
+      color: $background-color;
+      border: none;
+      padding: $spacing-sm $spacing-md;
+      border-radius: 4px;
+      font-size: $font-size-base;
+      cursor: pointer;
+      margin-top: $spacing-md;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: $hover-color;
+      }
+
+      &:focus {
+        outline: 2px solid $primary-color;
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  /* Responsive: 1 cột trên màn hình nhỏ */
+  @media (max-width: 768px) {
+    .payment-item {
+      padding: $spacing-sm;
+
+      .payment-details > div {
+        flex: 1 1 100%;
+        min-width: 100%;
+
+        input {
+          max-width: 100%; /* Đảm bảo input chiếm toàn bộ chiều rộng trên mobile */
+        }
+      }
+    }
+  }
+}

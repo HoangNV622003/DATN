@@ -13,6 +13,7 @@ const ProfileMenu = () => { // Không cần nhận props nữa
   const [isBoardingOpen, setIsBoardingOpen] = useState(false);
   const [isRoomRentingOpen, setIsRoomRentingOpen] = useState(false);
   const [isForRent,setIsForRent]=useState(false)
+  const [isPaymentOpen,setIsPaymentOpen]=useState(false)
   const handleNavigateToCreatePost = () => {
     navigate(`${ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.POST.CREATE}`);
   };
@@ -35,6 +36,9 @@ const ProfileMenu = () => { // Không cần nhận props nữa
     logout();
     navigate(`/${ROUTERS.AUTH.LOGIN}`);
   };
+  const handleNavigateToManagePayment=()=>{
+    navigate(`${ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.BOARDING_HOUSE.MANAGEMENT_PAYMENT}`)
+  }
 const handleNavigateToChatPage=()=>{
         navigate(ROUTERS.USER.MESSAGE)
     }
@@ -82,7 +86,7 @@ const handleNavigateToChatPage=()=>{
             </div>
             <ul className={isRoomRentingOpen ? 'active' : ''}>
               <li onClick={handleNavigateToMyBoardingHouseRenting}>Thông tin phòng trọ</li>
-              <li>Thống kê chi tiêu</li>
+              <li onClick={handleNavigateToManagePayment}>Thống kê chi tiêu</li>
             </ul>
           </li>
         </ul>

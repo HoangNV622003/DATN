@@ -12,6 +12,8 @@ import { ROUTERS } from "../utils/router/Router";
 import SavePost from './user/profile/post/savePost/SavePost'; // Đảm bảo đường dẫn đúng
 import ForRentBoardingHouse from "./user/profile/boardingHouse/managementBoardingHouse/forRent/ForRentBoardingHouse";
 import RentingBoardingHouse from "./user/profile/boardingHouse/managementBoardingHouse/renting/RentingBoardingHouse";
+import ManagePayments from "./user/profile/boardingHouse/managementBoardingHouse/payment/managePayments/ManagePayments";
+import RoomPaymentsHistory from "./user/profile/boardingHouse/managementBoardingHouse/payment/myPaymentsHistory/RoomPaymentsHistory";
 
 const profileRouter = [
   {
@@ -74,6 +76,14 @@ const profileRouter = [
     path: ROUTERS.USER.ROOMS.DETAIL, // boardingHouse/:boardingHouseId/rooms/detail/:roomId
     element: <RoomDetail />,
   },
+  {
+    path: ROUTERS.USER.BOARDING_HOUSE.MANAGEMENT_PAYMENT, // boardingHouse/:boardingHouseId/payment
+    element: <ManagePayments />,
+  },
+  {
+    path: ROUTERS.USER.ROOMS.PAYMENT_HISTORY, // boardingHouse/:boardingHouseId/rooms/history-payment/:roomId
+    element:<RoomPaymentsHistory/>
+  }
 ];
 
 console.log('ProfileRouter defined:', profileRouter.map(item => ({

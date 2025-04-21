@@ -1,8 +1,5 @@
 import axios from "axios";
-import { getToken } from "../../utils/service/localStorageService";
 import { API_URL } from "../../utils/ApiUrl";
-const accessToken = getToken;
-
 export const loginUser = async (payload) => {
   try {
     const response = await axios.post(`${API_URL}/auth/token`, payload, {
@@ -113,7 +110,7 @@ export const resendOtp = async (payload) => {
 };
 
 // payload={userId, oldPassword, newPassword, confirmNewPassword}
-export const changePassword = async (payload) => {
+export const changePassword = async (payload,accessToken) => {
   try {
     const response = await axios.put(
       `${API_URL}/auth/reset-password`,

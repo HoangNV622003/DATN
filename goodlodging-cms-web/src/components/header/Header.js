@@ -10,6 +10,7 @@ import "./style.scss";
 import { ROUTERS } from "../../utils/router/Router";
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
+import { toast } from "react-toastify";
 
 const Header = () => {
     const {openChat}=useChat();
@@ -31,7 +32,18 @@ const Header = () => {
         navigate("/"); // Điều hướng về trang chủ
     };
     const handleNavigateToFavoritePost=()=>{
-        navigate(ROUTERS.USER.FAVORITE_POST);
+        if(isLogin){
+            navigate(ROUTERS.USER.FAVORITE_POST);
+        }else{
+            toast.error("Vui lòng đăng nhập để thực hiện chức năng này")
+        }
+    }
+    const handleNavigateToCreatePost=()=>{
+        if(isLogin){
+            navigate(ROUTERS.USER.PROFILE.replace("*","")+ROUTERS.USER.POST.CREATE)
+        }else{
+            toast.error("Vui lòng đăng nhập để thực hiện chức năng này")
+        }
     }
     useEffect(() => {
         console.log("isLogin:", isLogin);
@@ -52,7 +64,7 @@ const Header = () => {
                         <CiHeart className="header__icon__like" aria-label="Yêu thích" />
                         <p>Yêu thích</p>
                     </button>
-                    <button className="header__button">Đăng Tin</button>
+                    <button className="header__button" onClick={handleNavigateToCreatePost}>Đăng Tin</button>
                     {isLogin && user ? (
                         <div className="header__buttons">
                             <button className="header__button" onClick={handleNavigateToMessagePage}>
