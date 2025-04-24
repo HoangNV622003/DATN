@@ -6,6 +6,7 @@ import SearchPage from "./user/searchPage/SearchPage";
 import FavoritePost from "./user/favoritePost/FavoritePost";
 import AuthorPosts from "./user/authorPost/AuthorPosts";
 import ChatPage from "./user/chatPage/ChatPage";
+import VNPayResult from "./user/vnpay/vnpay-result/VNPayResult";
 
 const managementRouter = [
   {
@@ -35,6 +36,10 @@ const managementRouter = [
   {
     path:ROUTERS.USER.CHAT,
     element:<ChatPage/>
+  },
+  {
+    path: ROUTERS.USER.VNPAY.RETURN,
+    element:<VNPayResult/>
   }
 ];
 

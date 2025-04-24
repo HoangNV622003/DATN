@@ -1,4 +1,5 @@
 import { ROUTERS } from "../../../utils/router/Router";
+import ChangePassword from "./ChangePassword/ChangePassword";
 import ForgotPassword from "./ForgotPassword/ForgotPassword";
 import JwtLogin from "./Login/JwtLogin";
 import RegisterForm from "./register/RegisterFrom";
@@ -25,6 +26,10 @@ const sessionRouter=[
     {
         path:ROUTERS.AUTH.VERIFY_OTP,
         element: <VerifyOTP/>
+    },
+    {
+        path:ROUTERS.AUTH.CHANGE_PASSWORD,
+        element: <ChangePassword/>
     }
 
 ]

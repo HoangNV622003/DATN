@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../../../utils/router/Router';
-import { fetchMyRoomInvoice } from '../../../../../../../apis/payment/PaymentService';
+import { createPayment, fetchMyRoomInvoice } from '../../../../../../../apis/payment/PaymentService';
 import { toast } from 'react-toastify';
 import ListPayment from '../../../../../../../components/payment/payment-list/ListPayment';
 
@@ -28,11 +28,23 @@ const ManagePayments = () => {
     }
   };
 
-  const handlePay = async (paymentId, formData) => {
-    // Thanh toán sẽ được xử lý trong PaymentPage
-    console.log('handlePay called with paymentId:', paymentId, 'formData:', formData); // Debug
-    toast.info(`Chuyển đến trang thanh toán ${paymentId}`);
-    //navigate(`/payment/${paymentId}`); // Điều hướng (dự phòng)
+  const handlePay = async ( formData) => {
+    const payload={
+      invoiceId: formData.paymentId,
+      amount: formData.amount,
+    }   
+    try {
+      const result = await createPayment(payload, token);
+      if (result.status === 200) {
+        window.location.href = result.data.url; // Redirect to payment page
+      } else {
+        toast.error('Có lỗi xảy ra khi thanh toán');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error('Có lỗi xảy ra khi thanh toán');
+    }
+
   };
 
   useEffect(() => {

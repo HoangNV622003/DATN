@@ -47,12 +47,6 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
     payButtonRef.current?.focus(); // Focus lại nút Thanh Toán
   };
 
-  const handleNavigatePaymentPage = (id) => {
-    console.log('Navigating to payment page for id:', id); // Debug
-    toast.info(`Chuyển đến trang thanh toán ${id}`);
-    navigate(`/payment/${id}`); // Điều hướng đến trang thanh toán
-  };
-
   const handleConfirmPay = async (paymentId, userId) => {
     console.log('Confirming payment:', { paymentId, userId }); // Debug
     try {
@@ -119,7 +113,10 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
             <button
               ref={payButtonRef}
               className="pay-button"
-              onClick={isManagement ? () => handleNavigatePaymentPage(payment.id) : handleOpenModal}
+              onClick={isManagement ? () => onPay({
+                paymentId: payment.id,
+                amount: calculateTotal(payment),
+              }) : handleOpenModal}
               aria-label="Thanh toán hóa đơn"
             >
               Thanh Toán

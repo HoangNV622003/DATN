@@ -42,10 +42,11 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+   
     const fetchUserInfo = async (userId, accessToken) => {
         try {
             const response = await getUser(userId, accessToken);
-            setUser(response);
+            setUser(response.data);
             setIsLogin(true);
         } catch (error) {
             console.error("Lỗi khi lấy thông tin người dùng:", error);
@@ -86,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, addressData, token, isLogin, login, logout, loading }}
+            value={{ user, addressData, token, isLogin, login, logout, loading,setUser }}
         >
             {children}
         </AuthContext.Provider>

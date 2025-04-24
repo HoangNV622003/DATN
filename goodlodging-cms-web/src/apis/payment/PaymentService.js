@@ -46,5 +46,24 @@ export const confirmPayment = async (paymentId,userId, accessToken) => {
       userId: userId,
     },
   });
-  
+}
+export const createPayment = async (payload, accessToken) => {
+  return await axios.post(`${API_URL}/payment/create_payment`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+export const fetchPaymentResult = async (payload, accessToken) => {
+  return await axios.get(`${API_URL}/payment/payment_info`, {
+    params: {
+      vnp_ResponseCode:payload.vnp_ResponseCode,
+      vnp_OrderInfo:payload.vnp_OrderInfo,
+      payerId:payload.payerId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 }

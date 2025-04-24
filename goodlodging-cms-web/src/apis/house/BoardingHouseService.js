@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getToken } from "../../utils/service/localStorageService";
 import { API_URL } from "../../utils/ApiUrl";
 export const fetchAllHouse = async (userId,accessToken) => {
   try {

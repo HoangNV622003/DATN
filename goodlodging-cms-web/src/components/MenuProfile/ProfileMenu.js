@@ -5,6 +5,7 @@ import { ROUTERS } from '../../utils/router/Router';
 import { BsChevronDown } from "react-icons/bs";
 import defautAvatar from '../../assets/images/logo512.png';
 import { useAuth } from '../../context/AuthContext';
+import { IMAGE_URL } from '../../utils/ApiUrl';
 
 const ProfileMenu = () => { // Không cần nhận props nữa
   const { user, logout } = useAuth(); // Lấy user trực tiếp từ context
@@ -47,8 +48,8 @@ const handleNavigateToChatPage=()=>{
   return (
     <div className='profile-menu'>
       <div className="profile-header">
-        <img src={user.imageUrl || defautAvatar} alt={user.fullname || 'Profile'} />
-        <h3>{user.fullname || "Người dùng"}</h3>
+        <img src={IMAGE_URL+ user.imageUrl || defautAvatar} alt={user.fullname || 'Profile'} />
+        <h3>{user.firstName+" "+user.lastName || "Người dùng"}</h3>
       </div>
       <nav className="profile-nav">
         <p onClick={handleNavigateToMyProfile}>Thông tin cá nhân</p>
