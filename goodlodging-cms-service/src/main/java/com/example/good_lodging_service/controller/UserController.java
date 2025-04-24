@@ -29,13 +29,13 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public ApiResponse<List<UserResponseDTO>> getUsers(@PageableDefault(size = 15, sort = "dateUpdated", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ApiResponse.<List<UserResponseDTO>>builder().result(userService.getAllUsers(pageable)).build();
+    public ResponseEntity<List<UserResponseDTO>> getUsers(@PageableDefault(size = 15, sort = "dateUpdated", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @PostMapping
-    public ApiResponse<UserResponseDTO> createUser(@RequestBody UserCreateRequest requestDTO) {
-        return ApiResponse.<UserResponseDTO>builder().result(userService.createUser(requestDTO)).build();
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserCreateRequest requestDTO) {
+        return ResponseEntity.ok(userService.createUser(requestDTO));
     }
 
     @GetMapping("/{userId}")
@@ -43,19 +43,19 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
-    @PutMapping("/{userId}")
-    public ApiResponse<UserResponseDTO> updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequest requestDTO) {
-        return ApiResponse.<UserResponseDTO>builder().result(userService.updateUser(userId, requestDTO)).build();
+    @PutMapping(consumes = "multipart/form-data",value = "/{userId}")
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userId, @ModelAttribute UserUpdateRequest requestDTO) {
+        return ResponseEntity.ok(userService.updateUser(userId, requestDTO));
     }
 
     @DeleteMapping("/{userId}")
-    public ApiResponse<CommonResponse> deleteUser(@PathVariable Long userId) {
-        return ApiResponse.<CommonResponse>builder().result(userService.deleteUser(userId)).build();
+    public ResponseEntity<CommonResponse> deleteUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.deleteUser(userId));
     }
 
     @PatchMapping("/{userId}")
-    public ApiResponse<CommonResponse> updatePassword(@PathVariable Long userId, @RequestBody UpdatePasswordRequest requestDTO) {
-        return ApiResponse.<CommonResponse>builder().result(userService.updatePassword(userId, requestDTO)).build();
+    public ResponseEntity<CommonResponse> updatePassword(@PathVariable Long userId, @RequestBody UpdatePasswordRequest requestDTO) {
+        return ResponseEntity.ok(userService.updatePassword(userId, requestDTO));
     }
 
     @GetMapping("/{userId}/boarding-house")

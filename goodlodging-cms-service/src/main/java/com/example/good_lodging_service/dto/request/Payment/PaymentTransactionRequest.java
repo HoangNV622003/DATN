@@ -1,10 +1,9 @@
-package com.example.good_lodging_service.dto.request.PaymentTransaction;
+package com.example.good_lodging_service.dto.request.Payment;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Getter
 @Setter

@@ -18,7 +18,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findAllByEntityIdAndEntityTypeAndStatus(Long entityId, Integer entityType, Integer status);
 
     Optional<Image> findByIdAndStatus(Long id, Integer status);
-
+    Optional<Image> findByEntityIdAndEntityTypeAndStatus(Long entityId, Integer entityType, Integer status);
     List<Image> findAllByEntityIdInAndEntityTypeAndStatus(List<Long> entityId, Integer entityType, Integer status);
 
     @Query("""

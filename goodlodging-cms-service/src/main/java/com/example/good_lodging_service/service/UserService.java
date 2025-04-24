@@ -9,6 +9,7 @@ import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
+import com.example.good_lodging_service.dto.response.Image.ImageResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.*;
 import com.example.good_lodging_service.exception.AppException;
@@ -25,6 +26,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,6 +45,7 @@ public class UserService {
     ImageRepository imageRepository;
     BoardingHouseRepository boardingHouseRepository;
     BoardingHouseMapper boardingHouseMapper;
+    UploadService uploadService;
 
     public UserResponseDTO createUser(UserCreateRequest request) {
         // find user by username, email, phone
@@ -67,15 +70,26 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public UserResponseDTO updateUser(Long id, UserUpdateRequest requestDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ApiResponseCode.USER_NOT_FOUND));
+    public UserResponseDTO updateUser(Long id, UserUpdateRequest request) {
+        User user = userRepository.findByIdAndStatus(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
 
-        if (userRepository.existsByEmailOrPhoneAndIdNotWithQuery(requestDTO.getEmail(), requestDTO.getPhone(), CommonStatus.ACTIVE.getValue(), id) > 0) {
+        if (userRepository.existsByEmailOrPhoneAndIdNotWithQuery(request.getEmail(), request.getPhone(), CommonStatus.ACTIVE.getValue(), id) > 0) {
             throw new AppException(ApiResponseCode.EMAIL_OR_PHONE_NUMBER_ALREADY_EXISTS);
         }
 
-        userMapper.updateUser(user, requestDTO);
-        return userMapper.toUserResponse(userRepository.save(user));
+        userMapper.updateUser(user, request);
+        UserResponseDTO userResponse = userMapper.toUserResponse(userRepository.save(user));
+        userResponse.setImageUrl(request.getImageFile() != null ? uploadAvatar(id, request.getImageFile()).getImageUrl() : "");
+        return userResponse;
+    }
+
+    public Image uploadAvatar(Long userId, MultipartFile file) {
+        Image image = imageRepository.findByEntityIdAndEntityTypeAndStatus(userId, EntityType.USER.getValue(), CommonStatus.ACTIVE.getValue()).orElse(null);
+        if (image != null) {
+            uploadService.removeFiles(List.of(image));
+        }
+        return uploadService.uploadImage(userId, EntityType.USER.getValue(), file);
     }
 
     public CommonResponse updatePassword(Long id, UpdatePasswordRequest requestDTO) {
@@ -100,7 +114,10 @@ public class UserService {
 
     public UserResponseDTO getUser(Long id) {
         User user = findById(id);
-        return userMapper.toUserResponse(user);
+        UserResponseDTO userResponseDTO = userMapper.toUserResponse(user);
+        Image image = imageRepository.findByEntityIdAndEntityTypeAndStatus(user.getId(), EntityType.USER.getValue(), CommonStatus.ACTIVE.getValue()).orElse(null);
+        userResponseDTO.setImageUrl(image != null ? image.getImageUrl() : "");
+        return userResponseDTO;
     }
 
     public CommonResponse deleteUser(Long id) {

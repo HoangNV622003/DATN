@@ -98,6 +98,10 @@ public enum ApiResponseCode {
 
     //ROOM_USER
     DELETE_ROOM_USER_SUCCESSFUL(1043,"Đã xóa người dùng khỏi phòng trọ", HttpStatus.OK),
+
+    //PAYMENT
+    PAYMENT_SUCCESSFUL(1050,"Thanh toán thành công", HttpStatus.OK),
+    PAYMENT_FAILED(1051,"Thanh toán thất bại", HttpStatus.BAD_REQUEST),
     ;
     private final Integer code;
     private final String message;

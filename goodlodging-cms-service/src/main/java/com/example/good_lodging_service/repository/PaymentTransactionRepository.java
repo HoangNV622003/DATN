@@ -19,5 +19,5 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
             AND ru.status!=:status
     """)
     List<PaymentTransaction> findAllByUserIdAndStatusNotWithQuery(@Param("userId") Long userId,@Param("status") Integer status);
-
+    Optional<PaymentTransaction> findByIdAndStatus(Long id, Integer status);
 }

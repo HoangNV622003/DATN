@@ -20,7 +20,6 @@ public class UserResponseDTO {
     String lastName;
     String email;
     String phone;
-    String address;
     String gender;
     String imageUrl;
     LocalDate birthday;

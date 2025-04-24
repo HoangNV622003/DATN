@@ -2,6 +2,7 @@ package com.example.good_lodging_service.dto.request.User;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -18,5 +19,6 @@ public class UserUpdateRequest {
     String phone;
     String gender;
     String imageUrl;
+    MultipartFile imageFile;
     LocalDate birthday;
 }

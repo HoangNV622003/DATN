@@ -3,7 +3,7 @@ package com.example.good_lodging_service.service;
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.PaymentStatus;
-import com.example.good_lodging_service.dto.request.PaymentTransaction.PaymentTransactionRequest;
+import com.example.good_lodging_service.dto.request.Payment.PaymentTransactionRequest;
 import com.example.good_lodging_service.dto.response.Invoice.InvoiceResponse;
 import com.example.good_lodging_service.dto.response.PaymentTransaction.PaymentTransactionResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
