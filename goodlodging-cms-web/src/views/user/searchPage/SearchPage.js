@@ -1,4 +1,3 @@
-// src/pages/SearchPage.jsx
 import React, { useState, useEffect, memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchBar from '../../../components/searchBar/SearchBar';
@@ -7,6 +6,7 @@ import { fetchAllPost, searchPost } from '../../../apis/posts/PostService';
 import './style.scss';
 import ConfigView from '../../../components/config/ConfigView';
 import SearchPostList from './post/SearchPostList';
+import { getValuesExcludingId, postTypeConstants } from '../../../constants/PostTypeConstants';
 
 const SearchPage = () => {
     const [posts, setPosts] = useState({
@@ -22,8 +22,8 @@ const SearchPage = () => {
 
     const [payload, setPayload] = useState({
         wardsId: wardsId || [],
-        minRoomRent: 0,
-        maxRoomRent: 100000000,
+        minRent: 0,
+        maxRent: 100000000,
         minArea: 0,
         maxArea: 1000,
         minElectricityPrice: 0,
@@ -31,8 +31,33 @@ const SearchPage = () => {
         minWaterPrice: 0,
         maxWaterPrice: 100000,
         features: "",
-        descriptions: "",
+        description: "", // Sửa từ "descriptions" thành "description"
+        roomType: getValuesExcludingId(1, postTypeConstants), // [1, 2]
     });
+
+    const validatePayload = (payload) => {
+        if (payload.minRent > payload.maxRent) {
+            console.error("minRent phải nhỏ hơn hoặc bằng maxRent");
+            return false;
+        }
+        if (payload.minArea > payload.maxArea) {
+            console.error("minArea phải nhỏ hơn hoặc bằng maxArea");
+            return false;
+        }
+        if (payload.minElectricityPrice > payload.maxElectricityPrice) {
+            console.error("minElectricityPrice phải nhỏ hơn hoặc bằng maxElectricityPrice");
+            return false;
+        }
+        if (payload.minWaterPrice > payload.maxWaterPrice) {
+            console.error("minWaterPrice phải nhỏ hơn hoặc bằng maxWaterPrice");
+            return false;
+        }
+        if (!Array.isArray(payload.roomType)) {
+            console.error("roomType phải là một mảng");
+            return false;
+        }
+        return true;
+    };
 
     const handlePageChange = (newPage) => {
         setPosts((prev) => ({ ...prev, number: newPage }));
@@ -51,17 +76,21 @@ const SearchPage = () => {
                 });
             } else {
                 console.error("Dữ liệu không hợp lệ:", response);
+                alert("Không thể tải dữ liệu bài viết. Vui lòng thử lại.");
                 setPosts({ content: [], totalPages: 0, number: 0, first: true, last: true });
             }
         } catch (error) {
             console.error("Lỗi khi tải bài viết:", error);
+            alert("Có lỗi xảy ra khi tải bài viết. Vui lòng thử lại sau.");
             setPosts({ content: [], totalPages: 0, number: 0, first: true, last: true });
         }
     };
 
     useEffect(() => {
-        console.log("payload: ",payload)
-        handleLoadPost(posts.number, payload);
+        if (validatePayload(payload)) {
+            console.log("payload: ", payload);
+            handleLoadPost(posts.number, payload);
+        }
     }, [posts.number, payload]);
 
     // Callback để cập nhật payload từ SearchBar
