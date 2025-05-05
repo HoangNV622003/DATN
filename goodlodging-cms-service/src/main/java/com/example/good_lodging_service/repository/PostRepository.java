@@ -90,6 +90,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.status = 1
             -- Lọc theo địa chỉ
             AND (a.wards_id IN :wardsIds)
+            AND (p.type IN :roomType)
             -- Lọc theo các tiêu chí khác
             AND NOT (p.max_area < :minArea OR p.min_area > :maxArea)
             AND NOT (p.max_rent < :minRent OR p.min_rent > :maxRent)
@@ -111,6 +112,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         WHERE
             p.status = 1
             AND (a.wards_id IN :wardsIds)
+            AND (p.type IN :roomType)
             AND NOT (p.max_area < :minArea OR p.min_area > :maxArea)
             AND NOT (p.max_rent < :minRent OR p.min_rent > :maxRent)
             AND (bh.electricity_price BETWEEN COALESCE(:minElectricityPrice, bh.electricity_price) 
@@ -133,6 +135,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("maxWaterPrice") Float maxWaterPrice,
             @Param("features") String features,
             @Param("description") String description,
+            @Param("roomType") List<Integer> roomType,
             Pageable pageable);
 
     @Query(nativeQuery = true,value = """

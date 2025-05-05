@@ -14,7 +14,6 @@ public interface UserMapper {
     User toUser(UserCreateRequest requestDTO);
 
     @Mapping(target = "roles", ignore = true)
-    @Mapping(target = "address",ignore = true)
     UserResponseDTO toUserResponse(User user);
     void updateUser(@MappingTarget User user, UserUpdateRequest userUpdateRequest);
 }

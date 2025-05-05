@@ -79,9 +79,7 @@ public class PostService {
     public AuthorInfo getAuthorInformation(Long id, Pageable pageable) {
         User user = userRepository.findByIdAndStatus(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
-        Address address = addressRepository.findByIdAndStatus(user.getAddressId(), CommonStatus.ACTIVE.getValue()).orElse(null);
         UserResponseDTO userResponseDTO = userMapper.toUserResponse(user);
-        userResponseDTO.setAddress(address != null ? address.getFullAddress() : "");
         return AuthorInfo.builder()
                 .authorInfo(userResponseDTO)
                 .posts(getAllMyPosts(id, pageable))
@@ -218,8 +216,8 @@ public class PostService {
         validateFilter(filter);
         return postRepository.findAllByAddressAndFeaturesWithQuery(
                 filter.getWardsId(),
-                filter.getMinRoomRent(),
-                filter.getMaxRoomRent(),
+                filter.getMinRent(),
+                filter.getMaxRent(),
                 filter.getMinArea(),
                 filter.getMaxArea(),
                 filter.getMinElectricityPrice(),
@@ -228,14 +226,15 @@ public class PostService {
                 filter.getMaxWaterPrice(),
                 filter.getFeatures(),
                 filter.getDescription(),
+                filter.getRoomType(),
                 pageable
         );
     }
 
     private void validateFilter(PostFilterRequest filter) {
         // Kiểm tra minRoomRent và maxRoomRent
-        if (filter.getMinRoomRent() != null && filter.getMaxRoomRent() != null) {
-            if (filter.getMinRoomRent() > filter.getMaxRoomRent()) {
+        if (filter.getMinRent() != null && filter.getMaxRent() != null) {
+            if (filter.getMinRent() > filter.getMaxRent()) {
                 throw new AppException(ApiResponseCode.INVALID_ROOM_RENT);
             }
         }
@@ -262,10 +261,10 @@ public class PostService {
         }
 
         // Có thể thêm các kiểm tra khác nếu cần, ví dụ: giá trị âm
-        if (filter.getMinRoomRent() != null && filter.getMinRoomRent() < 0) {
+        if (filter.getMinRent() != null && filter.getMinRent() < 0) {
             throw new AppException(ApiResponseCode.INVALID_ROOM_RENT_NEGATIVE);
         }
-        if (filter.getMaxRoomRent() != null && filter.getMaxRoomRent() < 0) {
+        if (filter.getMaxRent() != null && filter.getMaxRent() < 0) {
             throw new AppException(ApiResponseCode.INVALID_ROOM_RENT_NEGATIVE);
         }
         if (filter.getMinArea() != null && filter.getMinArea() < 0) {

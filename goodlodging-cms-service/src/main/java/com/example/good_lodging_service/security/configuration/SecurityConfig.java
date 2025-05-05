@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/notifications/otp/resend",
             "/notifications/otp/verify",
             "/addresses",
-            "/posts/**"
+            "/posts/**",
+            "/chat"
     };
 
     @Autowired
