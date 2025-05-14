@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../../../context/AuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTERS } from '../../../../../../../utils/router/Router';
-import { confirmPayment, createInvoice, fetchRoomInvoice, updateInvoice } from '../../../../../../../apis/payment/PaymentService';
+import { confirmPayment, createBill, fetchRoomBills, updateBill} from '../../../../../../../apis/bill/BillService';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import ListPayment from '../../../../../../../components/payment/payment-list/ListPayment';
@@ -28,7 +28,7 @@ const RoomPaymentHistory = () => {
     }
     setLoadingData(true);
     try {
-      const result = await fetchRoomInvoice(id, accessToken);
+      const result = await fetchRoomBills(id, accessToken);
       const mappedData = {
         ...result.data,
         members: result.data.members.map((member) => ({
@@ -75,7 +75,7 @@ const RoomPaymentHistory = () => {
 
   const handleCreateInvoice = async (invoiceData) => {
     try {
-      const response = await createInvoice({ ...invoiceData, roomId: data.roomId }, token);
+      const response = await createBill({ ...invoiceData, roomId: data.roomId }, token);
       toast.success('Tạo hóa đơn thành công!');
       setSelectedInvoice(null);
       setData((prev) => ({
@@ -101,7 +101,7 @@ const RoomPaymentHistory = () => {
         waterUsage: parseInt(invoiceData.waterUsage) || 0,
         description: invoiceData.description || '',
       };
-      const response = await updateInvoice(selectedInvoice.id, payload, token);
+      const response = await updateBill(selectedInvoice.id, payload, token);
       toast.success('Cập nhật hóa đơn thành công!');
       setSelectedInvoice(null);
       setData((prev) => ({

@@ -17,6 +17,15 @@ export const searchPost = async (page = 0, payload) => {
         throw error;
     }
 }
+export const fetchSuggestedPost = async (payload) => {
+    return await axios.get(`${API_URL}/posts/suggested-posts`, {
+            params: {
+                provinceName:payload.provinceName,
+                districtName:payload.districtName,
+                wardName:payload.wardName,
+            }
+        });
+}
 export const fetchAllPost = async (page = 0) => {
     try {
 

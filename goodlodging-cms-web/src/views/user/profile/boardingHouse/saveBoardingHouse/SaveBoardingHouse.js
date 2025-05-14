@@ -66,7 +66,6 @@ const SaveBoardingHouse = () => {
       return;
     }
     if (!boardingHouseId || boardingHouseId === 'undefined') {
-      toast.error('ID nhà trọ không hợp lệ!');
       return;
     }
     try {
@@ -242,8 +241,16 @@ const SaveBoardingHouse = () => {
         for (let pair of submitData.entries()) {
           console.log(pair[0], pair[1]);
         }
-        response = await updateBoardingHouse(boardingHouseId, submitData, token);
-        toast.success('Cập nhật nhà trọ thành công!');
+        await updateBoardingHouse(boardingHouseId, submitData, token)
+        .then(response => {
+          console.log('Update boarding house response:', response);
+          toast.success('Cập nhật nhà trọ thành công!');
+          setSavedBoardingHouseId(boardingHouseId);
+        })
+        .catch(err => {
+          console.error('Error updating boarding house:', err);
+        });
+       
       } else {
         imageFiles.forEach((file, index) => {
           submitData.append(`imageFiles[${index}].imageFile`, file); // Sửa từ "imagesFiles" thành "imageFiles"
@@ -252,16 +259,24 @@ const SaveBoardingHouse = () => {
         for (let pair of submitData.entries()) {
           console.log(pair[0], pair[1]);
         }
-        response = await createBoardingHouse(submitData, token);
+        response = await createBoardingHouse(submitData, token)
+        .then(response => {
+          toast.success('Tạo nhà trọ mới thành công!');
+
+          return response;
+        })
+        .catch(err => {
+          console.error('Error creating boarding house:', err);
+          toast.error('Lỗi khi tạo nhà trọ!');
+        });
         newBoardingHouseId = response.data.id;
         setFormData(prev => ({
           ...prev,
           rooms: [],
         }));
         setSavedBoardingHouseId(newBoardingHouseId);
-        toast.success('Tạo nhà trọ mới thành công!');
       }
-
+      console.log("imageUrls:", response.data.images);
       const updatedImages = response.data.images && Array.isArray(response.data.images)
         ? response.data.images.map(img => img.imageUrl)
         : [];
@@ -273,7 +288,9 @@ const SaveBoardingHouse = () => {
       }
     } catch (error) {
       console.error('Error saving boarding house:', error);
-      toast.error('Lỗi khi lưu nhà trọ: ' + (error.response?.data?.message || error.message));
+      if (error.response?.status === 401) {
+        toast.error('Xác thực thất bại: Token không hợp lệ hoặc đã hết hạn');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -325,7 +342,6 @@ const SaveBoardingHouse = () => {
     <div className="save-boarding-house">
       <h2>{currentBoardingHouseId ? 'Chỉnh sửa nhà trọ' : 'Tạo nhà trọ mới'}</h2>
       <form onSubmit={handleSubmit}>
-        {currentBoardingHouseId && <p>id: {currentBoardingHouseId}</p>}
         <div>
           <label>Tên nhà trọ:</label>
           <input type="text" name="name" value={formData.name} onChange={handleChange} required />

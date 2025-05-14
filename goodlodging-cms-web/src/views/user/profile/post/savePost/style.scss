@@ -1,143 +1,182 @@
-$primary-color: #007bff;
-$secondary-color: #6c757d;
-$background-color: #f8f9fa;
-$text-color: #333;
-$border-radius: 8px;
-$spacing: 15px;
+// Biến màu sắc
+$primary: #007bff;
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #17a2b8;
+$secondary: #6c757d;
+$background: #ffffff;
+$border: #e0e0e0;
+$text: #2c2c2c;
+$text-secondary: #555;
+$error: #dc3545;
 
-.save-post-container {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: $spacing * 2;
-  background: #ffffff;
-  border-radius: $border-radius;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+// Biến khoảng cách
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+
+// Biến kích thước
+$border-radius: 0.5rem;
+$font-size-base: 0.875rem;
+$font-size-heading: 1.5rem;
+
+.save-post {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: $spacing-md;
+  background: $background;
+  box-sizing: border-box;
+
+  // Reset để tránh xung đột từ global styles
+  display: block;
+  font-size: $font-size-base;
+  line-height: 1.5;
+
+  & * {
+    box-sizing: border-box;
+  }
 
   h2 {
-    font-size: 24px;
-    color: $text-color;
-    margin-bottom: $spacing * 2;
-    text-align: center;
+    font-size: $font-size-heading;
+    color: $text;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.save-post__loading,
+.save-post__error {
+  text-align: center;
+  padding: $spacing-lg;
+  font-size: $font-size-base;
+  color: $error;
+}
+
+.save-post__form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.save-post__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  label {
+    font-weight: 500;
+    color: $text;
+    font-size: $font-size-base;
   }
 
-  .error {
-    color: #dc3545;
-    text-align: center;
-    margin-bottom: $spacing;
-    font-size: 16px;
-  }
+  input {
+    padding: $spacing-sm;
+    border: 1px solid $border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-  .loading {
-    text-align: center;
-    font-size: 18px;
-    color: $text-color;
-    padding: $spacing * 2;
-  }
-
-  form {
-    .form-group {
-      margin-bottom: $spacing * 1.5;
-
-      label {
-        display: block;
-        font-size: 14px;
-        font-weight: 600;
-        color: $text-color;
-        margin-bottom: 5px;
-      }
-
-      input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: $border-radius;
-        font-size: 16px;
-        transition: border-color 0.3s ease;
-
-        &:focus {
-          border-color: $primary-color;
-          outline: none;
-        }
-
-        &[type="number"] {
-          -moz-appearance: textfield;
-          &::-webkit-outer-spin-button,
-          &::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-          }
-        }
-
-        &:disabled {
-          background: #e9ecef;
-          color: $secondary-color;
-        }
-      }
-
-      .current-image {
-        margin-bottom: $spacing;
-        img {
-          border-radius: $border-radius;
-          margin-top: 5px;
-          height: 150px;
-        }
-      }
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.1);
     }
 
-    input[type="file"] {
+    &[disabled] {
+      background-color: #f5f5f5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.save-post__image-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  .save-post__current-image,
+  .save-post__image-preview {
+    max-width: 200px;
+    margin-bottom: $spacing-sm;
+
+    img {
       width: 100%;
-      background: white;
+      height: auto;
+      border-radius: $border-radius;
+      border: 1px solid $border;
+    }
+  }
 
-      &::file-selector-button {
-        padding: 8px 16px;
-        background: $primary-color;
-        color: white;
-        border: none;
-        border-radius: $border-radius;
-        cursor: pointer;
+  input[type="file"] {
+    padding: $spacing-sm 0;
+  }
+}
 
-        &:hover {
-          background: darken($primary-color, 10%);
-        }
+.save-post__form-buttons {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+
+  button {
+    padding: $spacing-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: $font-size-base;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &:first-child {
+      background-color: $primary;
+      color: white;
+
+      &:hover {
+        background-color: darken($primary, 10%);
+        transform: translateY(-2px);
       }
     }
 
-    .form-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: $spacing * 2;
+    &.save-post__cancel-btn {
+      background-color: $secondary;
+      color: white;
 
-      button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: $border-radius;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:first-child {
-          background-color: $primary-color;
-          color: white;
-
-          &:hover:not(:disabled) {
-            background-color: darken($primary-color, 10%);
-          }
-
-          &:disabled {
-            background-color: $secondary-color;
-            cursor: not-allowed;
-          }
-        }
-
-        &.cancel {
-          background-color: $secondary-color;
-          color: white;
-
-          &:hover:not(:disabled) {
-            background-color: darken($secondary-color, 10%);
-          }
-        }
+      &:hover {
+        background-color: darken($secondary, 10%);
+        transform: translateY(-2px);
       }
+    }
+
+    &:disabled {
+      background-color: $secondary;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+.save-post__house-list {
+  margin-top: $spacing-lg;
+}
+
+@media (max-width: 600px) {
+  .save-post__form-group {
+    input {
+      width: 100%;
+    }
+  }
+
+  .save-post__form-buttons {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .save-post__image-section {
+    .save-post__current-image,
+    .save-post__image-preview {
+      max-width: 150px;
     }
   }
 }

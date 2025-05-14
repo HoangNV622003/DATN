@@ -2,7 +2,7 @@ import React, { use, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './style.scss';
 import { toast } from 'react-toastify';
-import { fetchPaymentResult } from '../../../../apis/payment/PaymentService';
+import { fetchOrderResult } from '../../../../apis/vn-pay/VNPayService';
 import { useAuth } from '../../../../context/AuthContext';
 
 const VNPayResult = () => {
@@ -41,7 +41,7 @@ const VNPayResult = () => {
         vnp_ResponseCode: params.vnp_ResponseCode,
         payerId: userId,
       }
-      const result = await fetchPaymentResult(payload, accessToken);
+      const result = await fetchOrderResult(payload, accessToken);
       result.status !== 200 && toast.error('Có lỗi xảy ra khi lấy dữ liệu thanh toán!');
     } catch (error) {
       console.error('Error fetching payment result:', error);

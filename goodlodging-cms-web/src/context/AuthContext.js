@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setUser(null);
         setIsLogin(false);
-        window.location.reload();
     };
 
     const fetchAddress = async () => {

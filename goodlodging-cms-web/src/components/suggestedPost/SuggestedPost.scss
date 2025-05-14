@@ -1,0 +1,38 @@
+// Biến màu sắc và kích thước
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$text-color: #333333;
+$spacing: 16px;
+
+// Style cho SuggestedPost
+.suggested-post-container {
+  width: 100%;
+  margin: 0 auto;
+  p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-color;
+    margin-bottom: $spacing;
+    text-align: center;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .suggested-post-container {
+    padding: $spacing * 0.5;
+
+    p {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .suggested-post-container {
+    p {
+      font-size: 1.2rem;
+    }
+  }
+}

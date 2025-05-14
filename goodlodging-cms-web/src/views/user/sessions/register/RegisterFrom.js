@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import "./style.scss";
 import { ROUTERS } from '../../../../utils/router/Router';
+import { existedUser } from '../../../../apis/account/UserService';
+import { toast } from 'react-toastify';
 
 
 const RegisterForm = () => {
@@ -10,8 +12,8 @@ const RegisterForm = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        firstname: '',
-        lastname: '',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         gender: 'male', // Giá trị mặc định
@@ -24,10 +26,25 @@ const RegisterForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Register data:', formData);
-        // Xử lý đăng ký tại đây
-
-        navigate(`/${ROUTERS.AUTH.LOGIN}`)
+        const payload = {
+            username: formData.username,
+            phone: formData.phone,
+            email: formData.email,
+        }
+        existedUser(payload)
+            .then((response) => {
+                if(response.data>0){
+                    toast.error("Tài khoản đã tồn tại, vui lòng thử lại");
+                    return;
+                }else{
+                    localStorage.setItem('userRegister', JSON.stringify(formData));
+                    navigate(ROUTERS.AUTH.VERIFY_OTP);
+                }
+            })
+            .catch((error) => {
+                toast.error(error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại sau");
+            });
+        
     };
 
     return (
@@ -58,9 +75,9 @@ const RegisterForm = () => {
                     <div className="form-group">
                         <input
                             type="text"
-                            name="firstname"
+                            name="firstName"
                             placeholder="Họ"
-                            value={formData.firstname}
+                            value={formData.firstName}
                             onChange={handleChange}
                             required
                         />
@@ -68,9 +85,9 @@ const RegisterForm = () => {
                     <div className="form-group">
                         <input
                             type="text"
-                            name="lastname"
+                            name="lastName"
                             placeholder="Tên"
-                            value={formData.lastname}
+                            value={formData.lastName}
                             onChange={handleChange}
                             required
                         />
@@ -118,7 +135,7 @@ const RegisterForm = () => {
                     </div>
                     <button type="submit" className="submit-btn">Đăng ký</button>
                     <div className="form-group">
-                        <Link to="/login">Bạn đã có tài khoản ư?</Link>
+                        <Link to={ROUTERS.AUTH.LOGIN}>Bạn đã có tài khoản ư?</Link>
                     </div>
                 </div>
             </form>

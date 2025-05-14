@@ -18,7 +18,7 @@ const ForRentBoardingHouse = () => {
         if (!loading) {
             if (!isLogin || !user) {
                 toast.error("Vui lòng đăng nhập để tiếp tục");
-                navigate(`/${ROUTERS.AUTH.LOGIN}`);
+                navigate(ROUTERS.AUTH.LOGIN);
             } else {
                 loadBoardingHouses();
             }

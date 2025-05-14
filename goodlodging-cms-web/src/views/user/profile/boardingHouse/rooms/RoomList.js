@@ -6,202 +6,250 @@ import { ROUTERS } from '../../../../../utils/router/Router';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../../../../context/AuthContext';
 
-const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
-  const [isAddingRoom, setIsAddingRoom] = useState(false);
-  const navigate = useNavigate();
-  const {token}=useAuth();
+const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
   const [newRoom, setNewRoom] = useState({
-    id: '',
     name: '',
-    description: '',
     area: '',
-    floor: '',
     price: '',
     capacity: '',
-    boardingHouseId: boardingHouseId || null,
+    floor: '',
+    boardingHouseId,
   });
+  const { token } = useAuth();
 
-  useEffect(() => {
-    setNewRoom((prev) => ({ ...prev, boardingHouseId }));
-  }, [boardingHouseId]);
-
-  const handleNewRoomChange = (field, value) => {
-    setNewRoom({ ...newRoom, [field]: value });
+  const handleChange = (field, value) => {
+    setNewRoom((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleCreateRoom = async () => {
+  const handleSubmit = async () => {
     if (!boardingHouseId) {
       toast.warn('Vui lòng tạo nhà trọ trước khi thêm phòng!');
       return;
     }
-    if (!newRoom.name) {
+    if (!newRoom.name.trim()) {
       toast.warn('Vui lòng nhập tên phòng!');
       return;
     }
     try {
-      const response = await createRoom(newRoom,token);
-      if (!response.data || !response.data.id) {
-        throw new Error('Invalid response from createRoom API');
+      const response = await createRoom(newRoom, token);
+      if (!response.data?.id) {
+        throw new Error('Phản hồi không hợp lệ từ API tạo phòng');
       }
-      const createdRoom = { ...newRoom, id: response.data.id };
-      const updatedRooms = [...rooms, createdRoom];
-      if (onRoomChange) onRoomChange(updatedRooms); // Truyền danh sách phòng mới lên cha
-      setNewRoom({ name: '', description: '', price: '', area: '', capacity: '', floor: '', boardingHouseId });
-      setIsAddingRoom(false);
-      toast.success('Đã thêm phòng mới!');
+      onSave({ ...newRoom, id: response.data.id });
+      setNewRoom({
+        name: '',
+        area: '',
+        price: '',
+        capacity: '',
+        floor: '',
+        boardingHouseId,
+      });
+      toast.success('Thêm phòng thành công!');
     } catch (error) {
-      console.error('Error creating room:', error.response?.data || error);
+      console.error('Lỗi khi tạo phòng:', error.response?.data || error);
       toast.error(error.response?.data?.message || 'Không thể thêm phòng!');
     }
   };
 
-  const handleCancelAddRoom = () => {
-    setNewRoom({ name: '', description: '', price: '', area: '', capacity: '', floor: '', boardingHouseId });
-    setIsAddingRoom(false);
-  };
+  return (
+    <div className="room-item new-room" data-testid="new-room-form">
+      <div className="form-grid">
+        <div className="form-group">
+          <label htmlFor="room-name">Tên phòng:</label>
+          <input
+            id="room-name"
+            type="text"
+            value={newRoom.name}
+            onChange={(e) => handleChange('name', e.target.value)}
+            placeholder="Nhập tên phòng"
+            aria-label="Tên phòng"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="room-area">Diện tích (m²):</label>
+          <input
+            id="room-area"
+            type="number"
+            value={newRoom.area}
+            onChange={(e) => handleChange('area', e.target.value)}
+            placeholder="Nhập diện tích"
+            aria-label="Diện tích phòng"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="room-price">Tiền thuê (VND):</label>
+          <input
+            id="room-price"
+            type="number"
+            value={newRoom.price}
+            onChange={(e) => handleChange('price', e.target.value)}
+            placeholder="Nhập tiền thuê"
+            aria-label="Tiền thuê phòng"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="room-capacity">Số người tối đa:</label>
+          <input
+            id="room-capacity"
+            type="number"
+            value={newRoom.capacity}
+            onChange={(e) => handleChange('capacity', e.target.value)}
+            placeholder="Nhập số người"
+            aria-label="Số người tối đa"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="room-floor">Tầng:</label>
+          <input
+            id="room-floor"
+            type="number"
+            value={newRoom.floor}
+            onChange={(e) => handleChange('floor', e.target.value)}
+            placeholder="Nhập vị trí tầng"
+            aria-label="Tầng"
+          />
+        </div>
+      </div>
+      <div className="button-group">
+        <button
+          type="button"
+          className="room-btn-save"
+          onClick={handleSubmit}
+          aria-label="Lưu phòng mới"
+        >
+          Lưu
+        </button>
+        <button
+          type="button"
+          className="room-btn-cancel"
+          onClick={onCancel}
+          aria-label="Hủy thêm phòng"
+        >
+          Hủy
+        </button>
+      </div>
+    </div>
+  );
+};
 
-  const handleRemoveRoom = async (roomId) => {
+const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
+  const [isAddingRoom, setIsAddingRoom] = useState(false);
+  const navigate = useNavigate();
+  const { token } = useAuth();
+
+  useEffect(() => {
+    if (!boardingHouseId) setIsAddingRoom(false);
+  }, [boardingHouseId]);
+
+  const handleRoomAction = async (action, roomId) => {
     if (!roomId) {
       toast.warn('ID phòng không hợp lệ!');
       return;
     }
     try {
-      await deleteRoom(boardingHouseId, roomId,token);
-      const updatedRooms = rooms.filter((room) => room.id !== roomId);
-      if (onRoomChange) onRoomChange(updatedRooms); // Truyền danh sách phòng mới lên cha
-      toast.success('Đã xóa phòng!');
+      switch (action) {
+        case 'delete':
+          await deleteRoom(boardingHouseId, roomId, token);
+          onRoomChange?.(rooms.filter((room) => room.id !== roomId));
+          toast.success('Xóa phòng thành công!');
+          break;
+        case 'update':
+          navigate(
+            ROUTERS.USER.PROFILE.replace('*', '') +
+              ROUTERS.USER.ROOMS.UPDATE.replace(':id', roomId)
+          );
+          break;
+        case 'payment':
+          navigate(
+            ROUTERS.USER.PROFILE.replace('*', '') +
+              ROUTERS.USER.ROOMS.PAYMENT_HISTORY.replace(':id', roomId)
+          );
+          break;
+        default:
+          break;
+      }
     } catch (error) {
-      console.error('Error deleting room:', error.response?.data || error);
-      toast.error(error.response?.data?.message || 'Không thể xóa phòng!');
+      console.error(`Lỗi khi ${action}:`, error.response?.data || error);
+      toast.error(error.response?.data?.message || `Không thể ${action} phòng!`);
     }
   };
-  const handlePaymentHistory = async (roomId) => {
-    if (!roomId) {
-      toast.warn('Không thể điều hướng: ID phòng không hợp lệ!');
-      return;
-    }
-    navigate(ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.ROOMS.PAYMENT_HISTORY.replace(":id", roomId));
-  }
 
-  const handleNavigateToRoomDetail = async (roomId) => {
-    if (!roomId) {
-      toast.warn('Không thể điều hướng: ID phòng không hợp lệ!');
-      return;
-    }
-    navigate(ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.ROOMS.UPDATE.replace(":id", roomId));
+  const handleAddRoom = (newRoom) => {
+    onRoomChange?.([...rooms, newRoom]);
+    setIsAddingRoom(false);
   };
 
   return (
-    <div className="room-list">
-      <div className="btn-add-room" onClick={() => setIsAddingRoom(true)}>
+    <div className="room-list" data-testid="room-list">
+      <button
+        className="btn-add-room"
+        onClick={() => setIsAddingRoom(true)}
+        aria-label="Thêm phòng mới"
+      >
         Thêm phòng
-      </div>
+      </button>
 
       {isAddingRoom && (
-        <div className="room-item new-room">
-          <div className="form-row">
-            <div className="form-group">
-              <label>Tên phòng:</label>
-              <input
-                type="text"
-                value={newRoom.name}
-                onChange={(e) => handleNewRoomChange('name', e.target.value)}
-                placeholder="Tên phòng"
-              />
-            </div>
-            <div className="form-group">
-              <label>Mô tả:</label>
-              <input
-                type="text"
-                value={newRoom.description}
-                onChange={(e) => handleNewRoomChange('description', e.target.value)}
-                placeholder="Mô tả"
-              />
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Diện tích (m²):</label>
-              <input
-                type="number"
-                value={newRoom.area}
-                onChange={(e) => handleNewRoomChange('area', e.target.value)}
-                placeholder="Diện tích (m²)"
-              />
-            </div>
-            <div className="form-group">
-              <label>Tiền thuê:</label>
-              <input
-                type="number"
-                value={newRoom.price}
-                onChange={(e) => handleNewRoomChange('price', e.target.value)}
-                placeholder="Tiền thuê"
-              />
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Số người tối đa:</label>
-              <input
-                type="number"
-                value={newRoom.capacity}
-                onChange={(e) => handleNewRoomChange('capacity', e.target.value)}
-                placeholder="Số người tối đa"
-              />
-            </div>
-            <div className="form-group">
-              <label>Tầng:</label>
-              <input
-                type="number"
-                value={newRoom.floor}
-                onChange={(e) => handleNewRoomChange('floor', e.target.value)}
-                placeholder="Tầng"
-              />
-            </div>
-          </div>
-          <div className="button-group">
-            <button type="button" className="room-btn-save" onClick={handleCreateRoom}>Lưu</button>
-            <button type="button" className="room-btn-cancel" onClick={handleCancelAddRoom}>Hủy</button>
-          </div>
-        </div>
+        <NewRoomForm
+          boardingHouseId={boardingHouseId}
+          onSave={handleAddRoom}
+          onCancel={() => setIsAddingRoom(false)}
+        />
       )}
 
-      {rooms.map((room, index) => (
-        <div key={room.id || `room-${index}`} className="room-item">
-          <div className="form-row">
-            <div className="form-group">
+      {rooms.map((room) => (
+        <div
+          key={room.id}
+          className="room-item"
+          data-testid={`room-item-${room.id}`}
+        >
+          <div className="room-grid">
+            <div className="room-info">
               <label>Tên phòng:</label>
-              <input type="text" value={room.name} readOnly placeholder="Tên phòng" />
+              <span>{room.name || 'Chưa có tên'}</span>
             </div>
-            <div className="form-group">
-              <label>Mô tả:</label>
-              <input type="text" value={room.description} readOnly placeholder="Mô tả" />
+            <div className="room-info">
+              <label>Diện tích:</label>
+              <span>{room.area ? `${room.area} m²` : '0 m²'}</span>
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Diện tích (m²):</label>
-              <input type="number" value={room.area} readOnly placeholder="Diện tích (m²)" />
-            </div>
-            <div className="form-group">
+            <div className="room-info">
               <label>Tiền thuê:</label>
-              <input type="number" value={room.price} readOnly placeholder="VND" />
+              <span>{room.price ? `${room.price} VND` : '0 VND'}</span>
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
+            <div className="room-info">
               <label>Số người tối đa:</label>
-              <input type="number" value={room.capacity} readOnly placeholder="Người" />
+              <span>{room.capacity || '0'} người</span>
             </div>
-            <div className="form-group">
+            <div className="room-info">
               <label>Tầng:</label>
-              <input type="number" value={room.floor} readOnly placeholder="Tầng" />
+              <span>{room.floor || '1'}</span>
             </div>
           </div>
           <div className="button-group">
-            <button type="button" className="room-btn-remove" onClick={() => handleRemoveRoom(room.id)}>Xóa phòng</button>
-            <button type="button" className="room-btn-update" onClick={() => handleNavigateToRoomDetail(room.id)}>Cập nhật</button>
-            <button type="button" className='room-btn-payment' onClick={() => handlePaymentHistory(room.id)}>Lịch sử thanh toán</button>
+            <button
+              type="button"
+              className="room-btn-remove"
+              onClick={() => handleRoomAction('delete', room.id)}
+              aria-label="Xóa phòng"
+            >
+              Xóa
+            </button>
+            <button
+              type="button"
+              className="room-btn-update"
+              onClick={() => handleRoomAction('update', room.id)}
+              aria-label="Cập nhật phòng"
+            >
+              Cập nhật
+            </button>
+            <button
+              type="button"
+              className="room-btn-payment"
+              onClick={() => handleRoomAction('payment', room.id)}
+              aria-label="Xem lịch sử thanh toán"
+            >
+              Lịch sử thanh toán
+            </button>
           </div>
         </div>
       ))}

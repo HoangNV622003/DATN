@@ -54,30 +54,7 @@ const ChangePassword = () => {
       return;
     }
 
-    // try {
-    //   const response = await changePassword(user.id, {
-    //     oldPassword: formData.oldPassword,
-    //     newPassword: formData.newPassword,
-    //   }, token);
-
-    //   if (response.status === 200) {
-    //     toast.success("Đổi mật khẩu thành công!");
-    //     setFormData({
-    //       oldPassword: "",
-    //       newPassword: "",
-    //       confirmNewPassword: "",
-    //     });
-    //     setError("");
-    //   } else {
-    //     const errorData = await response.data;
-    //     setError(errorData.message || "Có lỗi xảy ra khi đổi mật khẩu!");
-    //     toast.error(errorData.message || "Có lỗi xảy ra khi đổi mật khẩu!");
-    //   }
-    // } catch (err) {
-    //   setError("Đã có lỗi xảy ra. Vui lòng thử lại.");
-    //   toast.error("Đã có lỗi xảy ra. Vui lòng thử lại.");
-    //   console.error("Error changing password:", err);
-    // }
+    
   };
 
   return (

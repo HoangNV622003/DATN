@@ -35,7 +35,7 @@ const ProfileMenu = () => { // Không cần nhận props nữa
   }
   const handleNavigateLogout = () => {
     logout();
-    navigate(`/${ROUTERS.AUTH.LOGIN}`);
+    navigate(ROUTERS.AUTH.LOGIN);
   };
   const handleNavigateToManagePayment=()=>{
     navigate(`${ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.BOARDING_HOUSE.MANAGEMENT_PAYMENT}`)

@@ -164,8 +164,9 @@ const PostDetail = () => {
                     </div>
                 </div>
                 <div className="list__room">
-                    <p>Danh sách phòng trống:</p>
-                    <ListRoomEmpty rooms={emptyRooms}/>
+                    {
+                        (emptyRooms!==null && emptyRooms.length > 0) && (<ListRoomEmpty rooms={emptyRooms}/>)
+                    }
                 </div>
                 <table className="expect_costs">
                     <tr className="title">

@@ -9,38 +9,146 @@ import { useAuth } from '../../../../../context/AuthContext';
 import { findRoomMate } from '../../../../../apis/posts/PostService';
 import FindRoommatePopup from '../../../../../components/popup/findRoomMatePopup/FindRoomMatePopup';
 
-function SaveRoom() {
-  const [savedRoom, setSavedRoom] = useState({ id: '', name: '', description: '', price: null, capacity: '', area: '', floor: '' }); // Dữ liệu đã lưu
-  const [room, setRoom] = useState({ id: '', name: '', description: '', price: null, capacity: '', area: '', floor: '' }); // Dữ liệu đang chỉnh sửa
+const RoomForm = ({ room, onChange, onSubmit, isLoading }) => (
+  <section className="save-room__room-info" data-testid="save-room__room-form">
+    <h2>Thông tin phòng trọ</h2>
+    <div className="save-room__form-grid">
+      <div className="save-room__form-group">
+        <label htmlFor="save-room__room-id">ID:</label>
+        <input
+          id="save-room__room-name"
+          type="text"
+          name="name"
+          value={room.id}
+          placeholder="Nhập tên phòng"
+          disabled
+          aria-label="ID"
+        />
+      </div>
+      <div className="save-room__form-group">
+        <label htmlFor="save-room__room-name">Tên phòng:</label>
+        <input
+          id="save-room__room-name"
+          type="text"
+          name="name"
+          value={room.name}
+          onChange={onChange}
+          placeholder="Nhập tên phòng"
+          aria-label="Tên phòng"
+        />
+      </div>
+      <div className="save-room__form-group">
+        <label htmlFor="save-room__room-price">Giá (VND):</label>
+        <input
+          id="save-room__room-price"
+          type="number"
+          name="price"
+          value={room.price || ''}
+          onChange={onChange}
+          placeholder="Nhập giá"
+          aria-label="Giá phòng"
+        />
+      </div>
+      <div className="save-room__form-group">
+        <label htmlFor="save-room__room-area">Diện tích (m²):</label>
+        <input
+          id="save-room__room-area"
+          type="number"
+          name="area"
+          value={room.area}
+          onChange={onChange}
+          placeholder="Nhập diện tích"
+          aria-label="Diện tích phòng"
+        />
+      </div>
+      <div className="save-room__form-group">
+        <label htmlFor="save-room__room-capacity">Số người tối đa:</label>
+        <input
+          id="save-room__room-capacity"
+          type="number"
+          name="capacity"
+          value={room.capacity}
+          onChange={onChange}
+          placeholder="Nhập số người"
+          aria-label="Số người tối đa"
+        />
+      </div>
+      <div className="save-room__form-group">
+        <label htmlFor="save-room__room-floor">Tầng:</label>
+        <input
+          id="save-room__room-floor"
+          type="number"
+          name="floor"
+          value={room.floor}
+          onChange={onChange}
+          placeholder="Nhập tầng"
+          aria-label="Tầng"
+        />
+      </div>
+    </div>
+    <button
+      className="save-room__update-btn"
+      onClick={onSubmit}
+      disabled={isLoading}
+      aria-label="Cập nhật phòng"
+    >
+      {isLoading ? 'Đang cập nhật...' : 'Cập nhật phòng'}
+    </button>
+  </section>
+);
+
+const SaveRoom = () => {
+  const [savedRoom, setSavedRoom] = useState({
+    id: '',
+    name: '',
+    price: null,
+    capacity: '',
+    area: '',
+    floor: '',
+  });
+  const [room, setRoom] = useState({
+    id: '',
+    name: '',
+    price: null,
+    capacity: '',
+    area: '',
+    floor: '',
+  });
   const [users, setUsers] = useState([]);
   const [newUsername, setNewUsername] = useState('');
-  const { id } = useParams();
-  const {user,token}=useAuth();
-  const [isExpenseListVisible, setIsExpenseListVisible] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // Load dữ liệu phòng khi component mount
+  const { id } = useParams();
+  const { user, token } = useAuth();
+
   useEffect(() => {
-    getRoom(id,token)
-      .then(response => {
-        setSavedRoom(response.data.room); // Lưu dữ liệu đã lưu
-        setRoom(response.data.room); // Dữ liệu để chỉnh sửa
+    setIsLoading(true);
+    getRoom(id, token)
+      .then((response) => {
+        const roomData = response.data.room;
+        setSavedRoom(roomData);
+        setRoom(roomData);
         setUsers(response.data.users);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Lỗi khi lấy dữ liệu phòng:', error);
         toast.error('Lỗi khi lấy dữ liệu phòng!');
-      });
-  }, [id]);
+      })
+      .finally(() => setIsLoading(false));
+  }, [id, token]);
 
-  // Xử lý cập nhật thông tin phòng
-  const handleUpdateRoom = () => {
+  const handleRoomChange = (e) => {
+    const { name, value } = e.target;
+    setRoom((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleUpdateRoom = async () => {
     const updatedRoom = {
       ...room,
       price: room.price || null,
-      area: parseInt(room.area),
-      capacity: parseInt(room.capacity),
-      floor: parseInt(room.floor),
+      area: parseInt(room.area) || 0,
+      capacity: parseInt(room.capacity) || 0,
+      floor: parseInt(room.floor) || 0,
     };
 
     const currentUsersCount = users.length;
@@ -50,53 +158,56 @@ function SaveRoom() {
       return;
     }
 
-    updateRoom(id, updatedRoom,token)
-      .then(() => {
-        setSavedRoom(updatedRoom); // Cập nhật dữ liệu đã lưu khi thành công
-        setRoom(updatedRoom);
-        toast.success('Đã cập nhật thông tin phòng!');
-      })
-      .catch(error => {
-        console.error('Lỗi khi cập nhật phòng:', error);
-        toast.error('Lỗi khi cập nhật phòng!');
-      });
+    setIsLoading(true);
+    try {
+      await updateRoom(id, updatedRoom, token);
+      setSavedRoom(updatedRoom);
+      setRoom(updatedRoom);
+      toast.success('Cập nhật phòng thành công!');
+    } catch (error) {
+      console.error('Lỗi khi cập nhật phòng:', error);
+      toast.error('Lỗi khi cập nhật phòng!');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Xử lý thêm người dùng
-  const handleAddUser = () => {
-    const currentCapacity = parseInt(savedRoom.capacity) || 0; // Dùng capacity đã lưu
-    if (users.length >= currentCapacity) {
-      toast.warn('Phòng đã đủ số người tối đa!');
-      return;
+  const handleUserAction = async (action, payload) => {
+    try {
+      switch (action) {
+        case 'add':
+          const currentCapacity = parseInt(savedRoom.capacity) || 0;
+          if (users.length >= currentCapacity) {
+            toast.warn('Phòng đã đủ số người tối đa!');
+            return;
+          }
+          if (!payload.username.trim()) {
+            toast.warn('Vui lòng nhập username!');
+            return;
+          }
+          const addResponse = await addUserToRoom(payload, token);
+          setUsers((prev) => [...prev, addResponse.data]);
+          setNewUsername('');
+          toast.success('Thêm người dùng thành công!');
+          break;
+        case 'delete':
+          await removeUserFromRoom(payload, token);
+          setUsers((prev) => prev.filter((user) => user.id !== payload.userId));
+          toast.success('Xóa người dùng thành công!');
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      const errorData = error.response?.data;
+      toast.error(errorData?.message || `Lỗi khi ${action === 'add' ? 'thêm' : 'xóa'} người dùng!`);
+      console.error(`Lỗi khi ${action}:`, error);
     }
-    if (!newUsername.trim()) {
-      toast.warn('Vui lòng nhập username!');
-      return;
-    }
-    const payload = {
-      roomId: id,
-      username: newUsername,
-    };
-    addUserToRoom(payload,token)
-      .then(response => {
-        setUsers([...users, response.data]);
-        setNewUsername('');
-        toast.success('Đã thêm người dùng!');
-      })
-      .catch(error => {
-        const errorData = error.response?.data;
-        if (errorData && errorData.message) {
-          toast.error(errorData.message);
-        } else {
-          toast.error('Có lỗi xảy ra khi thêm người dùng!');
-        }
-        console.error('Lỗi khi thêm người dùng:', error);
-      });
   };
-const handleFindRoommate = () => {
+
+  const handleFindRoommate = () => {
     const currentUsers = users.length;
-    const maxCapacity = room.capacity;
-
+    const maxCapacity = parseInt(room.capacity) || 0;
     if (currentUsers >= maxCapacity) {
       toast.error('Phòng đã đủ người, không thể tìm thêm thành viên!');
     } else {
@@ -104,128 +215,82 @@ const handleFindRoommate = () => {
     }
   };
 
-  const handleSubmitPost = async ({title,image}) => {
-    setIsLoading(true); // Bật loading
-    const payload=new FormData();
+  const handleSubmitPost = async ({ title, image }) => {
+    setIsLoading(true);
+    const payload = new FormData();
     payload.append('title', title);
     payload.append('roomId', id);
     payload.append('userId', user.id);
     payload.append('boardingHouseId', room.boardingHouseId);
     payload.append('imageFile', image);
-    console.log('Payload:', [...payload]); // Kiểm tra toàn bộ FormData
+
     try {
-      const response=await findRoomMate(payload,token);
-      toast.success("Đã đăng tin tìm người ở ghép thành công "||response.data.result);
-      console.log('Tiêu đề bài viết:', title);
+      await findRoomMate(payload, token);
+      toast.success('Đăng tin tìm người ở ghép thành công!');
     } catch (error) {
-      toast.error(error.message||'Đăng tin thất bại!');
+      toast.error(error.message || 'Đăng tin thất bại!');
     } finally {
-      setIsLoading(false); // Tắt loading
-      setIsPopupOpen(false); // Đóng popup sau khi hoàn tất
+      setIsLoading(false);
+      setIsPopupOpen(false);
     }
   };
 
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
-  // Xử lý xóa người dùng
-  const handleDeleteUser = (userId) => {
-    const payload = {
-      userId: userId,
-      roomId: id,
-    };
-    removeUserFromRoom(payload,token)
-      .then(() => {
-        setUsers(users.filter(user => user.id !== userId));
-        toast.success('Đã xóa người dùng khỏi phòng!');
-      })
-      .catch(error => {
-        const errorData = error.response?.data;
-        if (errorData && errorData.message) {
-          toast.error(errorData.message);
-        } else {
-          toast.error('Có lỗi xảy ra khi xóa người dùng!');
-        }
-        console.error('Lỗi khi xóa người dùng:', error);
-      });
-  };
-
-  // Xử lý thay đổi input của phòng
-  const handleRoomChange = (e) => {
-    const { name, value } = e.target;
-    setRoom({ ...room, [name]: value });
-  };
-
-  const isFull = users.length >= parseInt(savedRoom.capacity || 0); // Dùng capacity đã lưu để kiểm tra
+  const isFull = users.length >= parseInt(savedRoom.capacity || 0);
 
   return (
-    <div className="save-room">
-      <div className="room-info">
-        <h2>Thông tin phòng trọ</h2>
-        <div className="room-field">
-          <span>ID:</span>
-          <span>{room.id}</span>
+    <div className="save-room" data-testid="save-room">
+      <RoomForm
+        room={room}
+        onChange={handleRoomChange}
+        onSubmit={handleUpdateRoom}
+        isLoading={isLoading}
+      />
+      <section className="save-room__users-section">
+        <div className="save-room__section-header">
+          <h2>
+            Danh sách người thuê{' '}
+            <span className="save-room__user-count">
+              ({users.length}/{savedRoom.capacity || 0})
+            </span>
+          </h2>
+          <button
+            className="save-room__find-roommate-btn"
+            onClick={handleFindRoommate}
+            disabled={isFull}
+            aria-label="Tìm người ở ghép"
+          >
+            Tìm người ở ghép
+          </button>
         </div>
-        <label className="room-field">
-          <span>Tên phòng:</span>
-          <input type="text" name="name" value={room.name} onChange={handleRoomChange} />
-        </label>
-        <label className="room-field">
-          <span>Mô tả:</span>
-          <input type="text" name="description" value={room.description} onChange={handleRoomChange} />
-        </label>
-        <label className="room-field">
-          <span>Giá (VND):</span>
-          <input type="number" name="price" value={room.price || ''} onChange={handleRoomChange} />
-        </label>
-        <label className="room-field">
-          <span>Diện tích (m²):</span>
-          <input type="number" name="area" value={room.area} onChange={handleRoomChange} />
-        </label>
-        <label className="room-field">
-          <span>Số người tối đa:</span>
-          <input type="number" name="capacity" value={room.capacity} onChange={handleRoomChange} />
-        </label>
-        <label className="room-field">
-          <span>Tầng:</span>
-          <input type="number" name="floor" value={room.floor} onChange={handleRoomChange} />
-        </label>
-        <button className="update-btn" onClick={handleUpdateRoom}>Cập nhật phòng</button>
-      </div>
-
-      <div className="users-section">
-        <div className="container-title">
-
-        <h2>Danh sách người thuê ({users.length}/{savedRoom.capacity || 0})</h2> 
-        <button onClick={handleFindRoommate}>Tìm người ở ghép</button>
-        </div>
-        <div className="add-user">
+        <div className="save-room__add-user">
           <input
             type="text"
             placeholder="Nhập username"
             value={newUsername}
             onChange={(e) => setNewUsername(e.target.value)}
             disabled={isFull}
+            aria-label="Username người thuê"
           />
           <button
-            className="add-btn"
-            onClick={handleAddUser}
+            className="save-room__add-btn"
+            onClick={() => handleUserAction('add', { roomId: id, username: newUsername })}
             disabled={isFull}
+            aria-label="Thêm người thuê"
           >
-            Thêm người thuê
+            Thêm
           </button>
         </div>
-        <UserList users={users} onDelete={handleDeleteUser} />
-      </div>
+        <UserList users={users} onDelete={(userId) => handleUserAction('delete', { userId, roomId: id })} />
+      </section>
       <FindRoommatePopup
         isOpen={isPopupOpen}
-        onClose={handleClosePopup}
+        onClose={() => setIsPopupOpen(false)}
         onSubmit={handleSubmitPost}
         isLoading={isLoading}
       />
       <ToastContainer />
     </div>
   );
-}
+};
 
 export default SaveRoom;

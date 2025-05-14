@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import './style.scss';
+import { toast } from 'react-toastify';
 
 const SelectPayerPopup = ({ isManagement, isOpen, onClose, members, onConfirm, paymentId }) => {
   const [selectedPayer, setSelectedPayer] = useState('');
@@ -18,7 +19,7 @@ const SelectPayerPopup = ({ isManagement, isOpen, onClose, members, onConfirm, p
 
   const handleConfirm = async () => {
     if (!selectedPayer) {
-      alert('Vui lòng chọn người thanh toán');
+      toast.error('Vui lòng chọn người thanh toán');
       return;
     }
     setIsPaying(true);
@@ -29,7 +30,7 @@ const SelectPayerPopup = ({ isManagement, isOpen, onClose, members, onConfirm, p
       onClose(); // Đóng modal sau khi thanh toán thành công
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Thanh toán thất bại: ' + (error.message || 'Lỗi không xác định'));
+      toast.error('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau.');
     } finally {
       setIsPaying(false);
     }

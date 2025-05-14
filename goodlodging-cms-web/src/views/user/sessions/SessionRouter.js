@@ -11,13 +11,14 @@ const sessionRouter=[
         path:ROUTERS.AUTH.LOGIN,
         element: <JwtLogin/>
     },
-    {
-        path:ROUTERS.AUTH.REGISTER,
-        element: <RegisterForm/>
-    },
+   
     {
         path:ROUTERS.AUTH.RESET_PASSWORD,
         element: <ResetPassword/>
+    },
+     {
+        path:ROUTERS.AUTH.REGISTER,
+        element: <RegisterForm/>
     },
     {
         path:ROUTERS.AUTH.FORGOT_PASSWORD,

@@ -7,6 +7,7 @@ import './style.scss';
 import ConfigView from '../../../components/config/ConfigView';
 import SearchPostList from './post/SearchPostList';
 import { getValuesExcludingId, postTypeConstants } from '../../../constants/PostTypeConstants';
+import { toast } from 'react-toastify';
 
 const SearchPage = () => {
     const [posts, setPosts] = useState({
@@ -76,12 +77,11 @@ const SearchPage = () => {
                 });
             } else {
                 console.error("Dữ liệu không hợp lệ:", response);
-                alert("Không thể tải dữ liệu bài viết. Vui lòng thử lại.");
                 setPosts({ content: [], totalPages: 0, number: 0, first: true, last: true });
             }
         } catch (error) {
             console.error("Lỗi khi tải bài viết:", error);
-            alert("Có lỗi xảy ra khi tải bài viết. Vui lòng thử lại sau.");
+            toast.error("Có lỗi xảy ra khi tải bài viết");
             setPosts({ content: [], totalPages: 0, number: 0, first: true, last: true });
         }
     };

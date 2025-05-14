@@ -5,6 +5,7 @@ import { useAuth } from '../../../../../context/AuthContext';
 import MyPostList from './myPost/MyPostList';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../../../utils/router/Router';
+import { toast } from 'react-toastify';
 const ManagementPost = () => {
     const navigate=useNavigate();
     const {user,isLogin,loading}=useAuth();
@@ -28,8 +29,11 @@ const ManagementPost = () => {
         // Chỉ chạy logic sau khi loading hoàn tất
         if (!loading) {
             if (!isLogin || !user) {
-                alert("Vui lòng đăng nhập");
-                navigate(`/${ROUTERS.AUTH.LOGIN}`);
+                toast.error("Vui lòng đăng nhập để truy cập trang này",{
+                    autoClose: 3000, // Đóng sau 3 giây
+                    onClose: () => navigate(ROUTERS.AUTH.LOGIN),  // Chuyển trang sau khi đóng
+                });
+                navigate(ROUTERS.AUTH.LOGIN);
             }
             else{
                 handleLoadMyPosts(user.id);

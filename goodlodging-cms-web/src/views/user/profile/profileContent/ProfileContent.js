@@ -31,10 +31,16 @@ const ProfileContent = () => {
   };
 
   useEffect(() => {
-    if (loading) return;
-    if (!isLogin) {
-      navigate(ROUTERS.AUTH.LOGIN);
-    } else if (user) {
+     if (!loading) {
+          if (!isLogin || !user) {
+            toast.error('Vui lòng đăng nhập để tiếp tục');
+            //navigate(ROUTERS.AUTH.LOGIN);
+          } else {
+            handleFetchData();
+          }
+        }
+  }, [loading, isLogin,token, navigate, user]);
+  const handleFetchData = async () => {
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
@@ -46,9 +52,7 @@ const ProfileContent = () => {
       });
       setImageUrl(user.imageUrl || "");
       setPreviewImage(""); // Không hiển thị previewImage ban đầu
-    }
-  }, [loading, isLogin, navigate, user]);
-
+  }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {

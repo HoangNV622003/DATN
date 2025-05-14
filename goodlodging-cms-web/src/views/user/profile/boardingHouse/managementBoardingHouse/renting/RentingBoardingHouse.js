@@ -28,7 +28,7 @@ const RentingBoardingHouse = () => {
     if(!loading){
       if(!user||!isLogin){
         toast.error("Vui lòng đăng nhập để tiếp tục")
-        navigate(`/${ROUTERS.AUTH.LOGIN}`);
+        navigate(ROUTERS.AUTH.LOGIN);
 
       }else{
         handleFetchData(user.id,token);

@@ -1,0 +1,292 @@
+// Biến
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$card-background: #ffffff;
+$text-color: #333333;
+$border-color: #dee2e6;
+$heart-color: #ff4d4f;
+$shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+$spacing: 16px;
+$card-width: 300px;
+
+// Style cho SuggestedPostList
+.suggested-post {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 35px;
+  .no-posts {
+    font-size: 1.1rem;
+    color: $secondary-color;
+    text-align: center;
+    padding: $spacing;
+  }
+
+  .post-list-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+
+  }
+
+  .post-list-container {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .post-list {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    justify-content: center;
+
+    &.no-transition {
+      transition: none; // Tắt transition khi đặt lại startIndex
+    }
+
+    .post-card {
+      background: $card-background;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      overflow: hidden;
+      max-width: $card-width;
+      width: calc((100% - #{$spacing} * 2) / 3);
+      flex-shrink: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow;
+      }
+
+      .post-image {
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      }
+
+      .post-details {
+        padding: $spacing;
+        flex-grow: 1;
+
+        h3 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: $text-color;
+          margin: 0 0 $spacing * 0.5;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .price,
+        .area,
+        .address {
+          font-size: 0.95rem;
+          color: $secondary-color;
+          margin: $spacing * 0.25 0;
+
+          &.price {
+            color: $primary-color;
+            font-weight: 500;
+          }
+
+          &.address {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+
+      .favorite-icon {
+        position: absolute;
+        top: $spacing;
+        right: $spacing;
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        padding: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: $heart-color;
+        transition: background 0.2s, transform 0.2s;
+        z-index: 10;
+
+        &:hover {
+          background: rgba(255, 255, 255, 1);
+          transform: scale(1.1);
+        }
+
+        &:focus {
+          outline: none;
+        }
+
+        svg {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .nav-button {
+    margin: 30px;
+    background: rgba(0, 123, 255, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: background 0.2s, transform 0.2s;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &:hover:not(:disabled) {
+      background: rgba(0, 123, 255, 0.7);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    &:disabled {
+      background: rgba(108, 117, 125, 0.5);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    &.prev-button {
+      left: $spacing;
+    }
+
+    &.next-button {
+      right: $spacing;
+    }
+
+    svg {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .suggested-post {
+    .post-list-wrapper {
+      width: 100%;
+    }
+
+    .post-list-container {
+      width: 100%;
+    }
+
+    .post-list {
+      .post-card {
+        width: calc((100% - #{$spacing}) / 2);
+        max-width: $card-width * 0.8;
+
+        .post-image {
+          height: 140px;
+        }
+
+        .post-details {
+          h3 {
+            font-size: 1rem;
+          }
+
+          .price,
+          .area,
+          .address {
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+
+    .nav-button {
+      width: 32px;
+      height: 32px;
+
+      &.prev-button {
+        left: $spacing * 0.75;
+      }
+
+      &.next-button {
+        right: $spacing * 0.75;
+      }
+
+      svg {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .suggested-post {
+    .post-list-wrapper {
+      width: 100%;
+    }
+
+    .post-list-container {
+      width: 100%;
+    }
+
+    .post-list {
+      .post-card {
+        width: 100%;
+        max-width: $card-width * 0.8;
+
+        .post-image {
+          height: 100px;
+        }
+
+        .post-details {
+          h3 {
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+
+    .nav-button {
+      width: 28px;
+      height: 28px;
+
+      &.prev-button {
+        left: $spacing * 0.5;
+      }
+
+      &.next-button {
+        right: $spacing * 0.5;
+      }
+    }
+  }
+}

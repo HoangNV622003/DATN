@@ -1,187 +1,210 @@
-// Biến màu sắc và giá trị chung
-$primary-color: #007bff;
-$success-color: #28a745;
-$danger-color: #dc3545;
-$secondary-color: #6c757d;
-$border-color: #e0e0e0;
-$shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-$spacing: 20px;
+// Biến màu sắc
+$primary: #007bff;
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #17a2b8;
+$secondary: #6c757d;
+$background: #ffffff;
+$border: #e0e0e0;
+$text: #2c2c2c;
+$text-secondary: #333;
+
+// Biến khoảng cách
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+
+// Biến kích thước
+$border-radius: 0.5rem;
+$font-size-base: 0.875rem;
 
 .room-list {
-  max-width: 900px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: $spacing;
+  padding: $spacing-md;
+}
 
-  .btn-add-room {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: $primary-color;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    margin-bottom: $spacing;
-    transition: background-color 0.3s ease;
+.btn-add-room {
+  display: inline-block;
+  padding: $spacing-sm $spacing-md;
+  background-color: $success;
+  color: white;
+  border-radius: $border-radius;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: $font-size-base;
+  margin-bottom: $spacing-md;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
+  &:hover {
+    background-color: darken($success, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.room-item {
+  background: $background;
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .room-item {
-    background-color: white;
-    border-radius: 10px;
-    padding: $spacing;
-    margin-bottom: $spacing;
-    box-shadow: $shadow;
+  &.new-room {
+    border: 2px dashed $primary;
+  }
+}
 
-    &.new-room {
-      border: 2px dashed $primary-color;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 500;
+    color: $text;
+    font-size: $font-size-base;
+    margin-bottom: $spacing-sm;
+  }
+
+  input {
+    padding: $spacing-sm;
+    border: 1px solid $border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    transition: border all ease 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.1);
+    }
+  }
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  label {
+    font-weight: 500;
+    color: $text;
+    font-size: $font-size-base;
+    white-space: nowrap;
+  }
+
+  span {
+    font-size: $font-size-base;
+    color: $text-secondary;
+    flex: 1;
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-sm;
+
+  button {
+    padding: $spacing-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: $font-size-base;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &.room-btn-save {
+      background-color: $primary;
+      color: white;
+
+      &:hover {
+        background-color: darken($primary, 10%);
+        transform: translateY(-2px);
+      }
     }
 
-    .form-row {
-      display: flex;
-      gap: $spacing;
-      margin-bottom: $spacing / 2;
+    &.room-btn-cancel {
+      background-color: $secondary;
+      color: white;
 
-      .form-group {
-        flex: 1;
-        display: flex;
-        align-items: center;
-
-        label {
-          width: 120px;
-          font-weight: 600;
-          color: $secondary-color;
-        }
-
-        input {
-          flex: 1;
-          padding: 10px;
-          border: 1px solid $border-color;
-          border-radius: 5px;
-          font-size: 16px;
-          transition: border-color 0.3s ease;
-
-          &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 5px rgba($primary-color, 0.2);
-          }
-
-          &[readonly] {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-          }
-        }
+      &:hover {
+        background-color: darken($secondary, 10%);
+        transform: translateY(-2px);
       }
     }
 
-    .button-group {
-      display: flex;
-      gap: $spacing / 2;
-      margin-top: $spacing;
+    &.room-btn-remove {
+      background-color: $danger;
+      color: white;
 
-      .room-btn-save {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: $success-color;
-        color: white;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-          background-color: darken($success-color, 10%);
-        }
+      &:hover {
+        background-color: darken($danger, 10%);
+        transform: translateY(-2px);
       }
+    }
 
-      .room-btn-cancel {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: $secondary-color;
-        color: white;
-        transition: background-color 0.3s ease;
+    &.room-btn-update {
+      background-color: #007bff;
+      color: white;
 
-        &:hover {
-          background-color: darken($secondary-color, 10%);
-        }
+      &:hover {
+        background-color: darken(#007bff, 10%);
+        transform: translateY(-2px);
       }
+    }
 
-      .room-btn-remove {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: $danger-color;
-        color: white;
-        transition: background-color 0.3s ease;
+    &.room-btn-payment {
+      background-color: $info;
+      color: white thermometer;
 
-        &:hover {
-          background-color: darken($danger-color, 10%);
-        }
-      }
-
-      .room-btn-update {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: $primary-color;
-        color: white;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-          background-color: darken($primary-color, 10%);
-        }
+      &:hover {
+        background-color: darken($info, 10%);
+        transform: translateY(-2px);
       }
     }
   }
 }
 
-// Responsive
-@media (max-width: 768px) {
-  .room-list {
-    padding: $spacing / 2;
+@media (max-width: 600px) {
+  .form-grid,
+  .room-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .room-item {
-      .form-row {
-        flex-direction: column;
-        gap: $spacing / 2;
+  .room-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-        .form-group {
-          flex-direction: column;
-          align-items: stretch;
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
 
-          label {
-            width: auto;
-            margin-bottom: 5px;
-          }
-
-          input {
-            width: 100%;
-          }
-        }
-      }
-
-      .button-group {
-        flex-direction: column;
-        gap: $spacing / 2;
-
-        .room-btn-save,
-        .room-btn-cancel,
-        .room-btn-remove,
-        .room-btn-update {
-          width: 100%;
-        }
-      }
+    button {
+      width: 100%;
+      padding: $spacing-md;
     }
   }
 }

@@ -4,44 +4,39 @@ import { useNavigate } from "react-router-dom";
 import { RiHome2Line } from "react-icons/ri";
 import { CiHeart } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
-import { AiOutlineMessage } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import "./style.scss";
 import { ROUTERS } from "../../utils/router/Router";
 import { useAuth } from "../../context/AuthContext";
-import { useChat } from "../../context/ChatContext";
 import { toast } from "react-toastify";
+import { IMAGE_URL } from "../../utils/ApiUrl";
 
 const Header = () => {
-    const {openChat}=useChat();
     const { user, isLogin, loading } = useAuth(); // Thêm loading để kiểm tra
     const navigate = useNavigate();
 
     const handleNavigateToLogin = () => {
-        navigate("/login");
+        navigate(ROUTERS.AUTH.LOGIN);
     };
 
     const handleNavigateToProfile = () => {
         navigate(ROUTERS.USER.PROFILE.replace("/*", ""));
     };
 
-    const handleNavigateToMessagePage=()=>{
-        openChat();
-    }
     const handleHomeClick = () => {
         navigate("/"); // Điều hướng về trang chủ
     };
-    const handleNavigateToFavoritePost=()=>{
-        if(isLogin){
+    const handleNavigateToFavoritePost = () => {
+        if (isLogin) {
             navigate(ROUTERS.USER.FAVORITE_POST);
-        }else{
+        } else {
             toast.error("Vui lòng đăng nhập để thực hiện chức năng này")
         }
     }
-    const handleNavigateToCreatePost=()=>{
-        if(isLogin){
-            navigate(ROUTERS.USER.PROFILE.replace("*","")+ROUTERS.USER.POST.CREATE)
-        }else{
+    const handleNavigateToCreatePost = () => {
+        if (isLogin) {
+            navigate(ROUTERS.USER.PROFILE.replace("*", "") + ROUTERS.USER.POST.CREATE)
+        } else {
             toast.error("Vui lòng đăng nhập để thực hiện chức năng này")
         }
     }
@@ -67,12 +62,12 @@ const Header = () => {
                     <button className="header__button" onClick={handleNavigateToCreatePost}>Đăng Tin</button>
                     {isLogin && user ? (
                         <div className="header__buttons">
-                            <button className="header__button" onClick={handleNavigateToMessagePage}>
-                                <AiOutlineMessage className="header__icon__message" />
-                                <p>Tin nhắn</p>
-                            </button>
+
                             <button className="header__button" onClick={handleNavigateToProfile}>
-                                <CiUser className="header__icon__account" />
+                                {user.imageUrl !== null
+                                    ? <img src={IMAGE_URL + user.imageUrl} alt="Avatar" className="header__avatar" />
+                                    : <CiUser className="header__icon__account" />}
+
                                 <p>{user.firstName + " " + user.lastName}</p>
                             </button>
                         </div>

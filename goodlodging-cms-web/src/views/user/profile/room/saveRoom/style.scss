@@ -1,168 +1,229 @@
-// Biến màu sắc và giá trị chung
-$primary-color: #007bff;
-$secondary-color: #6c757d;
-$success-color: #28a745;
-$border-color: #e0e0e0;
-$shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-$spacing: 20px;
+// Biến màu sắc
+$primary: #007bff;
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #17a2b8;
+$secondary: #6c757d;
+$background: #ffffff;
+$border: #e0e0e0;
+$text: #2c2c2c;
+$text-secondary: #555;
 
-// Container chính
+// Biến khoảng cách
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+
+// Biến kích thước
+$border-radius: 0.5rem;
+$font-size-base: 0.875rem;
+
 .save-room {
-  max-width: 1000px;
+  max-width: 60rem;
   margin: 0 auto;
-  padding: $spacing;
-  font-family: 'Arial', sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+  padding: $spacing-md;
+  background: $background;
+  box-sizing: border-box;
+
+  // Reset các thuộc tính có thể bị ghi đè từ global styles
+  display: block;
+  font-size: $font-size-base;
+  line-height: 1.5;
+
+  // Đảm bảo các phần tử con không bị ảnh hưởng từ style cha
+  & * {
+    box-sizing: border-box;
+  }
 }
 
-// Phần thông tin phòng
-.room-info {
-  background-color: white;
-  border-radius: 10px;
-  padding: $spacing;
-  box-shadow: $shadow;
-  margin-bottom: $spacing * 2;
+.save-room__room-info {
+  margin-bottom: $spacing-lg;
 
   h2 {
-    color: $primary-color;
-    font-size: 28px;
-    margin-bottom: $spacing;
-    border-bottom: 2px solid $primary-color;
-    padding-bottom: 5px;
+    font-size: 1.5rem;
+    color: $text;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.save-room__form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.save-room__form-group {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  justify-content: space-between;
+  label {
+    font-weight: 500;
+    color: $text;
+    font-size: $font-size-base;
+    white-space: nowrap;
   }
 
-  .room-field {
-    display: flex;
-    align-items: center;
-    margin: $spacing / 2 0;
+  input {
+    width: 60%;
+    padding: $spacing-sm;
+    border: 1px solid $border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-    span:first-child {
-      width: 120px;
-      font-weight: 600;
-      color: $secondary-color;
-    }
-
-    input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid $border-color;
-      border-radius: 5px;
-      font-size: 16px;
-      transition: border-color 0.3s ease;
-
-      &:focus {
-        outline: none;
-        border-color: $primary-color;
-        box-shadow: 0 0 5px rgba($primary-color, 0.2);
-      }
+    &::focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.1);
     }
   }
 
-  .update-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: $primary-color;
+  span {
+    font-size: $font-size-base;
+    color: $text-secondary;
+    flex: 1;
+  }
+}
+
+.save-room__update-btn {
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary;
+  color: white;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: $font-size-base;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: darken($primary, 10%);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: $secondary;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.save-room__users-section {
+  h2 {
+    font-size: 1.25rem;
+    color: $text;
+    margin-bottom: $spacing-md;
+  }
+
+  .save-room__user-count {
+    color: $info;
+    font-weight: 600;
+  }
+}
+
+.save-room__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.save-room__find-roommate-btn {
+  padding: $spacing-sm $spacing-md;
+  background-color: $success;
+  color: white;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: $font-size-base;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: darken($success, 10%);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: $secondary;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.save-room__add-user {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  input {
+    flex: 1;
+    padding: $spacing-sm;
+    border: 1px solid $border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.1);
+    }
+
+    &:disabled {
+      background-color: #f5f5f5;
+      cursor: not-allowed;
+    }
+  }
+
+  .save-room__add-btn {
+    padding: $spacing-sm $spacing-md;
+    background-color: $info;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: $border-radius;
     cursor: pointer;
-    margin-top: $spacing;
-    transition: background-color 0.3s ease;
+    font-weight: 500;
+    font-size: $font-size-base;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 
     &:hover {
-      background-color: darken($primary-color, 10%);
+      background-color: darken($info, 10%);
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      background-color: $secondary;
+      cursor: not-allowed;
+      transform: none;
     }
   }
 }
 
-// Phần danh sách người dùng
-.users-section {
-  .container-title{
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 2px solid $primary-color;
-    margin-bottom: $spacing;
-    h2 {
-      color: $primary-color;
-      font-size: 28px;
-      margin-bottom: $spacing;
-      padding-bottom: 5px;
-    }
-    button{
-      height: 40px;
-      width: 150px;
-      background: $primary-color;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-
-      &:hover {
-        background: darken($primary-color, 10%);
-      }
-    }
+@media (max-width: 600px) {
+  .save-room__form-grid {
+    grid-template-columns: 1fr;
   }
 
-  .add-user {
-    display: flex;
-    gap: $spacing / 2;
-    margin-bottom: $spacing;
-
-    input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid $border-color;
-      border-radius: 5px;
-      font-size: 16px;
-
-      &:focus {
-        outline: none;
-        border-color: $primary-color;
-      }
-    }
-
-    .add-btn {
-      height: 40px;
-      width: 150px;
-      background-color: $success-color;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: darken($success-color, 10%);
-      }
-    }
-  }
-}
-
-// Responsive
-@media (max-width: 768px) {
-  .save-room {
-    padding: $spacing / 2;
+  .save-room__form-group {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .room-info,
-  .users-section {
-    .room-field,
-    .add-user {
-      flex-direction: column;
-      align-items: stretch;
+  .save-room__section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
 
-      span:first-child {
-        width: auto;
-        margin-bottom: 5px;
-      }
+  .save-room__add-user {
+    flex-direction: column;
 
-      input,
-      .add-btn {
-        width: 100%;
-      }
+    input,
+    .save-room__add-btn {
+      width: 100%;
     }
   }
 }

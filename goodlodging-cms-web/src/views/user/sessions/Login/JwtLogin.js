@@ -5,6 +5,7 @@ import "./style.scss";
 import { ROUTERS } from '../../../../utils/router/Router';
 import { loginUser } from '../../../../apis/auth/AuthService';
 import { useAuth } from '../../../../context/AuthContext';
+import { toast } from 'react-toastify';
 const JwtLogin = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -39,7 +40,7 @@ const JwtLogin = () => {
     };
 
     const handleNavigateToRegister = () => {
-        navigate(`/${ROUTERS.AUTH.REGISTER}`);
+        navigate(ROUTERS.AUTH.REGISTER);
     };
 
     const handleNavigateHomepage = () => {
@@ -79,13 +80,12 @@ const JwtLogin = () => {
                         {loading ? "Đang xử lý..." : "Đăng nhập"}
                     </button>
                     <div className="form-group">
-                        <Link to={"/forgot-password"}>Quên mật khẩu</Link>
+                        <Link to={ROUTERS.AUTH.FORGOT_PASSWORD}>Quên mật khẩu</Link>
                     </div>
                     <hr />
-                    <button className="register-btn" onClick={handleNavigateToRegister} disabled={loading}>
+                    <div className="register-btn"  onClick={handleNavigateToRegister} disabled={loading}>
                         Tạo tài khoản mới
-                    </button>
-                    <button onClick={handleNavigateHomepage}>Trở lại trang chủ</button>
+                    </div>
                 </div>
             </form>
         </div>

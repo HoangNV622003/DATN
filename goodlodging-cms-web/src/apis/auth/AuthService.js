@@ -57,7 +57,7 @@ export const resetPasswordInit = async (payload) => {
   }
 };
 //gọi api xác thực otp => payload => {email,otp}
-export const resetPasswordCheck = async (payload) => {
+export const verifyOTP = async (payload) => {
   try {
     const response = await axios.post(
       `${API_URL}/notifications/otp/verify`,
@@ -74,6 +74,17 @@ export const resetPasswordCheck = async (payload) => {
   }
 };
 
+export const sendOtp = async (payload) => {
+  return await axios.post(
+    `${API_URL}/notifications/otp/send`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
 //gọi api tạo mật khẩu mới => payload => {email, newPassword, confirmNewPassword}
 export const resetPasswordFinish = async (payload) => {
   try {

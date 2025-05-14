@@ -24,6 +24,15 @@ export const createUser = async (userData) => {
   });
 };
 
+export const existedUser=async (payload) => {
+  return await axios.get(`${API_URL}/users/existed`, {
+    params: payload,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 export const updateUser = async (userId, userData, accessToken) => {
   return await axios.put(`${API_URL}/users/${userId}`, userData, {
     headers: {
@@ -34,7 +43,7 @@ export const updateUser = async (userId, userData, accessToken) => {
 };
 
 export const deleteUser = async (userId, accessToken) => {
-  return await axios.delete(`${API_URL}/${userId}`, {
+  return await axios.delete(`${API_URL}/users/${userId}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -42,9 +51,17 @@ export const deleteUser = async (userId, accessToken) => {
 };
 
 export const fetchMyBoardingHouse = async (userId, accessToken) => {
-  return await axios.get(`${API_URL}/${userId}/boarding-house`, {
+  return await axios.get(`${API_URL}/users/${userId}/boarding-house`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   })
+}
+
+export const resetPassword=async(payload) => {
+  return axios.patch(`${API_URL}/users/reset-password`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
