@@ -10,6 +10,7 @@ import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,6 @@ public class AuthenticationController {
 
     @PostMapping("/introspect")
     public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest requestDTO) throws ParseException, JOSEException {
-        System.out.println("hello");
         return ApiResponse.<IntrospectResponse>builder().result(authenticationService.introspect(requestDTO)).build();
     }
 
@@ -50,4 +50,5 @@ public class AuthenticationController {
     public ApiResponse<CommonResponse> changeUserPassword(@RequestBody ChangeUserPasswordRequest changeUserPasswordRequest) {
         return ApiResponse.<CommonResponse>builder().result(authenticationService.changePassword(changeUserPasswordRequest)).build();
     }
+
 }

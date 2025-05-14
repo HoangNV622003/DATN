@@ -2,12 +2,12 @@ package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
-import com.example.good_lodging_service.constants.PaymentStatus;
+import com.example.good_lodging_service.constants.BillStatus;
 import com.example.good_lodging_service.dto.request.EntityDelete.EntityDeleteRequest;
 import com.example.good_lodging_service.dto.request.Room.RoomRequest;
+import com.example.good_lodging_service.dto.response.Bill.BillResponse;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
-import com.example.good_lodging_service.dto.response.PaymentTransaction.PaymentTransactionResponse;
 import com.example.good_lodging_service.dto.response.Room.MyRoomResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomConfigProjection;
 import com.example.good_lodging_service.dto.response.Room.RoomDetailResponse;
@@ -15,11 +15,11 @@ import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.dto.response.RoomUser.RoomUserProjection;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.entity.BoardingHouse;
-import com.example.good_lodging_service.entity.PaymentTransaction;
+import com.example.good_lodging_service.entity.Bill;
 import com.example.good_lodging_service.entity.Room;
 import com.example.good_lodging_service.entity.User;
 import com.example.good_lodging_service.exception.AppException;
-import com.example.good_lodging_service.mapper.PaymentTransactionMapper;
+import com.example.good_lodging_service.mapper.BillMapper;
 import com.example.good_lodging_service.mapper.RoomMapper;
 import com.example.good_lodging_service.mapper.UserMapper;
 import com.example.good_lodging_service.repository.*;
@@ -44,8 +44,8 @@ public class RoomService {
     UserMapper userMapper;
     UserRepository userRepository;
     private final BoardingHouseRepository boardingHouseRepository;
-    PaymentTransactionRepository paymentTransactionRepository;
-    PaymentTransactionMapper paymentTransactionMapper;
+    BillRepository billRepository;
+    BillMapper billMapper;
 
     public RoomResponse createRoom(RoomRequest request) {
         if (roomRepository.existsByNameAndBoardingHouseIdAndStatus(request.getName(), request.getBoardingHouseId(), CommonStatus.ACTIVE.getValue()))
@@ -101,22 +101,22 @@ public class RoomService {
         return CommonResponse.builder().result(ApiResponseCode.ROOM_DELETED_SUCCESSFUL.getMessage()).build();
     }
 
-    private PaymentTransactionResponse convertToPaymentTransactionResponse(User user, PaymentTransaction paymentTransaction) {
-        PaymentTransactionResponse paymentTransactionResponse = paymentTransactionMapper.toPaymentTransactionResponse(paymentTransaction);
-        paymentTransactionResponse.setPayerName(user != null ? user.getFirstName() + " " + user.getLastName() : "");
-        return paymentTransactionResponse;
+    private BillResponse convertToPaymentTransactionResponse(User user, Bill bill) {
+        BillResponse billResponse = billMapper.toPaymentTransactionResponse(bill);
+        billResponse.setPayerName(user != null ? user.getFirstName() + " " + user.getLastName() : "");
+        return billResponse;
     }
 
-    public List<PaymentTransactionResponse> findAllPaymentByRoomId(Long roomId) {
-        List<PaymentTransaction> paymentTransactions = paymentTransactionRepository.findAllByRoomIdAndStatusNot(roomId, PaymentStatus.DELETED.getValue());
+    public List<BillResponse> findAllPaymentByRoomId(Long roomId) {
+        List<Bill> bills = billRepository.findAllByRoomIdAndStatusNot(roomId, BillStatus.DELETED.getValue());
 
-        List<Long> payerIds = paymentTransactions.stream().map(PaymentTransaction::getPayerId).toList();
+        List<Long> payerIds = bills.stream().map(Bill::getPayerId).toList();
         List<User> users = userRepository.findAllByIdInAndStatus(payerIds, CommonStatus.ACTIVE.getValue());
         Map<Long, User> userMap = new HashMap<>();
         users.forEach(user -> {
             userMap.put(user.getId(), user);
         });
-        return paymentTransactions.stream().map(paymentTransaction
+        return bills.stream().map(paymentTransaction
                 -> convertToPaymentTransactionResponse(userMap.get(paymentTransaction.getPayerId()), paymentTransaction)).toList();
     }
 

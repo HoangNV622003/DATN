@@ -53,7 +53,7 @@ public class PostService {
     @Value("${upload.uploadDir}")
     @NonFinal
     private String uploadDir;
-
+    Integer MAX_POST_SUGGESTED=15;
     public PostResponse createPost(PostRequest request) throws Exception {
         //get address by boardingHouseId
         Address address = addressRepository.findByBoardingHouseIdAndStatusWithQuery(request.getBoardingHouseId(), CommonStatus.ACTIVE.getValue()).orElse(null);
@@ -93,7 +93,8 @@ public class PostService {
         List<Image> boardingHouseImageUrls = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getBoardingHouseId(), EntityType.BOARDING_HOUSE.getValue(), CommonStatus.ACTIVE.getValue());
         List<Image> roomImageUrls = imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getRoomId(), EntityType.ROOM.getValue(), CommonStatus.ACTIVE.getValue());
         boardingHouseImageUrls.addAll(roomImageUrls);
-        List<String> imageUrls = boardingHouseImageUrls.stream().map(Image::getImageUrl).toList();
+        List<String> imageUrls = new ArrayList<>(List.of(postDetailProjection.getImageUrl()));
+        imageUrls.addAll(boardingHouseImageUrls.stream().map(Image::getImageUrl).toList());
         List<RoomResponse> rooms=roomRepository.findAllByBoardingHouseIdAndStatusWithQuery(postDetailProjection.getBoardingHouseId(),CommonStatus.ACTIVE.getValue())
                 .stream().map(roomMapper::toRoomResponseDTO).toList();
         return PostDetailResponse.builder()
@@ -212,6 +213,29 @@ public class PostService {
                 : getAllPosts(pageable);
     }
 
+    public List<PostProjection> getSuggestedPosts(String provinceName, String districtName, String wardName) {
+        List<PostProjection> result = new ArrayList<>();
+
+        // Ward-level query
+        if (wardName != null && !wardName.isEmpty()) {
+            List<PostProjection> wardPosts = postRepository.findByWard(provinceName, districtName, wardName, CommonStatus.ACTIVE.getValue());
+            result.addAll(wardPosts);
+        }
+
+        // District-level query
+        if (result.size() < MAX_POST_SUGGESTED && districtName != null && !districtName.isEmpty()) {
+            List<PostProjection> districtPosts = postRepository.findByDistrict(provinceName, districtName, wardName, CommonStatus.ACTIVE.getValue(), MAX_POST_SUGGESTED - result.size());
+            result.addAll(districtPosts);
+        }
+
+        // Province-level query
+        if (result.size() < MAX_POST_SUGGESTED && provinceName != null && !provinceName.isEmpty()) {
+            List<PostProjection> provincePosts = postRepository.findByProvince(provinceName, districtName, wardName, CommonStatus.ACTIVE.getValue(), MAX_POST_SUGGESTED - result.size());
+            result.addAll(provincePosts);
+        }
+
+        return result;
+    }
     private Page<PostProjection> findByAddressAndFeature(PostFilterRequest filter, Pageable pageable) {
         validateFilter(filter);
         return postRepository.findAllByAddressAndFeaturesWithQuery(

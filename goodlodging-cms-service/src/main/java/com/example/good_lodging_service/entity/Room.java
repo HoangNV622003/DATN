@@ -23,7 +23,6 @@ public class Room extends AbstractAuditingEntity implements Serializable {
     Long id;
     Long boardingHouseId;
     String name;
-    String description;
     Integer capacity;
     Float price;
     Float area;

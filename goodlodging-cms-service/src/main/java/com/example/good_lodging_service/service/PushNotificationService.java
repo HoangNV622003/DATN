@@ -19,18 +19,22 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PushNotificationService {
 
     KafkaProducer kafkaProducer;
     OTPRepository otpRepository;
+    Map<String, Instant> lastSentTimes = new ConcurrentHashMap<>(); // Lưu thời gian gửi OTP cuối
 
     private static final DateTimeFormatter formatter = DateTimeFormatter
             .ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -40,6 +44,46 @@ public class PushNotificationService {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
         return String.valueOf(otp);
+    }
+
+    @Transactional
+    public Instant sendOtp(OtpRequest request) {
+        // Kiểm tra tần suất gửi OTP
+        Instant lastSent = lastSentTimes.get(request.getEmail());
+        if (lastSent != null && lastSent.plusSeconds(30).isAfter(Instant.now())) {
+            throw new AppException(ApiResponseCode.OTP_REQUEST_TOO_FREQUENT);
+        }
+
+        // Kiểm tra email
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new AppException(ApiResponseCode.INVALID_REQUEST_EMAIL);
+        }
+
+        // Tìm OTP hiện có
+        Optional<OTP> existingOtp = otpRepository.findFirstByEmailOrderByExpiryTimeDesc(request.getEmail());
+        OTP otp;
+        if (existingOtp.isPresent()) {
+            otp = existingOtp.get();
+            otp.setOtp(generateOTP());
+            otp.setExpiryTime(Instant.now().plus(OTPConstant.OTP_EXPIRE_TIME_MINUTES.getValue(), java.time.temporal.ChronoUnit.MINUTES));
+        } else {
+            otp = OTP.builder()
+                    .email(request.getEmail())
+                    .otp(generateOTP())
+                    .expiryTime(Instant.now().plus(OTPConstant.OTP_EXPIRE_TIME_MINUTES.getValue(), java.time.temporal.ChronoUnit.MINUTES))
+                    .build();
+        }
+
+        // Lưu OTP
+        otpRepository.save(otp);
+        lastSentTimes.put(request.getEmail(), Instant.now());
+
+        // Gửi email ngoài giao dịch
+        String expiryTimeStr = DateTimeUtils.format(otp.getExpiryTime(), ZoneId.of(ConstantsAll.ZoneId));
+        String messageBody = String.format("Your OTP is %s. It expires at %s.", otp.getOtp(), expiryTimeStr);
+        sendOtpToEmail(request, otp.getOtp(), messageBody);
+
+        return otp.getExpiryTime();
     }
 
     public void saveOtp(PushNotificationRequest request) {
@@ -77,9 +121,9 @@ public class PushNotificationService {
         return true;
     }
 
-    public void resendOtp(OtpRequest request) {
-        otpRepository.deleteAllByEmail(request.getEmail());
-        sendOtp(request);
+    @Transactional
+    public Instant resendOtp(OtpRequest request) {
+        return sendOtp(request); // Tái sử dụng sendOtp với logic đã tối ưu
     }
 
     private void sendOtpToEmail(OtpRequest request, String otpValue, String messageBody) {
@@ -93,22 +137,5 @@ public class PushNotificationService {
                 .email(request.getEmail())
                 .message(messageBody)
                 .build());
-    }
-
-    public void sendOtp(OtpRequest request) {
-        otpRepository.deleteAllByEmail(request.getEmail());
-
-        if ((request.getEmail() == null || request.getEmail().isEmpty())) {
-            throw new AppException(ApiResponseCode.INVALID_REQUEST_EMAIL);
-        }
-
-        String otpValue = generateOTP();
-        Instant expiryTime = Instant.now().plus(OTPConstant.OTP_EXPIRE_TIME_MINUTES.getValue(), java.time.temporal.ChronoUnit.MINUTES);
-        String expiryTimeStr = DateTimeUtils.format(expiryTime, ZoneId.of(ConstantsAll.ZoneId));
-        String messageBody = String.format("Your OTP is %s. It expires at %s.", otpValue, expiryTimeStr);
-
-        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
-            sendOtpToEmail(request, otpValue, messageBody);
-        }
     }
 }

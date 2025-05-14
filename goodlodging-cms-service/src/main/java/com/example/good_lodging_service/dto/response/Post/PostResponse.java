@@ -21,8 +21,6 @@ public class PostResponse {
     Float electricityPrice;
     Float waterPrice;
     Float otherPrice;
-
-
     String address;
     Long boardingHouseId;
     Long userId;

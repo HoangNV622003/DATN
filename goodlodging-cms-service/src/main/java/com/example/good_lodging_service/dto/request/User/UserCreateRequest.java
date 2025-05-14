@@ -18,7 +18,6 @@ public class UserCreateRequest {
     String lastName;
     String email;
     String phone;
-    AddressRequest address;
     String gender;
     LocalDate birthday;
 }

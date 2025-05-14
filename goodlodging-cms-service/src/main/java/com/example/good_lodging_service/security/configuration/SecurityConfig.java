@@ -26,6 +26,8 @@ public class SecurityConfig {
             "/auth/token",
             "/auth/introspect",
             "/users",
+            "/users/existed",
+            "/users/reset-password",
             "/notifications/otp/send",
             "/notifications/otp/resend",
             "/notifications/otp/verify",
@@ -42,6 +44,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
                 .requestMatchers(HttpMethod.GET,PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers(HttpMethod.PATCH,"/users/reset-password").permitAll()
                 .anyRequest().authenticated()
         );
 

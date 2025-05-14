@@ -7,6 +7,7 @@ public interface PostDetailProjection {
     Long getUserId();
     Long getRoomId();
     Long getBoardingHouseId();
+    String getImageUrl();
     String getUrlAvatar();
     String getBoardingHouseName();
     String getAddress();

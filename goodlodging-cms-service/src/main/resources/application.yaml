@@ -4,6 +4,9 @@ server:
     context-path: /good-lodging
 
 spring:
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+    time-zone: Asia/Ho_Chi_Minh
   datasource:
     url: "jdbc:mysql://localhost:3306/good-lodging"
     username: root
@@ -17,10 +20,6 @@ spring:
       enabled: true
       max-file-size: 100MB
       max-request-size: 500MB
-
-  data:
-    mongodb:
-      uri: mongodb://root:root@localhost:27017/notification-service?authSource=admin
   kafka:
     bootstrap-servers: localhost:9094
     producer:
@@ -44,10 +43,6 @@ spring:
           auth: true
           starttls:
             enable: true
-gemini:
-  api:
-    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent
-    key: AIzaSyDZctvo2W0j7i2AV0gyfGs5whhVWrsrgM4
 notification:
   email:
       brevo-url: https://api.brevo.com

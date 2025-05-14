@@ -43,4 +43,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT u FROM User u INNER JOIN RoomUser ru ON ru.userId=u.id WHERE ru.roomId=:roomId AND ru.status=:status AND u.status=:status")
     List<User> findAllByRoomIdAndStatusWithQuery(@Param("roomId")Long roomId,@Param("status")Integer status);
     List<User> findAllByStatus(Integer status, Pageable pageable);
+    Optional<User> findByEmailAndStatus(String email, Integer status);
 }

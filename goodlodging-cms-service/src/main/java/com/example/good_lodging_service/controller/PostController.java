@@ -34,10 +34,11 @@ import java.util.List;
 public class PostController {
     PostService postService;
 
-    @PostMapping(consumes = "multipart/form-data",value = "/find-room-mate")
+    @PostMapping(consumes = "multipart/form-data", value = "/find-room-mate")
     public ResponseEntity<CommonResponse> findRoomMate(@ModelAttribute FindRoomMateRequest request) {
         return ResponseEntity.ok(postService.findRoomMate(request));
     }
+
     @GetMapping
     public ResponseEntity<Page<PostProjection>> getPosts(
             @PageableDefault(size = 20, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -54,9 +55,10 @@ public class PostController {
     @GetMapping("/author/{id}")
     public ResponseEntity<AuthorInfo> getAuthorPosts(
             @PathVariable Long id,
-            @PageableDefault(size = 15,sort = "modifiedDate",direction = Sort.Direction.DESC) Pageable pageable){
+            @PageableDefault(size = 15, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(postService.getAuthorInformation(id, pageable));
     }
+
     @GetMapping("/my-post/{postId}")
     public ResponseEntity<MyPostResponse> getMyPost(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getMyPost(postId));
@@ -92,5 +94,13 @@ public class PostController {
             @RequestBody(required = false) PostFilterRequest request
     ) {
         return ResponseEntity.ok(postService.searchPosts(request, pageable));
+    }
+
+    @GetMapping("/suggested-posts")
+    public ResponseEntity<List<PostProjection>> getSuggestedPosts(
+            @RequestParam("provinceName") String provinceName,
+            @RequestParam("districtName") String districtName,
+            @RequestParam("wardName") String wardName) {
+        return ResponseEntity.ok(postService.getSuggestedPosts(provinceName, districtName, wardName));
     }
 }

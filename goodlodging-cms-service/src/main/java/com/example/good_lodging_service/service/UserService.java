@@ -4,6 +4,7 @@ import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.Authorities;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.EntityType;
+import com.example.good_lodging_service.dto.request.Auth.ResetPasswordRequest;
 import com.example.good_lodging_service.dto.request.Auth.UpdatePasswordRequest;
 import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
@@ -53,16 +54,11 @@ public class UserService {
             throw new AppException(ApiResponseCode.USER_ALREADY_EXISTS);
         }
 
-        //save address
-        Address address = addressMapper.toAddress(request.getAddress());
-        address.setStatus(CommonStatus.ACTIVE.getValue());
-        address = addressRepository.save(address);
 
         //save user
         User user = userMapper.toUser(request);
         user.setStatus(CommonStatus.ACTIVE.getValue());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setAddressId(address.getId());
         Set<Role> roles = new HashSet<>();
         roleRepository.findById(Authorities.CUSTOMER.name()).ifPresent(roles::add);
         user.setRoles(roles);
@@ -135,6 +131,10 @@ public class UserService {
         return findAll(pageable).stream().map(userMapper::toUserResponse).toList();
     }
 
+    public Integer findByEmailAndPhoneAndUsername(String email, String phone, String username) {
+        return userRepository.existByUsernameOrEmailOrPhoneWithQuery(username, email, phone, CommonStatus.ACTIVE.getValue());
+    }
+
     public List<BoardingHouseResponse> getMyBoardingHouses(Long userId) {
         // Lấy danh sách nhà trọ đang hoạt động
         List<BoardingHouse> boardingHouses = boardingHouseRepository.findAllByUserIdAndStatus(userId, CommonStatus.ACTIVE.getValue());
@@ -187,5 +187,13 @@ public class UserService {
             response.setAddress(address != null ? address.getFullAddress() : "");
         });
         return responses;
+    }
+
+    public CommonResponse resetPassword(ResetPasswordRequest requestDTO) {
+        User user = userRepository.findByEmailAndStatus(requestDTO.getEmail(), CommonStatus.ACTIVE.getValue()).orElseThrow(
+                () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
+        user.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
+        userRepository.save(user);
+        return CommonResponse.builder().result("Cập nhật mật khẩu thành công").build();
     }
 }

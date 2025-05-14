@@ -1,6 +1,7 @@
 package com.example.good_lodging_service.controller;
 
 import com.example.good_lodging_service.dto.ApiResponse;
+import com.example.good_lodging_service.dto.request.Auth.ResetPasswordRequest;
 import com.example.good_lodging_service.dto.request.Auth.UpdatePasswordRequest;
 import com.example.good_lodging_service.dto.request.User.UserCreateRequest;
 import com.example.good_lodging_service.dto.request.User.UserUpdateRequest;
@@ -43,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
-    @PutMapping(consumes = "multipart/form-data",value = "/{userId}")
+    @PutMapping(consumes = "multipart/form-data", value = "/{userId}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userId, @ModelAttribute UserUpdateRequest requestDTO) {
         return ResponseEntity.ok(userService.updateUser(userId, requestDTO));
     }
@@ -58,8 +59,17 @@ public class UserController {
         return ResponseEntity.ok(userService.updatePassword(userId, requestDTO));
     }
 
+    @PatchMapping("/reset-password")
+    public ResponseEntity<CommonResponse> resetPassword(@RequestBody ResetPasswordRequest requestDTO) {
+        return ResponseEntity.ok(userService.resetPassword(requestDTO));
+    }
     @GetMapping("/{userId}/boarding-house")
     public ResponseEntity<List<BoardingHouseResponse>> getMyBoardingHouse(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getMyBoardingHouses(userId));
+    }
+
+    @GetMapping("/existed")
+    public ResponseEntity<Integer> findUser(@RequestParam String email, @RequestParam String phone, @RequestParam String username) {
+        return ResponseEntity.ok(userService.findByEmailAndPhoneAndUsername(email, phone, username));
     }
 }

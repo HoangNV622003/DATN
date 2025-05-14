@@ -9,7 +9,7 @@ public enum ApiResponseCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized Exception", HttpStatus.INTERNAL_SERVER_ERROR),
     BAD_REQUEST(400, "Bad Request", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR(500,"INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR),
-
+    OTP_REQUEST_TOO_FREQUENT(999,"Vui lòng đợi 30 giây trước khi gửi lại OTP",HttpStatus.TOO_MANY_REQUESTS),
     SUCCESS(1000,"SUCCESS",HttpStatus.OK),
     INVALID_KEY(1001, "Invalid Key", HttpStatus.BAD_REQUEST),
     ENTITY_NOT_FOUND(1002, "Entity not found", HttpStatus.BAD_REQUEST),
@@ -102,6 +102,10 @@ public enum ApiResponseCode {
     //PAYMENT
     PAYMENT_SUCCESSFUL(1050,"Thanh toán thành công", HttpStatus.OK),
     PAYMENT_FAILED(1051,"Thanh toán thất bại", HttpStatus.BAD_REQUEST),
+
+    //GEMINI
+    INVALID_RESPONSE_GEMINI(1060,"Không nhận được phản hồi hợp lệ từ Gemini Api", HttpStatus.BAD_REQUEST),
+    ERROR_PROCESSING_GEMINI(1061,"Lỗi xử lý từ Gemini Api", HttpStatus.BAD_REQUEST),
     ;
     private final Integer code;
     private final String message;

@@ -1,6 +1,6 @@
 package com.example.good_lodging_service.dto.response.Invoice;
 
-import com.example.good_lodging_service.dto.response.PaymentTransaction.PaymentTransactionResponse;
+import com.example.good_lodging_service.dto.response.Bill.BillResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,5 +18,5 @@ public class InvoiceResponse {
     Long roomId;
     String roomName;
     List<UserResponseDTO> members=new ArrayList<>();
-    List<PaymentTransactionResponse> invoices;
+    List<BillResponse> invoices;
 }

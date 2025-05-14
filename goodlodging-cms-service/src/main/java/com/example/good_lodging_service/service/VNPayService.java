@@ -1,19 +1,15 @@
 package com.example.good_lodging_service.service;
 
 import com.example.good_lodging_service.constants.ApiResponseCode;
-import com.example.good_lodging_service.constants.CommonStatus;
-import com.example.good_lodging_service.constants.ConstantsAll;
-import com.example.good_lodging_service.constants.PaymentStatus;
-import com.example.good_lodging_service.dto.request.Payment.PaymentRequest;
+import com.example.good_lodging_service.constants.BillStatus;
+import com.example.good_lodging_service.dto.request.Bill.PaymentRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
-import com.example.good_lodging_service.dto.response.PaymentTransaction.PaymentResponse;
-import com.example.good_lodging_service.entity.PaymentTransaction;
+import com.example.good_lodging_service.dto.response.Bill.PaymentResponse;
+import com.example.good_lodging_service.entity.Bill;
 import com.example.good_lodging_service.exception.AppException;
-import com.example.good_lodging_service.repository.PaymentTransactionRepository;
-import com.example.good_lodging_service.security.SecurityUtils;
+import com.example.good_lodging_service.repository.BillRepository;
 import com.example.good_lodging_service.security.configuration.VNPayConfig;
 import com.example.good_lodging_service.utils.VNPAYUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +17,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.Configuration;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
-
-import static com.example.good_lodging_service.security.configuration.VNPayConfig.vnp_ApiUrl;
-import static com.example.good_lodging_service.security.configuration.VNPayConfig.vnp_ReturnUrl;
 
 @Slf4j
 @Service
@@ -40,12 +32,12 @@ import static com.example.good_lodging_service.security.configuration.VNPayConfi
 
 public class VNPayService {
 
-    private final PaymentTransactionRepository paymentTransactionRepository;
+    private final BillRepository billRepository;
 
     public PaymentResponse createOrder(PaymentRequest request) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_OrderType = "billpayment";
+        String vnp_OrderType = "bill";
         String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
         String vnp_Locale = "vn";
         String vnp_CurrCode = "VND";
@@ -100,13 +92,13 @@ public class VNPayService {
     public CommonResponse transaction(String vnp_ResponseCode, String vnp_OrderInfo,Long payerId) {
         if (!vnp_ResponseCode.equals("00")) throw new AppException(ApiResponseCode.PAYMENT_FAILED);
         Long invoiceId = extractInvoiceNumber(vnp_OrderInfo);
-        PaymentTransaction paymentTransaction= paymentTransactionRepository.findByIdAndStatusNot(invoiceId, PaymentStatus.DELETED.getValue()).orElseThrow(
+        Bill bill = billRepository.findByIdAndStatusNot(invoiceId, BillStatus.DELETED.getValue()).orElseThrow(
                 ()-> new AppException(ApiResponseCode.PAYMENT_FAILED));
         //save order
-        paymentTransaction.setPayerId(payerId);
-        paymentTransaction.setPaymentDate(Instant.now());
-        paymentTransaction.setStatus(PaymentStatus.PAID.getValue());
-        paymentTransactionRepository.save(paymentTransaction);
+        bill.setPayerId(payerId);
+        bill.setPaymentDate(Instant.now());
+        bill.setStatus(BillStatus.PAID.getValue());
+        billRepository.save(bill);
 
         return CommonResponse.builder().status(ApiResponseCode.PAYMENT_SUCCESSFUL.getCode())
                 .result(ApiResponseCode.PAYMENT_SUCCESSFUL.getMessage())

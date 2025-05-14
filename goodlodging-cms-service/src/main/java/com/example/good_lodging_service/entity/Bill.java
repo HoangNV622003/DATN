@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentTransaction extends AbstractAuditingEntity implements Serializable {
+public class Bill extends AbstractAuditingEntity implements Serializable {
         @Serial
         private static final long serialVersionUID = 1L;
         @Id

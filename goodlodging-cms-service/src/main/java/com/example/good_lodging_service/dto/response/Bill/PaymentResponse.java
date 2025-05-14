@@ -1,4 +1,4 @@
-package com.example.good_lodging_service.dto.response.chat;
+package com.example.good_lodging_service.dto.response.Bill;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChatResponse {
-    String content;
+public class PaymentResponse {
+    String status;
+    String message;
+    String URL;
 }

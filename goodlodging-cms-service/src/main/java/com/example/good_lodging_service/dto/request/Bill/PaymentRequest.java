@@ -1,6 +1,5 @@
-package com.example.good_lodging_service.dto.request.Payment;
+package com.example.good_lodging_service.dto.request.Bill;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

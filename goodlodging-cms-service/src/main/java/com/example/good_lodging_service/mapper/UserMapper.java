@@ -10,7 +10,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    @Mapping(target = "addressId", ignore = true)
     User toUser(UserCreateRequest requestDTO);
 
     @Mapping(target = "roles", ignore = true)

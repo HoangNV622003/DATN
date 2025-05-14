@@ -4,7 +4,6 @@ import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseRequest;
-import com.example.good_lodging_service.dto.request.BoardingHouse.BoardingHouseUpdateRequest;
 import com.example.good_lodging_service.dto.request.BoardingHouse.ChangeOwnerRequest;
 import com.example.good_lodging_service.dto.request.Image.ImageFileRequest;
 import com.example.good_lodging_service.dto.request.Image.ImageRequest;
@@ -28,7 +27,6 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +122,6 @@ public class BoardingHouseService {
 
         //save boarding house
         boardingHouse = boardingHouseRepository.save(boardingHouse);
-
 
         return convertToDtoAndReturn(boardingHouse);
     }
