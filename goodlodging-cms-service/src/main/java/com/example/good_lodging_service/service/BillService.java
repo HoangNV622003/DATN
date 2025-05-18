@@ -122,6 +122,7 @@ public class BillService {
     private BillResponse convertToPaymentTransactionResponse(User user, Bill bill) {
         BillResponse billResponse = billMapper.toPaymentTransactionResponse(bill);
         billResponse.setPayerName(user != null ? user.getFirstName() + " " + user.getLastName() : "");
+        billResponse.setUpdateDate(bill.getDateUpdated());
         return billResponse;
     }
 

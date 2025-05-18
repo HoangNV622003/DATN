@@ -144,6 +144,7 @@ public class RoomService {
                 .electricityPrice(roomUserProjection.getElectricityPrice())
                 .features(roomUserProjection.getFeatures())
                 .address(roomUserProjection.getAddress())
+                .otherPrice(roomUserProjection.getOtherPrice())
                 .build();
 
         UserResponseDTO user = findHostByRoomId(roomUserProjection.getRoomId());

@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../../../../../context/AuthContext';
 import { findRoomMate } from '../../../../../apis/posts/PostService';
 import FindRoommatePopup from '../../../../../components/popup/findRoomMatePopup/FindRoomMatePopup';
+import DeleteConfirmPopup from '../../../../../components/popup/deleteConfirmPopup/DeleteConfirmPopup';
 
 const RoomForm = ({ room, onChange, onSubmit, isLoading }) => (
   <section className="save-room__room-info" data-testid="save-room__room-form">
@@ -116,7 +117,9 @@ const SaveRoom = () => {
   });
   const [users, setUsers] = useState([]);
   const [newUsername, setNewUsername] = useState('');
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isFindRoommatePopupOpen, setIsFindRoommatePopupOpen] = useState(false);
+  const [isDeleteConfirmPopupOpen, setIsDeleteConfirmPopupOpen] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const { user, token } = useAuth();
@@ -205,13 +208,34 @@ const SaveRoom = () => {
     }
   };
 
+  const handleOpenDeleteConfirmPopup = (userId) => {
+    setUserIdToDelete(userId);
+    setIsDeleteConfirmPopupOpen(true);
+  };
+
+  const handleCloseDeleteConfirmPopup = () => {
+    setIsDeleteConfirmPopupOpen(false);
+    setUserIdToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsLoading(true);
+    try {
+      const payload = { userId: userIdToDelete, roomId: id };
+      await handleUserAction('delete', payload);
+    } finally {
+      setIsLoading(false);
+      handleCloseDeleteConfirmPopup();
+    }
+  };
+
   const handleFindRoommate = () => {
     const currentUsers = users.length;
     const maxCapacity = parseInt(room.capacity) || 0;
     if (currentUsers >= maxCapacity) {
       toast.error('Phòng đã đủ người, không thể tìm thêm thành viên!');
     } else {
-      setIsPopupOpen(true);
+      setIsFindRoommatePopupOpen(true);
     }
   };
 
@@ -231,7 +255,7 @@ const SaveRoom = () => {
       toast.error(error.message || 'Đăng tin thất bại!');
     } finally {
       setIsLoading(false);
-      setIsPopupOpen(false);
+      setIsFindRoommatePopupOpen(false);
     }
   };
 
@@ -280,14 +304,21 @@ const SaveRoom = () => {
             Thêm
           </button>
         </div>
-        <UserList users={users} onDelete={(userId) => handleUserAction('delete', { userId, roomId: id })} />
+        <UserList users={users} onDelete={handleOpenDeleteConfirmPopup} />
       </section>
       <FindRoommatePopup
-        isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
+        isOpen={isFindRoommatePopupOpen}
+        onClose={() => setIsFindRoommatePopupOpen(false)}
         onSubmit={handleSubmitPost}
         isLoading={isLoading}
       />
+      <DeleteConfirmPopup
+        isOpen={isDeleteConfirmPopupOpen}
+        onClose={handleCloseDeleteConfirmPopup}
+        onConfirm={handleConfirmDelete}
+        message="Bạn có chắc chắn muốn xóa người dùng này khỏi phòng không?"
+      />
+      <ToastContainer />
     </div>
   );
 };

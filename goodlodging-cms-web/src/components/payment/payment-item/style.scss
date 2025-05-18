@@ -23,10 +23,11 @@
   font-size: 16px;
 }
 
-.card-due-date {
-  color: #555;
-  font-size: 14px;
-}
+.card-date{
+
+    font-size: 12px;
+    list-style-type: none;
+  }
 
 .card-body {
   display: flex;
@@ -142,9 +143,10 @@
   .card-id {
     font-size: 14px;
   }
+  .card-date{
 
-  .card-due-date {
     font-size: 12px;
+    list-style-type: none;
   }
 
   .usage-info,

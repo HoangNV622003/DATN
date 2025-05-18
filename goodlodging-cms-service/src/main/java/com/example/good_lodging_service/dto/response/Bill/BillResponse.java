@@ -16,6 +16,7 @@ public class BillResponse {
     String payerName;
     Instant dueDate;
     Instant paymentDate;
+    Instant updateDate;
     Float fineAmount;
     Float roomRent;
     Float otherPrice;

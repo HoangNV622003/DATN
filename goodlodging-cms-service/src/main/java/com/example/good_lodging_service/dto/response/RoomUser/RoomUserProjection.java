@@ -14,5 +14,6 @@ public interface RoomUserProjection {
     String getBoardingHouseName();
     Float getWaterPrice();
     Float getElectricityPrice();
+    Float getOtherPrice();
     String getFeatures();
 }

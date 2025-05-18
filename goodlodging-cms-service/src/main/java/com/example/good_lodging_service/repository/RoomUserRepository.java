@@ -55,6 +55,7 @@ public interface RoomUserRepository extends JpaRepository<RoomUser, Long> {
                     bh.name         as boardingHouseName,
                     bh.water_price  as waterPrice,
                     bh.electricity_price as electricityPrice,
+                    bh.other_price as otherPrice,
                     bh.features     as features
                 FROM room_user ru
                 	INNER JOIN user u               ON u.id=ru.user_id

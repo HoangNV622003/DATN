@@ -49,6 +49,7 @@ body{
 }
 
 .content {
+  min-height: 1000px;
   flex: 1; // Chiếm không gian còn lại
   margin-top: 70px; // Khoảng cách bằng chiều cao header (padding 20px + nội dung)
 }

@@ -90,7 +90,10 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit, onDelete }
     <div className="payment-card">
       <div className="card-header">
         <span className="card-id">Mã Hóa Đơn: {payment.id}</span>
-        <span className="card-due-date">Ngày Đến Hạn: {formatDate(payment.dueDate)}</span>
+        <ul className="card-date">
+          <li>Ngày tạo: {formatDate(payment.updateDate)}</li>
+          <li>Ngày đến hạn: {formatDate(payment.dueDate)}</li>
+        </ul>
       </div>
       <div className="card-body">
         <div className="usage-info">
