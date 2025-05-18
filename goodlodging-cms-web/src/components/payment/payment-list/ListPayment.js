@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import PaymentItem from '../payment-item/PaymentItem';
 import './style.scss';
 
-const ListPayment = ({ isManagement, payments, members, onPay, onEdit }) => {
+const ListPayment = ({ isManagement, payments, members, onPay, onEdit, onDelete }) => {
   return (
     <div className="payment-list">
       {payments.length === 0 ? (
@@ -17,6 +17,7 @@ const ListPayment = ({ isManagement, payments, members, onPay, onEdit }) => {
             isManagement={isManagement}
             onPay={onPay}
             onEdit={onEdit}
+            onDelete={onDelete}
           />
         ))
       )}
@@ -50,6 +51,7 @@ ListPayment.propTypes = {
   isManagement: PropTypes.bool.isRequired,
   onPay: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default ListPayment;

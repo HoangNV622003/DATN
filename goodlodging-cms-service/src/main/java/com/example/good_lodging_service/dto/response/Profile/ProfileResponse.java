@@ -19,11 +19,11 @@ public class ProfileResponse {
     String email;
     String phoneNumber;
 
-    public static ProfileResponse fromPostDetailProjection(PostDetailProjection postDetailProjection) {
+    public static ProfileResponse fromPostDetailProjection(PostDetailProjection postDetailProjection,String imageUrl) {
         return ProfileResponse.builder()
                 .userId(postDetailProjection.getUserId())
                 .fullName(ValueUtils.getOrDefault(postDetailProjection.getFullName(), ""))
-                .imageUrl(ValueUtils.getOrDefault(postDetailProjection.getUrlAvatar(), ""))
+                .imageUrl(imageUrl)
                 .email(ValueUtils.getOrDefault(postDetailProjection.getEmail(),""))
                 .phoneNumber(ValueUtils.getOrDefault(postDetailProjection.getPhoneNumber(),""))
                 .build();

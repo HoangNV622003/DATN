@@ -2,6 +2,7 @@ package com.example.good_lodging_service.controller;
 
 import com.example.good_lodging_service.dto.request.Bill.BillRequest;
 import com.example.good_lodging_service.dto.response.Bill.BillResponse;
+import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Invoice.InvoiceResponse;
 import com.example.good_lodging_service.service.BillService;
 import com.example.good_lodging_service.service.VNPayService;
@@ -41,5 +42,10 @@ public class BillController {
     @PutMapping("/{id}")
     public ResponseEntity<BillResponse> updatePaymentTransaction(@PathVariable Long id, @RequestBody BillRequest billRequest) {
         return ResponseEntity.ok(billService.updatePaymentTransaction(id, billRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse> deletePaymentTransaction(@PathVariable Long id) {
+        return ResponseEntity.ok(billService.deleteBill(id));
     }
 }

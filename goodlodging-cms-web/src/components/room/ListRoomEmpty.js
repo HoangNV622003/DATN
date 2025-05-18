@@ -3,8 +3,7 @@ import "./style.scss"
 const ListRoomEmpty = ({rooms}) => {
     return (
         <div className='list-room-empty'>
-            <p>Danh sách phòng trống:</p>
-
+            <p className="room__found">Có {rooms.length} phòng trống:</p>
             {
                 rooms.map((item,key)=>(
                     <div className="room-item">

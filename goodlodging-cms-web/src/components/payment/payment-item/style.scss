@@ -93,9 +93,11 @@
   display: flex;
   gap: 8px;
 }
-
+.delete-button,
 .pay-button,
 .edit-button {
+  width: 120px;
+  margin-left: 10px;
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -117,7 +119,10 @@
   background-color: #ffc107;
   color: black;
 }
-
+.delete-button{
+  color: white;
+  background-color: #dc3545;
+}
 .edit-button:hover {
   background-color: #e0a800;
 }

@@ -123,8 +123,8 @@ export const resendOtp = async (payload) => {
 // payload={userId, oldPassword, newPassword, confirmNewPassword}
 export const changePassword = async (payload,accessToken) => {
   try {
-    const response = await axios.put(
-      `${API_URL}/auth/reset-password`,
+    const response = await axios.post(
+      `${API_URL}/auth/change-password`,
       payload,
       {
         headers: {

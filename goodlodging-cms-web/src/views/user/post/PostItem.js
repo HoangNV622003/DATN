@@ -11,13 +11,13 @@ import { useAuth } from '../../../context/AuthContext';
 import { getTile, getTitle } from '../../../utils/PostUtils';
 
 const PostItem = ({ post }) => {
-  const { user } = useAuth();
+  const { user,token } = useAuth();
   const navigate = useNavigate();
   const handleNavigateToDetailPost = () => {
     navigate(ROUTERS.USER.POST_DETAIL.replace(':id', id))
   }
   const handleAddFavoritePost = () => {
-    if (user === null) {
+    if (user === null||token===null) {
       toast.info("Vui lòng đăng nhập để thực hiện tính năng này")
     } else {
 
@@ -25,7 +25,7 @@ const PostItem = ({ post }) => {
         userId: user.id,
         postId: id,
       };
-      createFavoritePost(payload)
+      createFavoritePost(payload,token)
         .then((response) => { toast.success(response.data.result || response.data.message) })
         .catch((error) => { toast.error(error || "Có lỗi sảy ra, vui lòng thử lại sau") });
     }

@@ -3,26 +3,26 @@ package com.example.good_lodging_service.service;
 import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.BillStatus;
+import com.example.good_lodging_service.constants.EntityType;
 import com.example.good_lodging_service.dto.request.EntityDelete.EntityDeleteRequest;
 import com.example.good_lodging_service.dto.request.Room.RoomRequest;
 import com.example.good_lodging_service.dto.response.Bill.BillResponse;
 import com.example.good_lodging_service.dto.response.BoardingHouse.BoardingHouseResponse;
 import com.example.good_lodging_service.dto.response.CommonResponse;
+import com.example.good_lodging_service.dto.response.Member.MemberResponse;
 import com.example.good_lodging_service.dto.response.Room.MyRoomResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomConfigProjection;
 import com.example.good_lodging_service.dto.response.Room.RoomDetailResponse;
 import com.example.good_lodging_service.dto.response.Room.RoomResponse;
 import com.example.good_lodging_service.dto.response.RoomUser.RoomUserProjection;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
-import com.example.good_lodging_service.entity.BoardingHouse;
-import com.example.good_lodging_service.entity.Bill;
-import com.example.good_lodging_service.entity.Room;
-import com.example.good_lodging_service.entity.User;
+import com.example.good_lodging_service.entity.*;
 import com.example.good_lodging_service.exception.AppException;
 import com.example.good_lodging_service.mapper.BillMapper;
 import com.example.good_lodging_service.mapper.RoomMapper;
 import com.example.good_lodging_service.mapper.UserMapper;
 import com.example.good_lodging_service.repository.*;
+import com.example.good_lodging_service.utils.ValueUtils;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,6 +47,7 @@ public class RoomService {
     private final BoardingHouseRepository boardingHouseRepository;
     BillRepository billRepository;
     BillMapper billMapper;
+    private final ImageRepository imageRepository;
 
     public RoomResponse createRoom(RoomRequest request) {
         if (roomRepository.existsByNameAndBoardingHouseIdAndStatus(request.getName(), request.getBoardingHouseId(), CommonStatus.ACTIVE.getValue()))
@@ -59,9 +61,10 @@ public class RoomService {
 
     public RoomDetailResponse getRoomDetail(Long roomId) {
         RoomResponse roomResponse = roomMapper.toRoomResponseDTO(findById(roomId));
-        List<UserResponseDTO> users = roomUserRepository.findAllByRoomIdAndStatusWithQuery(roomId, CommonStatus.ACTIVE.getValue())
-                .stream().map(userMapper::toUserResponse).toList();
-        return RoomDetailResponse.builder().room(roomResponse).users(users).build();
+        List<MemberResponse> memberResponses= roomUserRepository.findAllByRoomIdAndStatusWithQuery(roomId, CommonStatus.ACTIVE.getValue()).stream().map(MemberResponse::fromMemberProjection)
+                .collect(Collectors.toList());
+
+        return RoomDetailResponse.builder().room(roomResponse).users(memberResponses).build();
     }
 
     private Room findById(Long roomId) {
@@ -84,19 +87,26 @@ public class RoomService {
         BoardingHouse boardingHouse = boardingHouseRepository.findById(boardingHouseId).orElseThrow(
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
         RoomConfigProjection roomConfigProjection = roomRepository.findRoomConfigProjectionByBoardingHouseIdAndStatusWithQuery(boardingHouseId).orElse(null);
-        boardingHouse.setMaxArea(roomConfigProjection != null ? roomConfigProjection.getMaxArea() : 0);
-        boardingHouse.setMinArea(roomConfigProjection != null ? roomConfigProjection.getMinArea() : 0);
-        boardingHouse.setMaxRent(roomConfigProjection != null ? roomConfigProjection.getMaxRent() : 0);
-        boardingHouse.setMinRent(roomConfigProjection != null ? roomConfigProjection.getMinRent() : 0);
+        boardingHouse.setMaxArea(roomConfigProjection != null ? ValueUtils.getOrDefault(roomConfigProjection.getMaxArea(),0F) : 0f);
+        boardingHouse.setMinArea(roomConfigProjection != null ? ValueUtils.getOrDefault(roomConfigProjection.getMinArea(),0F): 0f);
+        boardingHouse.setMaxRent(roomConfigProjection != null ? ValueUtils.getOrDefault(roomConfigProjection.getMaxRent(),0F) : 0f);
+        boardingHouse.setMinRent(roomConfigProjection != null ? ValueUtils.getOrDefault(roomConfigProjection.getMinRent(),0F) : 0f);
         boardingHouseRepository.save(boardingHouse);
     }
 
     public CommonResponse deleteRoom(Long boardingHouseId, EntityDeleteRequest request) {
         List<Room> rooms = roomRepository.findAllById(request.getIds());
+        List<Long>roomIds=rooms.stream().map(Room::getId).toList();
+        if (roomUserRepository.existsByRoomIdInAndStatus(roomIds,CommonStatus.ACTIVE.getValue()))
+            throw new AppException(ApiResponseCode.CANNOT_DELETE_ROOM);
         rooms.forEach(room -> {
             room.setStatus(CommonStatus.DELETED.getValue());
         });
         roomRepository.saveAll(rooms);
+        List<RoomUser> roomUsers=roomUserRepository.findAllByRoomIdInAndStatus(roomIds,CommonStatus.ACTIVE.getValue());
+        roomUsers.forEach(roomUser -> {
+            roomUser.setStatus(CommonStatus.DELETED.getValue());
+        });
         updateBoardingHouse(boardingHouseId);
         return CommonResponse.builder().result(ApiResponseCode.ROOM_DELETED_SUCCESSFUL.getMessage()).build();
     }
@@ -123,13 +133,7 @@ public class RoomService {
     public MyRoomResponse getMyRoom(Long userId) {
         RoomUserProjection roomUserProjection = roomUserRepository.findByUserIdAndStatusWithQuery(userId, CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
-        UserResponseDTO user = UserResponseDTO.builder()
-                .id(roomUserProjection.getUserId())
-                .firstName(roomUserProjection.getFirstName())
-                .lastName(roomUserProjection.getLastName())
-                .phone(roomUserProjection.getPhoneNumber())
-                .email(roomUserProjection.getEmail())
-                .build();
+
         //get room
         RoomDetailResponse roomDetail = getRoomDetail(roomUserProjection.getRoomId());
         BoardingHouseResponse boardingHouse = BoardingHouseResponse.builder()
@@ -139,14 +143,23 @@ public class RoomService {
                 .waterPrice(roomUserProjection.getWaterPrice())
                 .electricityPrice(roomUserProjection.getElectricityPrice())
                 .features(roomUserProjection.getFeatures())
+                .address(roomUserProjection.getAddress())
                 .build();
-        boardingHouse.setAddress(roomUserProjection.getAddress());
 
+        UserResponseDTO user = findHostByRoomId(roomUserProjection.getRoomId());
+        Image image = imageRepository.findByEntityIdAndEntityTypeAndStatus(user.getId(), EntityType.USER.getValue(), CommonStatus.ACTIVE.getValue()).orElse(null);
+
+        user.setImageUrl(image != null ? image.getImageUrl() : "");
         return MyRoomResponse.builder()
                 .host(user)
                 .roomDetail(roomDetail)
                 .payments(findAllPaymentByRoomId(roomUserProjection.getRoomId()))
                 .boardingHouse(boardingHouse)
                 .build();
+    }
+
+    public UserResponseDTO findHostByRoomId(Long roomId) {
+        return userMapper.toUserResponse(userRepository.findByRoomIdAndStatusWithQuery(roomId, CommonStatus.ACTIVE.getValue())
+                .orElseThrow(() -> new AppException(ApiResponseCode.ENTITY_NOT_FOUND)));
     }
 }

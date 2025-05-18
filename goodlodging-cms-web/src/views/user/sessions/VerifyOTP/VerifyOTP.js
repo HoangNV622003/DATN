@@ -22,7 +22,7 @@ const VerifyOTP = () => {
     // Hàm định dạng thời gian đếm ngược (MM:SS)
     const formatCountdown = (seconds) => {
         if (seconds <= 0) return 'Hết hạn';
-        const minutes = Math.floor(seconds / 60);
+        const minutes = Math.floor(4);
         const remainingSeconds = seconds % 60;
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };

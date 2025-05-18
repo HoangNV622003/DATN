@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
 import SelectPayerPopup from '../../popup/selectPayerPopup/SelectPayerPopup';
+import ConfirmDeletePopup from "../../../components/confirmDeletePopup/ConfirmDeletePopup";
 import { toast } from 'react-toastify';
 
-const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
+const PaymentItem = ({ payment, isManagement, members, onPay, onEdit, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const payButtonRef = useRef(null);
   const navigate = useNavigate();
 
@@ -47,6 +49,16 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
     payButtonRef.current?.focus(); // Focus lại nút Thanh Toán
   };
 
+  const handleOpenDeleteModal = () => {
+    console.log('Opening delete modal for paymentId:', payment.id); // Debug
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    console.log('Closing delete modal'); // Debug
+    setIsDeleteModalOpen(false);
+  };
+
   const handleConfirmPay = async (paymentId, userId) => {
     console.log('Confirming payment:', { paymentId, userId }); // Debug
     try {
@@ -55,6 +67,17 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
     } catch (error) {
       console.error('Payment error in PaymentItem:', error);
       throw error; // Ném lỗi để SelectPayerPopup xử lý
+    }
+  };
+
+  const handleConfirmDelete = async (paymentId) => {
+    console.log('Confirming delete for paymentId:', paymentId); // Debug
+    try {
+      await onDelete(paymentId);
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error('Delete error in PaymentItem:', error);
+      throw error;
     }
   };
 
@@ -122,13 +145,22 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
               Thanh Toán
             </button>
             {!isManagement && (
-              <button
-                className="edit-button"
-                onClick={() => onEdit(payment)}
-                aria-label="Chỉnh sửa hóa đơn"
-              >
-                Chỉnh Sửa
-              </button>
+              <div>
+                <button
+                  className="edit-button"
+                  onClick={() => onEdit(payment)}
+                  aria-label="Chỉnh sửa hóa đơn"
+                >
+                  Chỉnh Sửa
+                </button>
+                <button
+                  className="delete-button"
+                  onClick={handleOpenDeleteModal}
+                  aria-label="Xóa hóa đơn"
+                >
+                  Xóa
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -141,6 +173,12 @@ const PaymentItem = ({ payment, isManagement, members, onPay, onEdit }) => {
         onConfirm={handleConfirmPay}
         paymentId={payment.id}
         isManagement={isManagement}
+      />
+      <ConfirmDeletePopup
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        paymentId={payment.id}
       />
     </div>
   );
@@ -171,6 +209,7 @@ PaymentItem.propTypes = {
   ).isRequired,
   onPay: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default PaymentItem;

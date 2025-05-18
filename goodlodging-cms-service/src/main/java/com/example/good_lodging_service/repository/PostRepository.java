@@ -88,7 +88,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     INNER JOIN
                         boarding_house bh ON p.boarding_house_id = bh.id AND bh.status=1
                     INNER JOIN
-                        address a ON bh.id = a.boarding_house_id AND a.status=1
+                        address a ON bh.address_id = a.id AND a.status=1
                     WHERE
                         p.status = 1
                         -- Lọc theo địa chỉ
@@ -111,7 +111,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     INNER JOIN
                         boarding_house bh ON p.boarding_house_id = bh.id AND bh.status=1
                     INNER JOIN
-                        address a ON bh.id = a.boarding_house_id AND a.status=1
+                        address a ON bh.address_id = a.id AND a.status=1
                     WHERE
                         p.status = 1
                         AND (a.wards_id IN :wardsIds)
@@ -150,7 +150,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 p.title AS title,
                 CONCAT(u.first_name,' ',u.last_name) AS fullname,
                 p.image_url         AS imageUrl,
-                u.url_avatar AS urlAvatar,
                 u.email AS email,
                 u.phone AS phoneNumber,
                 p.max_area AS maxArea,
@@ -166,7 +165,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 p.other_price AS otherPrice,
                 p.date_updated as modifiedDate,
                 p.type AS type
-            
             FROM post p
             INNER JOIN user u ON p.user_id=u.id AND u.status=:status
             INNER JOIN boarding_house bh ON bh.id=p.boarding_house_id AND bh.status=:status

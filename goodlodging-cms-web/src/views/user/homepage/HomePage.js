@@ -5,7 +5,7 @@ import SearchBar from '../../../components/searchBar/SearchBar';
 import { fetchAllPost } from '../../../apis/posts/PostService';
 import ListPost from "../post/ListPost";
 import Pagination from '../../../components/pagination/Pagination';
-import "./style.scss";
+import "./Style.scss";
 import SuggestedPost from '../../../components/suggestedPost/SuggestedPost';
 
 const HomePage = () => {

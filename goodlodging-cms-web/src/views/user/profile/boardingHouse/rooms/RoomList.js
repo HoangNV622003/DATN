@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import './style.scss';
-import { createRoom, deleteRoom } from '../../../../../apis/room/RoomService';
-import { useNavigate } from 'react-router-dom';
-import { ROUTERS } from '../../../../../utils/router/Router';
-import { toast } from 'react-toastify';
-import { useAuth } from '../../../../../context/AuthContext';
+import React, { useState, useEffect } from "react";
+import "./style.scss";
+import { createRoom, deleteRoom } from "../../../../../apis/room/RoomService";
+import { useNavigate } from "react-router-dom";
+import { ROUTERS } from "../../../../../utils/router/Router";
+import { toast } from "react-toastify";
+import { useAuth } from "../../../../../context/AuthContext";
+import DeleteConfirmPopup from "../../../../../components/popup/deleteConfirmPopup/DeleteConfirmPopup";
 
 const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
   const [newRoom, setNewRoom] = useState({
-    name: '',
-    area: '',
-    price: '',
-    capacity: '',
-    floor: '',
+    name: "",
+    area: "",
+    price: "",
+    capacity: "",
+    floor: "",
     boardingHouseId,
   });
   const { token } = useAuth();
@@ -23,31 +24,31 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
 
   const handleSubmit = async () => {
     if (!boardingHouseId) {
-      toast.warn('Vui lòng tạo nhà trọ trước khi thêm phòng!');
+      toast.warn("Vui lòng tạo nhà trọ trước khi thêm phòng!");
       return;
     }
     if (!newRoom.name.trim()) {
-      toast.warn('Vui lòng nhập tên phòng!');
+      toast.warn("Vui lòng nhập tên phòng!");
       return;
     }
     try {
       const response = await createRoom(newRoom, token);
       if (!response.data?.id) {
-        throw new Error('Phản hồi không hợp lệ từ API tạo phòng');
+        throw new Error("Phản hồi không hợp lệ từ API tạo phòng");
       }
       onSave({ ...newRoom, id: response.data.id });
       setNewRoom({
-        name: '',
-        area: '',
-        price: '',
-        capacity: '',
-        floor: '',
+        name: "",
+        area: "",
+        price: "",
+        capacity: "",
+        floor: "",
         boardingHouseId,
       });
-      toast.success('Thêm phòng thành công!');
+      toast.success("Thêm phòng thành công!");
     } catch (error) {
-      console.error('Lỗi khi tạo phòng:', error.response?.data || error);
-      toast.error(error.response?.data?.message || 'Không thể thêm phòng!');
+      console.error("Lỗi khi tạo phòng:", error.response?.data || error);
+      toast.error(error.response?.data?.message || "Không thể thêm phòng!");
     }
   };
 
@@ -60,7 +61,7 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
             id="room-name"
             type="text"
             value={newRoom.name}
-            onChange={(e) => handleChange('name', e.target.value)}
+            onChange={(e) => handleChange("name", e.target.value)}
             placeholder="Nhập tên phòng"
             aria-label="Tên phòng"
           />
@@ -71,7 +72,7 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
             id="room-area"
             type="number"
             value={newRoom.area}
-            onChange={(e) => handleChange('area', e.target.value)}
+            onChange={(e) => handleChange("area", e.target.value)}
             placeholder="Nhập diện tích"
             aria-label="Diện tích phòng"
           />
@@ -82,7 +83,7 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
             id="room-price"
             type="number"
             value={newRoom.price}
-            onChange={(e) => handleChange('price', e.target.value)}
+            onChange={(e) => handleChange("price", e.target.value)}
             placeholder="Nhập tiền thuê"
             aria-label="Tiền thuê phòng"
           />
@@ -93,7 +94,7 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
             id="room-capacity"
             type="number"
             value={newRoom.capacity}
-            onChange={(e) => handleChange('capacity', e.target.value)}
+            onChange={(e) => handleChange("capacity", e.target.value)}
             placeholder="Nhập số người"
             aria-label="Số người tối đa"
           />
@@ -104,7 +105,7 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
             id="room-floor"
             type="number"
             value={newRoom.floor}
-            onChange={(e) => handleChange('floor', e.target.value)}
+            onChange={(e) => handleChange("floor", e.target.value)}
             placeholder="Nhập vị trí tầng"
             aria-label="Tầng"
           />
@@ -134,6 +135,8 @@ const NewRoomForm = ({ boardingHouseId, onSave, onCancel }) => {
 
 const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
   const [isAddingRoom, setIsAddingRoom] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
   const navigate = useNavigate();
   const { token } = useAuth();
 
@@ -143,26 +146,25 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
 
   const handleRoomAction = async (action, roomId) => {
     if (!roomId) {
-      toast.warn('ID phòng không hợp lệ!');
+      toast.warn("ID phòng không hợp lệ!");
       return;
     }
     try {
       switch (action) {
-        case 'delete':
-          await deleteRoom(boardingHouseId, roomId, token);
-          onRoomChange?.(rooms.filter((room) => room.id !== roomId));
-          toast.success('Xóa phòng thành công!');
+        case "delete":
+          setRoomToDelete(roomId);
+          setIsPopupOpen(true);
           break;
-        case 'update':
+        case "update":
           navigate(
-            ROUTERS.USER.PROFILE.replace('*', '') +
-              ROUTERS.USER.ROOMS.UPDATE.replace(':id', roomId)
+            ROUTERS.USER.PROFILE.replace("*", "") +
+              ROUTERS.USER.ROOMS.UPDATE.replace(":id", roomId)
           );
           break;
-        case 'payment':
+        case "payment":
           navigate(
-            ROUTERS.USER.PROFILE.replace('*', '') +
-              ROUTERS.USER.ROOMS.PAYMENT_HISTORY.replace(':id', roomId)
+            ROUTERS.USER.PROFILE.replace("*", "") +
+              ROUTERS.USER.ROOMS.PAYMENT_HISTORY.replace(":id", roomId)
           );
           break;
         default:
@@ -170,8 +172,30 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
       }
     } catch (error) {
       console.error(`Lỗi khi ${action}:`, error.response?.data || error);
-      toast.error(error.response?.data?.message || `Không thể ${action} phòng!`);
+      toast.error(
+        error.response?.data?.message || `Không thể ${action} phòng!`
+      );
     }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!roomToDelete) return;
+    try {
+      await deleteRoom(boardingHouseId, roomToDelete, token);
+      onRoomChange?.(rooms.filter((room) => room.id !== roomToDelete));
+      toast.success("Xóa phòng thành công!");
+    } catch (error) {
+      console.error("Lỗi khi xóa phòng:", error.response?.data || error);
+      toast.error(error.response?.data?.message || "Không thể xóa phòng!");
+    } finally {
+      setIsPopupOpen(false);
+      setRoomToDelete(null);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setRoomToDelete(null);
   };
 
   const handleAddRoom = (newRoom) => {
@@ -206,30 +230,30 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
           <div className="room-grid">
             <div className="room-info">
               <label>Tên phòng:</label>
-              <span>{room.name || 'Chưa có tên'}</span>
+              <span>{room.name || "Chưa có tên"}</span>
             </div>
             <div className="room-info">
               <label>Diện tích:</label>
-              <span>{room.area ? `${room.area} m²` : '0 m²'}</span>
+              <span>{room.area ? `${room.area} m²` : "0 m²"}</span>
             </div>
             <div className="room-info">
               <label>Tiền thuê:</label>
-              <span>{room.price ? `${room.price} VND` : '0 VND'}</span>
+              <span>{room.price ? `${room.price} VND` : "0 VND"}</span>
             </div>
             <div className="room-info">
               <label>Số người tối đa:</label>
-              <span>{room.capacity || '0'} người</span>
+              <span>{room.capacity || "0"} người</span>
             </div>
             <div className="room-info">
               <label>Tầng:</label>
-              <span>{room.floor || '1'}</span>
+              <span>{room.floor || "1"}</span>
             </div>
           </div>
           <div className="button-group">
             <button
               type="button"
               className="room-btn-remove"
-              onClick={() => handleRoomAction('delete', room.id)}
+              onClick={() => handleRoomAction("delete", room.id)}
               aria-label="Xóa phòng"
             >
               Xóa
@@ -237,7 +261,7 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
             <button
               type="button"
               className="room-btn-update"
-              onClick={() => handleRoomAction('update', room.id)}
+              onClick={() => handleRoomAction("update", room.id)}
               aria-label="Cập nhật phòng"
             >
               Cập nhật
@@ -245,7 +269,7 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
             <button
               type="button"
               className="room-btn-payment"
-              onClick={() => handleRoomAction('payment', room.id)}
+              onClick={() => handleRoomAction("payment", room.id)}
               aria-label="Xem lịch sử thanh toán"
             >
               Lịch sử thanh toán
@@ -253,6 +277,12 @@ const RoomList = ({ rooms, onRoomChange, boardingHouseId }) => {
           </div>
         </div>
       ))}
+      <DeleteConfirmPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        onConfirm={handleConfirmDelete}
+        message="Bạn có chắc chắn muốn xóa phòng này không?"
+      />
     </div>
   );
 };

@@ -288,7 +288,6 @@ const SaveRoom = () => {
         onSubmit={handleSubmitPost}
         isLoading={isLoading}
       />
-      <ToastContainer />
     </div>
   );
 };

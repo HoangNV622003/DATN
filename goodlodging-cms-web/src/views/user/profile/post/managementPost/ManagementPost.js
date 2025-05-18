@@ -8,7 +8,7 @@ import { ROUTERS } from '../../../../../utils/router/Router';
 import { toast } from 'react-toastify';
 const ManagementPost = () => {
     const navigate=useNavigate();
-    const {user,isLogin,loading}=useAuth();
+    const {user,isLogin,loading,token}=useAuth();
     const [myPosts,setMyPosts]=useState([]);
     const [error,setError]=useState(null);
     const [loadingData,setLoadingData]=useState(false);
@@ -46,8 +46,24 @@ const ManagementPost = () => {
     }
     return (
         <div className='container__my__post'>
+            {
+                myPosts.length===0 ? (
+                    <div className="my-posts-header">
+                        <h2>Không có bài viết nào</h2>
+                        <p>Bạn chưa có bài viết nào. Hãy tạo một bài viết mới!</p>
+                    </div>
+                )
+                : (
+                    <div className="my-posts-header">
+                        <h2>Danh sách bài viết</h2>
+                    </div>
+                )
+            }
             <div className="error">{error}</div>
-            <MyPostList initialPosts={myPosts}/>
+            <MyPostList 
+                initialPosts={myPosts} 
+                accessToken={token}
+            />
         </div>
     );
 };

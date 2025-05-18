@@ -232,6 +232,11 @@ public class BoardingHouseService {
         addressPresentations.forEach(addressPresentation -> addressPresentation.setStatus(CommonStatus.DELETED.getValue()));
         boardingHouseRepository.saveAll(boardingHouses);
         addressRepository.saveAll(addressPresentations);
+
+        //delete Room
+        List<Room>rooms=roomRepository.findAllByBoardingHouseIdInAndStatus(boardingHouseIds,CommonStatus.ACTIVE.getValue());
+        rooms.forEach(room -> room.setStatus(CommonStatus.DELETED.getValue()));
+        roomRepository.saveAll(rooms);
         return CommonResponse.builder().result(ApiResponseCode.BOARDING_HOUSE_DELETED_SUCCESSFUL.getMessage()).build();
     }
 
@@ -245,6 +250,7 @@ public class BoardingHouseService {
         User user = userRepository.findByUsernameAndStatus(request.getUsername(), CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
         boardingHouse.setUserId(user.getId());
+        boardingHouse.setName(boardingHouse.getName()+" - Chuyển nhượng");
         boardingHouseRepository.save(boardingHouse);
         List<Post> posts = postRepository.findAllByBoardingHouseIdAndStatus(boardingHouse.getId(), CommonStatus.ACTIVE.getValue());
         posts.forEach(post -> {

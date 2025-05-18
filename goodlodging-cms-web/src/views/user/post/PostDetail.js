@@ -165,7 +165,10 @@ const PostDetail = () => {
                 </div>
                 <div className="list__room">
                     {
-                        (emptyRooms!==null && emptyRooms.length > 0) && (<ListRoomEmpty rooms={emptyRooms}/>)
+
+                        (emptyRooms!==null && emptyRooms.length > 0) 
+                        ? (<ListRoomEmpty rooms={emptyRooms}/>)
+                        : (<p className="room__not__found">Không có phòng nào trống</p>)
                     }
                 </div>
                 <table className="expect_costs">

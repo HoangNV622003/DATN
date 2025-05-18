@@ -1,0 +1,71 @@
+#dcpPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#dcpPopupContent {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transform: translateY(0);
+}
+
+#dcpPopupMessage {
+  margin-bottom: 24px;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+#dcpPopupButtons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+#dcpBtnConfirm {
+  background: #dc2626;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #b91c1c;
+  }
+}
+
+#dcpBtnCancel {
+  background: #6b7280;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #4b5563;
+  }
+}

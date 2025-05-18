@@ -3,6 +3,7 @@ package com.example.good_lodging_service.controller;
 import com.example.good_lodging_service.dto.request.RoomUser.RoomUserDeleteRequest;
 import com.example.good_lodging_service.dto.request.RoomUser.RoomUserRequest;
 import com.example.good_lodging_service.dto.response.CommonResponse;
+import com.example.good_lodging_service.dto.response.Member.MemberResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
 import com.example.good_lodging_service.service.RoomUserService;
 import lombok.AccessLevel;
@@ -31,7 +32,7 @@ public class RoomUserController {
     }
 
     @GetMapping("/{roomId}")
-    public ResponseEntity<List<UserResponseDTO>> getUsersWithRoomId(@PathVariable Long roomId) {
+    public ResponseEntity<List<MemberResponse>> getUsersWithRoomId(@PathVariable Long roomId) {
         return ResponseEntity.ok(roomUserService.findAllByRoomId(roomId));
     }
 }

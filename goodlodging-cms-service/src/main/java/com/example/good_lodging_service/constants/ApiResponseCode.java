@@ -69,7 +69,7 @@ public enum ApiResponseCode {
     ROOM_ALREADY_EXITED(8001,"Phòng đã tồn tại, vui lòng chọn tên khác", HttpStatus.BAD_REQUEST),
     ROOM_DELETED_SUCCESSFUL(8002, "Phòng đã được xóa thành công", HttpStatus.OK),
     ROOM_NOT_FOUND(8003,"Không tìm thấy phòng", HttpStatus.BAD_REQUEST),
-
+    CANNOT_DELETE_ROOM(8004,"Không thể xóa phòng trọ",HttpStatus.BAD_REQUEST),
     //DEVICE
     DEVICE_ALREADY_EXITED(9001, "Thiết bị đã tồn tại", HttpStatus.BAD_REQUEST),
     DEVICE_DELETED_SUCCESSFUL(9002, "Thiết bị đã được xóa thành công", HttpStatus.OK),

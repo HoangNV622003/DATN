@@ -79,7 +79,9 @@ public class PostService {
     public AuthorInfo getAuthorInformation(Long id, Pageable pageable) {
         User user = userRepository.findByIdAndStatus(id, CommonStatus.ACTIVE.getValue()).orElseThrow(
                 () -> new AppException(ApiResponseCode.USER_NOT_FOUND));
+        Image image=imageRepository.findByEntityIdAndEntityTypeAndStatus(user.getId(),EntityType.USER.getValue(), CommonStatus.ACTIVE.getValue()).orElse(null);
         UserResponseDTO userResponseDTO = userMapper.toUserResponse(user);
+        userResponseDTO.setImageUrl(image!=null?ValueUtils.getOrDefault(image.getImageUrl(),""):"");
         return AuthorInfo.builder()
                 .authorInfo(userResponseDTO)
                 .posts(getAllMyPosts(id, pageable))
@@ -97,8 +99,10 @@ public class PostService {
         imageUrls.addAll(boardingHouseImageUrls.stream().map(Image::getImageUrl).toList());
         List<RoomResponse> rooms=roomRepository.findAllByBoardingHouseIdAndStatusWithQuery(postDetailProjection.getBoardingHouseId(),CommonStatus.ACTIVE.getValue())
                 .stream().map(roomMapper::toRoomResponseDTO).toList();
+        Image image=imageRepository.findAllByEntityIdAndEntityTypeAndStatus(postDetailProjection.getUserId(),EntityType.USER.getValue(), CommonStatus.ACTIVE.getValue()).getFirst();
+
         return PostDetailResponse.builder()
-                .authorInfo(ProfileResponse.fromPostDetailProjection(postDetailProjection))
+                .authorInfo(ProfileResponse.fromPostDetailProjection(postDetailProjection,image.getImageUrl()))
                 .title(ValueUtils.getOrDefault(postDetailProjection.getTitle(), ""))
                 .maxArea(ValueUtils.getOrDefault(postDetailProjection.getMaxArea(), 0F))
                 .minArea(ValueUtils.getOrDefault(postDetailProjection.getMinArea(), 0F))

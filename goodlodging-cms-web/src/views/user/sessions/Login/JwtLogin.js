@@ -43,10 +43,6 @@ const JwtLogin = () => {
         navigate(ROUTERS.AUTH.REGISTER);
     };
 
-    const handleNavigateHomepage = () => {
-        navigate("/"); // Chuyển về trang chủ mà không đăng nhập
-    };
-
     return (
         <div className="container__login__form">
             <form className="form" onSubmit={handleSubmit}>

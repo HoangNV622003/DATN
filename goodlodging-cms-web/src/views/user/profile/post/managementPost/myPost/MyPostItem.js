@@ -7,7 +7,7 @@ import { ROUTERS } from '../../../../../../utils/router/Router';
 import { deletePost } from '../../../../../../apis/posts/PostService';
 import { toast } from 'react-toastify';
 
-const MyPostItem = ({ post, onDeleteSuccess }) => {
+const MyPostItem = ({ post, onDeleteSuccess,accessToken }) => {
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false); // State để hiển thị modal
@@ -24,13 +24,9 @@ const MyPostItem = ({ post, onDeleteSuccess }) => {
     const confirmDelete = async () => {
         setShowConfirmModal(false); // Ẩn modal
         try {
-            await deletePost([post.id]);
-            toast.success('Xóa bài đăng thành công', {
-                autoClose: 2000,
-                onClose: () => {
-                    if (onDeleteSuccess) onDeleteSuccess(post.id); // Gọi callback để cập nhật danh sách
-                },
-            });
+            await deletePost([post.id],accessToken); // Gọi API xóa bài đăng
+            toast.success('Xóa bài đăng thành công');
+            if (onDeleteSuccess) onDeleteSuccess(post.id); // Gọi callback để cập nhật danh sách
         } catch (error) {
             setError('Lỗi khi xóa bài đăng, vui lòng thử lại sau');
             toast.error('Xóa bài đăng thất bại, vui lòng thử lại');

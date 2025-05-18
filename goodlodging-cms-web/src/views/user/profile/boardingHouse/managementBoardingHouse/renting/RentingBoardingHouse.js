@@ -8,9 +8,9 @@ import { ROUTERS } from '../../../../../../utils/router/Router';
 import { toast } from 'react-toastify';
 import FindRoommatePopup from '../../../../../../components/popup/findRoomMatePopup/FindRoomMatePopup';
 import { findRoomMate } from '../../../../../../apis/posts/PostService';
+import { IMAGE_URL } from '../../../../../../utils/ApiUrl';
 const RentingBoardingHouse = () => {
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
   const [isExpenseListVisible, setIsExpenseListVisible] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Thêm state loading cho request
@@ -19,9 +19,14 @@ const RentingBoardingHouse = () => {
   const handleFetchData=async(userId,accessToken)=>{
     try {
       const result = await fetchMyRoom(userId, accessToken);
-      setData(result.data);
+      if (!result || !result.data) {
+        return <>Bạn chưa thuê phòng trọ nào</>
+      }else{
+
+        setData(result.data);
+      }
     } catch (err) {
-      setError(err.message);
+
     }
   }
   useEffect(() => {
@@ -36,12 +41,9 @@ const RentingBoardingHouse = () => {
     }
   }, [isLogin,loading, user, navigate]);
 
-  if (error) {
-    return <div className="room-info-container">Lỗi: {error}</div>;
-  }
 
   if (!data) {
-    return <div className="room-info-container">Không có dữ liệu để hiển thị</div>;
+    return <div className="room-info-container">Bạn chưa thuê phòng trọ nào</div>;
   }
 
   const { roomDetail, host, boardingHouse, payments } = data;
@@ -168,15 +170,18 @@ const RentingBoardingHouse = () => {
               <th>Email</th>
               <th>Số điện thoại</th>
               <th>Ngày sinh</th>
+              <th>Thời gian thuê</th>
             </tr>
           </thead>
           <tbody>
             {roomDetail.users.map((user) => (
               <tr key={user.id}>
-                <td>{user.firstName} {user.lastName}</td>
+                <td>{user.fullName}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
                 <td>{new Date(user.birthday).toLocaleDateString('vi-VN')}</td>
+                <td>{new Date(user.updatedAt).toLocaleDateString('vi-VN')}</td>
+
               </tr>
             ))}
           </tbody>
@@ -187,13 +192,12 @@ const RentingBoardingHouse = () => {
       <section className="section">
         <h2>Thông tin chủ trọ</h2>
         <div className="container__host">
-          <img src={host.imageUrl || defaultAvatar} alt="Host Avatar" />
+          <img src={IMAGE_URL + host.imageUrl || defaultAvatar} alt="Host Avatar" />
           <div className="container__host__information" onClick={handleNavigateToAuthorPosts}>
             <div className="info-item"><span className="label">Tên:</span> {host.firstName} {host.lastName}</div>
             <div className="info-item"><span className="label">Email:</span> {host.email}</div>
             <div className="info-item"><span className="label">Số điện thoại:</span> {host.phone}</div>
           </div>
-          <button className="btn-send-message">Nhắn tin</button>
         </div>
       </section>
 

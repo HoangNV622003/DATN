@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { createBoardingHouse, fetchHouse, updateBoardingHouse } from '../../../../../apis/house/BoardingHouseService';
 import RoomList from '../rooms/RoomList';
 import AddressSelector from '../../../../../components/address/AddressSelector';
@@ -9,11 +9,12 @@ import './style.scss';
 import { IMAGE_URL } from '../../../../../utils/ApiUrl';
 import { toast } from 'react-toastify';
 import { getArea, getPrice } from '../../../../../utils/BoardingHouseConfig';
+import { ROUTERS } from '../../../../../utils/router/Router';
 
 const SaveBoardingHouse = () => {
   const { boardingHouseId } = useParams();
-  const { token, isLogin, loading } = useAuth();
-
+  const { token,user, isLogin, loading } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     userId: null,
     name: '',
@@ -44,15 +45,19 @@ const SaveBoardingHouse = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    console.log('boardingHouseId from useParams:', boardingHouseId);
-    if (!isLogin || loading) return;
-    if (!boardingHouseId || boardingHouseId === 'undefined') {
-      return;
-    }
-    fetchBoardingHouseData();
+    if(!loading){
+          if(!user||!isLogin){
+            toast.error("Vui lòng đăng nhập để tiếp tục")
+            navigate(ROUTERS.AUTH.LOGIN);
+    
+          }else{
+            fetchBoardingHouseData();
+          }
+        }
   }, [boardingHouseId, token, isLogin, loading]);
 
   useEffect(() => {
+
     return () => {
       combinedImagePreviews.forEach(preview => {
         if (preview.startsWith('blob:')) URL.revokeObjectURL(preview);
@@ -245,7 +250,10 @@ const SaveBoardingHouse = () => {
         .then(response => {
           console.log('Update boarding house response:', response);
           toast.success('Cập nhật nhà trọ thành công!');
-          setSavedBoardingHouseId(boardingHouseId);
+          setFormData(prev => ({
+          ...prev,
+          rooms: [],
+        }));
         })
         .catch(err => {
           console.error('Error updating boarding house:', err);
@@ -262,7 +270,6 @@ const SaveBoardingHouse = () => {
         response = await createBoardingHouse(submitData, token)
         .then(response => {
           toast.success('Tạo nhà trọ mới thành công!');
-
           return response;
         })
         .catch(err => {

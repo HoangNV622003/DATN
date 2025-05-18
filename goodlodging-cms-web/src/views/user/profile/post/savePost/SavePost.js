@@ -339,7 +339,7 @@ const SavePost = () => {
 
   return (
     <div className="save-post" data-testid="save-post">
-      <h2>{isEditMode ? 'Chỉnh sửa bài đăng' : 'Tạo mới bài đăng'}</h2>
+      <h2>{isEditMode ? 'Chỉnh sửa bài viết' : 'Tạo bài viết'}</h2>
       {error && <div className="save-post__error">{error}</div>}
       <PostForm
         post={post}

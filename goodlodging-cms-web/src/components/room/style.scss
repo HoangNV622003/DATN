@@ -1,49 +1,56 @@
 .list-room-empty {
-    display: flex;
-    flex-wrap: nowrap; /* Ngăn các phần tử xuống dòng */
-    gap: 20px;
-    padding: 20px 0px;
-    overflow-x: auto; /* Bật cuộn ngang khi nội dung vượt kích thước */
-    scroll-behavior: smooth; /* Cuộn mượt mà */
-    scrollbar-width: thin; /* Tùy chỉnh thanh cuộn (cho Firefox) */
-    
-    /* Tùy chỉnh thanh cuộn cho Chrome/Safari */
-    &::-webkit-scrollbar {
-      height: 8px;
+  display: flex;
+  flex-wrap: wrap; /* Cho phép các phần tử xuống dòng */
+  gap: 20px;
+  padding: 20px 0px;
+  flex-direction: row; /* Sắp xếp theo hàng ngang */
+  max-height: 500px; /* Chiều cao tối đa */
+  overflow-y: auto; /* Bật cuộn dọc khi nội dung vượt kích thước */
+  scroll-behavior: smooth; /* Cuộn mượt mà */
+  scrollbar-width: thin; /* Tùy chỉnh thanh cuộn (cho Firefox) */
+
+  /* Tùy chỉnh thanh cuộn cho Chrome/Safari */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+  .room__found {
+    width: 100%; /* Đảm bảo tiêu đề chiếm toàn bộ chiều rộng */
+    margin-bottom: 10px;
+  }
+
+  .room-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    width: calc(33.33% - 40px / 3); /* Chia đều cho 3 phần tử, trừ khoảng cách gap */
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
-    &::-webkit-scrollbar-thumb {
-      background-color: #888;
-      border-radius: 4px;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background-color: #555;
-    }
-  
-    .room-item {
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 15px;
-      width: 250px;
-      flex: 0 0 auto; /* Đảm bảo kích thước cố định, không co giãn */
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease-in-out;
-  
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      }
-  
-      p {
-        margin: 8px 0;
-        font-size: 14px;
-        color: #333;
-  
-        &:first-child {
-          font-weight: bold;
-          font-size: 16px;
-          color: #2c3e50;
-        }
+
+    p {
+      margin: 8px 0;
+      font-size: 14px;
+      color: #333;
+
+      &:first-child {
+        font-weight: bold;
+        font-size: 16px;
+        color: #2c3e50;
       }
     }
   }
+}

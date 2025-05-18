@@ -92,7 +92,6 @@ const handleNavigateToChatPage=()=>{
           </li>
         </ul>
       </nav>
-      <button className="btn-chat" onClick={handleNavigateToChatPage}>Tin nhắn</button>
       <button onClick={handleNavigateLogout}>Đăng xuất</button>
     </div>
   );

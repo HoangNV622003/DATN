@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../../../context/AuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTERS } from '../../../../../../../utils/router/Router';
-import { confirmPayment, createBill, fetchRoomBills, updateBill} from '../../../../../../../apis/bill/BillService';
+import { confirmPayment, createBill, fetchRoomBills, updateBill, deleteBill } from '../../../../../../../apis/bill/BillService';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import ListPayment from '../../../../../../../components/payment/payment-list/ListPayment';
@@ -113,6 +113,21 @@ const RoomPaymentHistory = () => {
     }
   };
 
+  const handleDelete = async (paymentId) => {
+    try {
+      await deleteBill(paymentId, token);
+      toast.success('Xóa hóa đơn thành công!');
+      setData((prev) => ({
+        ...prev,
+        invoices: prev.invoices.filter((inv) => inv.id !== paymentId),
+      }));
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Xóa hóa đơn thất bại';
+      toast.error(errorMessage);
+    }
+  };
+
   const handleEdit = (payment) => {
     if (!payment?.id) {
       toast.error('Hóa đơn không hợp lệ, không thể chỉnh sửa');
@@ -179,6 +194,7 @@ const RoomPaymentHistory = () => {
         isManagement={false}
         onPay={handlePay}
         onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </main>
   );

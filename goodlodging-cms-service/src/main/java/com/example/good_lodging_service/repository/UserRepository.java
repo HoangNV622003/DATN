@@ -44,4 +44,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByRoomIdAndStatusWithQuery(@Param("roomId")Long roomId,@Param("status")Integer status);
     List<User> findAllByStatus(Integer status, Pageable pageable);
     Optional<User> findByEmailAndStatus(String email, Integer status);
+    @Query(value = """
+        SELECT u FROM User u
+            INNER JOIN BoardingHouse bh ON bh.userId=u.id
+            INNER JOIN Room r ON r.boardingHouseId=bh.id
+        WHERE r.status=:status AND r.id=:id
+    """)
+    Optional<User> findByRoomIdAndStatusWithQuery(@Param("id")Long id,@Param("status") Integer status);
 }

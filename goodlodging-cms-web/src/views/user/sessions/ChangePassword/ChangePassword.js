@@ -3,7 +3,7 @@ import "./style.scss";
 import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ROUTERS } from "../../../../utils/router/Router";
-import { changePassword } from "../../../../apis/account/UserService";
+import { changePassword } from "../../../../apis/auth/AuthService";
 import { toast } from "react-toastify";
 
 const ChangePassword = () => {
@@ -14,7 +14,6 @@ const ChangePassword = () => {
     newPassword: "",
     confirmNewPassword: "",
   });
-  const [error, setError] = useState("");
   const oldPasswordRef = useRef(null);
 
   const handleInputChange = (e) => {
@@ -24,7 +23,7 @@ const ChangePassword = () => {
 
   useEffect(() => {
     if (loading) return;
-    if (!isLogin) {
+    if (!isLogin&& !user) {
       navigate(ROUTERS.AUTH.LOGIN);
     } else {
       oldPasswordRef.current.focus(); // Focus vào trường mật khẩu cũ khi tải
@@ -33,30 +32,52 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     // Kiểm tra validation
     if (!formData.oldPassword || !formData.newPassword || !formData.confirmNewPassword) {
-      setError("Vui lòng điền đầy đủ tất cả các trường!");
       toast.error("Vui lòng điền đầy đủ tất cả các trường!");
       return;
     }
 
     if (formData.newPassword !== formData.confirmNewPassword) {
-      setError("Mật khẩu mới và xác nhận mật khẩu không khớp!");
       toast.error("Mật khẩu mới và xác nhận mật khẩu không khớp!");
       return;
     }
 
     if (formData.newPassword.length < 6) {
-      setError("Mật khẩu mới phải có ít nhất 6 ký tự!");
       toast.error("Mật khẩu mới phải có ít nhất 6 ký tự!");
       return;
     }
 
-    
+    const payload={
+      currentPassword: formData.oldPassword,
+      newPassword: formData.newPassword,
+      confirmPassword: formData.confirmNewPassword,
+    }
+    handleChangePassword(payload,token);
   };
 
+  const handleChangePassword = async (payload,token) => {
+    await changePassword(payload,token).then((response) => {
+      if(response) {
+        toast.success("Đổi mật khẩu thành công!").then(() => {
+          setTimeout(() => {
+            setFormData({
+            oldPassword: "",
+            newPassword: "",
+            confirmNewPassword: "",
+          });
+            navigate(ROUTERS.AUTH.LOGIN);
+          }, 2000); // Chờ 2 giây trước khi chuyển trang
+        });
+      }else{
+        toast.error("Mật khẩu cũ không đúng!");
+      }
+    }).catch((error) => {
+      toast.error(error.message||"Đổi mật khẩu không thành công!");
+      console.error("Lỗi khi đổi mật khẩu:", error);
+    })
+  }
   return (
     <div className="change-password-container">
       <div className="change-password-card">
@@ -99,7 +120,6 @@ const ChangePassword = () => {
               required
             />
           </div>
-          {error && <p className="error-message">{error}</p>}
           <div className="form-group">
             <button type="submit" className="change-password-button">
               Lưu thay đổi

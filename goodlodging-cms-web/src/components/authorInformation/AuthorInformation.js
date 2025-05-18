@@ -4,6 +4,7 @@ import { FiPhoneCall } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../utils/router/Router';
 import "./style.scss"
+import { IMAGE_URL } from '../../utils/ApiUrl';
 const AuthorInformation = ({data,isNavigate=true}) => {
     const navigate=useNavigate();
     const handleNavigateToAuthorPosts=()=>{
@@ -14,7 +15,7 @@ const AuthorInformation = ({data,isNavigate=true}) => {
     return (
         <div className="container__author__information">
                         <div className="author__avatar" onClick={handleNavigateToAuthorPosts}>
-                            <img src={data.imageUrl?data.imageUrl:"https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"} alt="Avatar" />
+                            <img src={data.imageUrl?IMAGE_URL+ data.imageUrl:"https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"} alt="Avatar" />
                         </div>
                         <p onClick={handleNavigateToAuthorPosts}>{data.fullName}</p>
                         <div className="author__email">

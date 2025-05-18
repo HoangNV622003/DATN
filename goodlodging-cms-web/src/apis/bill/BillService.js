@@ -47,3 +47,9 @@ export const confirmPayment = async (paymentId,userId, accessToken) => {
     },
   });
 }
+export const deleteBill = async (billId, token) => {
+  const response = await axios.delete(`${API_URL}/bill/${billId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response;
+};

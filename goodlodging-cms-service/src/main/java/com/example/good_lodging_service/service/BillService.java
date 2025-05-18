@@ -4,6 +4,7 @@ import com.example.good_lodging_service.constants.ApiResponseCode;
 import com.example.good_lodging_service.constants.CommonStatus;
 import com.example.good_lodging_service.constants.BillStatus;
 import com.example.good_lodging_service.dto.request.Bill.BillRequest;
+import com.example.good_lodging_service.dto.response.CommonResponse;
 import com.example.good_lodging_service.dto.response.Invoice.InvoiceResponse;
 import com.example.good_lodging_service.dto.response.Bill.BillResponse;
 import com.example.good_lodging_service.dto.response.User.UserResponseDTO;
@@ -54,6 +55,7 @@ public class BillService {
                 .build();
     }
 
+    // lấy về danh sách hóa đơn của 1 phòng nào đó theo id người thuê
     public InvoiceResponse findAllByUserId(Long userId) {
         List<Bill> bills = billRepository.findAllByUserIdAndStatusNotWithQuery(userId, BillStatus.DELETED.getValue());
         Room room = roomRepository.findByUserIdAndStatusWithQuery(userId, CommonStatus.ACTIVE.getValue()).orElseThrow(
@@ -121,5 +123,12 @@ public class BillService {
         BillResponse billResponse = billMapper.toPaymentTransactionResponse(bill);
         billResponse.setPayerName(user != null ? user.getFirstName() + " " + user.getLastName() : "");
         return billResponse;
+    }
+
+    public CommonResponse deleteBill(Long id) {
+        Bill bill = billRepository.findByIdAndStatus(id, BillStatus.PENDING.getValue()).orElseThrow(()->new AppException(ApiResponseCode.ENTITY_NOT_FOUND));
+        bill.setStatus(BillStatus.DELETED.getValue());
+        billRepository.save(bill);
+        return CommonResponse.builder().result("Xóa hóa đơn thành công").build();
     }
 }

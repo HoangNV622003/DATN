@@ -7,32 +7,25 @@ import imageDefault from '../../../../assets/images/defaultAvatar.jpg';
 import { LuMapPin } from "react-icons/lu";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IMAGE_URL } from '../../../../utils/ApiUrl';
-import { createFavoritePost, deleteFavoritePost } from '../../../../apis/favorite-posts/FavoritePostService';
+import { createFavoritePost } from '../../../../apis/favorite-posts/FavoritePostService';
 import { useAuth } from '../../../../context/AuthContext';
 import { CiHeart } from 'react-icons/ci';
 import { toast } from 'react-toastify';
 import { getTitle } from '../../../../utils/PostUtils';
 import { getArea, getPrice } from '../../../../utils/BoardingHouseConfig';
 
-const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
+const SearchPostItem = ({ post, showMenu = false, onDelete }) => {
   const { id, type, title, imageUrl, maxArea, minArea, maxRent, minRent, address, modifiedDate } = post;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
 
-  const handleDelete = async () => {
-    const payload = {
-      userId: user.id,
-      postIds: [id]
-    };
-    await deleteFavoritePost(payload).then((response) => {
-      setIsMenuOpen(false);
-      if (onPostDeleted) onPostDeleted(id); // Cập nhật danh sách ở parent
-      toast.success(response.data.result);
-    }).catch((error) => {
-      toast.error("Có lỗi xảy ra, vui lòng thử lại sau");
-    });
+  const handleDelete = (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // Ngăn click lan truyền
+    setIsMenuOpen(false);
+    if (onDelete) onDelete(id); // Gọi hàm onDelete từ parent
   };
 
   const handleAddFavoritePost = (e) => {
@@ -44,7 +37,7 @@ const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
         userId: user.id,
         postId: id,
       };
-      createFavoritePost(payload)
+      createFavoritePost(payload, token)
         .then((response) => { toast.success(response.data.result || response.data.message); })
         .catch((error) => { toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại sau"); });
     }
@@ -110,11 +103,7 @@ const SearchPostItem = ({ post, showMenu = false, onPostDeleted }) => {
               <div className="menu__popup">
                 <button
                   className="delete__button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation(); // Ngăn click lan truyền
-                    handleDelete();
-                  }}
+                  onClick={handleDelete}
                 >
                   Xóa khỏi danh sách
                 </button>

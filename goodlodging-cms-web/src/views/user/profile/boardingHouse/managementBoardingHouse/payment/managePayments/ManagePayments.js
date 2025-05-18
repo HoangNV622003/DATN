@@ -6,7 +6,7 @@ import { fetchMyRoomBills } from '../../../../../../../apis/bill/BillService';
 import { toast } from 'react-toastify';
 import ListPayment from '../../../../../../../components/payment/payment-list/ListPayment';
 import { createOrder } from '../../../../../../../apis/vn-pay/VNPayService';
-
+import './style.scss';
 const ManagePayments = () => {
   const { user, isLogin, loading, token } = useAuth();
   const [data, setData] = useState(null);
@@ -23,7 +23,6 @@ const ManagePayments = () => {
       setData(result.data);
     } catch (err) {
       setError(err.message);
-      toast.error('Có lỗi xảy ra khi lấy dữ liệu thanh toán');
     } finally {
       setLoadingData(false);
     }
@@ -39,11 +38,9 @@ const ManagePayments = () => {
       if (result.status === 200) {
         window.location.href = result.data.url; // Redirect to payment page
       } else {
-        toast.error('Có lỗi xảy ra khi thanh toán');
       }
     } catch (error) {
       console.error('Payment error:', error);
-      toast.error('Có lỗi xảy ra khi thanh toán');
     }
 
   };
@@ -63,28 +60,18 @@ const ManagePayments = () => {
     );
   }
 
-  if (error) {
-    return (
-      <main className="container__manage__payments error" role="main" aria-labelledby="payments-title">
-        <h1 id="payments-title">Quản lý thanh toán</h1>
-        <p>Lỗi: {error}</p>
-        <button onClick={() => handleFetchData(user.id, token)}>Thử lại</button>
-      </main>
-    );
-  }
-
   if (!data?.invoices || !Array.isArray(data.invoices)) {
     return (
       <main className="container__manage__payments" role="main" aria-labelledby="payments-title">
-        <h1 id="payments-title">Quản lý thanh toán</h1>
-        <p>Không có hóa đơn để hiển thị</p>
+        <h3 id="payments-title" style={{textAlign:'center'}}>Quản lý thanh toán</h3>
+        <p style={{textAlign:'center', marginTop:'20px'}}>Không có hóa đơn để hiển thị</p>
       </main>
     );
   }
 
   return (
     <main className="container__manage__payments" role="main" aria-labelledby="payments-title">
-      <h1 id="payments-title">Quản lý thanh toán</h1>
+      <h3 id="payments-title" style={{textAlign:'center'}}>Quản lý thanh toán</h3>
       <ListPayment
         payments={data.invoices}
         isManagement={true}

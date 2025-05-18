@@ -73,10 +73,11 @@ public class UserService {
         if (userRepository.existsByEmailOrPhoneAndIdNotWithQuery(request.getEmail(), request.getPhone(), CommonStatus.ACTIVE.getValue(), id) > 0) {
             throw new AppException(ApiResponseCode.EMAIL_OR_PHONE_NUMBER_ALREADY_EXISTS);
         }
-
+        Image image = imageRepository.findByEntityIdAndEntityTypeAndStatus(user.getId(), EntityType.USER.getValue(), CommonStatus.ACTIVE.getValue()).orElse(null);
+        String imageUrl = image != null ? image.getImageUrl() : "";
         userMapper.updateUser(user, request);
         UserResponseDTO userResponse = userMapper.toUserResponse(userRepository.save(user));
-        userResponse.setImageUrl(request.getImageFile() != null ? uploadAvatar(id, request.getImageFile()).getImageUrl() : "");
+        userResponse.setImageUrl(request.getImageFile() != null ? uploadAvatar(id, request.getImageFile()).getImageUrl() : imageUrl);
         return userResponse;
     }
 

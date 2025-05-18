@@ -46,7 +46,7 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete, o
         setIsTransferring(true); // Bật loading
         changeOwner(id, username, token)
             .then(response => {
-                toast.success(response.data.result || "Chuyển nhượng nhà trọ thành công");
+                toast.success("Chuyển nhượng nhà trọ thành công");
                 setIsPopupOpen(false);
                 if (onTransferSuccess) {
                     onTransferSuccess(id);
@@ -110,6 +110,7 @@ const BoardingHouseItem = ({ data, onSelect, isSelected, isSavePost, onDelete, o
                 setUsername={setUsername}
                 isLoading={isTransferring} // Truyền prop để disable nút trong popup nếu cần
             />
+            
         </div>
     );
 };

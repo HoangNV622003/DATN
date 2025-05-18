@@ -20,7 +20,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                     a.id as addressId,
                     a.full_address as fullAddress
                 FROM boarding_house bh
-                    JOIN address a ON bh.id = a.boarding_house_id
+                    JOIN address a ON bh.address_id = a.id
                 WHERE bh.id IN :ids AND a.status=1;
                 ;
             """)
