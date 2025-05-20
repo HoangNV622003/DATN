@@ -31,10 +31,10 @@ public interface RoomUserRepository extends JpaRepository<RoomUser, Long> {
                     u.birthday AS dateOfBirth,
                     u.date_updated AS updatedAt,
                     i.image_url AS imageUrl
-                FROM room_user ru
-                	INNER JOIN user u ON u.id=ru.user_id
+                FROM user u
                     LEFT JOIN image i ON i.entity_id=u.id AND i.entity_type=1
-                    WHERE ru.status=:status AND u.status=:status AND ru.room_id=:roomId AND i.status=:status
+                	LEFT JOIN room_user ru ON u.id=ru.user_id
+                    WHERE ru.status=:status AND u.status=:status AND ru.room_id=:roomId
             """)
     List<MemberProjection> findAllByRoomIdAndStatusWithQuery(Long roomId, Integer status);
     List<RoomUser> findAllByRoomIdInAndStatus(List<Long> roomIds, Integer status);
