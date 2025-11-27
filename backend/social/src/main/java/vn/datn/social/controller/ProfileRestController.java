@@ -27,16 +27,15 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProfileRestController {
 
-     UserService userService;
+    UserService userService;
 
-     FriendService friendService;
+    FriendService friendService;
 
-     PostService postService;
+    PostService postService;
 
-     LikeService likeService;
-    
-     CommentService commentService;
+    LikeService likeService;
 
+    CommentService commentService;
 
     @GetMapping("/main")
     public ResponseEntity<UserDto> getUserMainProfile(Principal principal) {
@@ -63,7 +62,6 @@ public class ProfileRestController {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
-
     @GetMapping("/fr")
     public ResponseEntity<List<FriendDTO>> getUserFr(Principal principal) {
         String username = principal.getName();
@@ -81,6 +79,7 @@ public class ProfileRestController {
 
         return new ResponseEntity<>(friends, HttpStatus.OK);
     }
+
     @GetMapping("/{username}/posts")
     public ResponseEntity<List<PostDTO>> getUserPost(
             @PathVariable String username, // Lấy username từ URL
@@ -94,7 +93,6 @@ public class ProfileRestController {
 
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
     }
-
 
     //get user post by id
     @GetMapping("/post")
@@ -181,8 +179,4 @@ public class ProfileRestController {
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
-
-
-
-
 }

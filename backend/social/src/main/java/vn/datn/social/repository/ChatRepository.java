@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    List<Chat> findByParticipantsUsername(String username);
+    List<Chat> findByParticipantsUsername(String participantsUsername);
 
 
     @Query("SELECT m FROM Message m WHERE m.chat.id = :chatId ORDER BY m.timestamp DESC")

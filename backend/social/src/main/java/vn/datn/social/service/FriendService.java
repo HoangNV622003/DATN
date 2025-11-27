@@ -8,6 +8,7 @@ import vn.datn.social.dto.response.FriendDTO;
 import vn.datn.social.entity.FriendShip;
 import vn.datn.social.entity.User;
 import vn.datn.social.repository.FriendRepository;
+import vn.datn.social.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class FriendService {
 
     private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
 
     public List<User> getFriends(String username) {
         return friendRepository.findFriendsByUsername(username);
@@ -30,8 +33,10 @@ public class FriendService {
                 .collect(Collectors.toList());
     }
 
+    public void acceptFriend(Long currentUserId, String friendUsername) {
+        User user = userService.findByUsername(friendUsername);
 
-
+    }
 
     public boolean existsBetweenUsers(User currentUser, User user) {
         return friendRepository.existsByUserAndFriendAndAccepted(currentUser, user, true);
@@ -63,7 +68,7 @@ public class FriendService {
 //        return friendShipRepository.findByUserAndFriendAndAcceptedFalse(sender, receiver);
 //    }
     public FriendShip findPendingRequest(User sender, User receiver) {
-        return friendRepository.findByUserAndFriendAndAcceptedFalse(sender, receiver);
+        return friendRepository.findByUserAndFriend(sender, receiver);
     }
 
     public boolean isCurrentUserFriendRequestReceiver(User sender, User receiver) {

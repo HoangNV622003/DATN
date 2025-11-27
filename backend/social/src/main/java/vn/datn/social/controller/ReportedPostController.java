@@ -73,7 +73,6 @@ public class ReportedPostController {
 
             // Tạo thông báo cho từng người đã báo cáo bài viết
 
-
             // Xóa bài viết và các báo cáo liên quan
             reportedPostService.deleteByPostId(postId);
             postService.deleteById(postId);
@@ -85,12 +84,9 @@ public class ReportedPostController {
         }
     }
 
-
-
     @DeleteMapping("/ignore/{reportId}")
     public ResponseEntity<String> ignorePost(@PathVariable Long reportId) {
         try {
-
 
             boolean isDeleted = reportedPostService.removeReport(reportId);
             if (isDeleted) {
@@ -104,6 +100,4 @@ public class ReportedPostController {
                     .body("An error occurred while trying to ignore the post.");
         }
     }
-
-
 }

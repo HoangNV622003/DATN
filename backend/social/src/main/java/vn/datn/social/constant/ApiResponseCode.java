@@ -21,14 +21,4 @@ public enum ApiResponseCode implements IApiResponse {
         this.code = code;
         this.error = error;
     }
-
-    @Override
-    public String getCode() {
-        return "";
-    }
-
-    @Override
-    public String getError() {
-        return "";
-    }
 }

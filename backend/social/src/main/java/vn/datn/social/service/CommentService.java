@@ -8,10 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.datn.social.constant.ApiResponseCode;
+import vn.datn.social.dto.request.CreateCommentRequestDTO;
 import vn.datn.social.dto.response.CommentDTO;
 import vn.datn.social.entity.Comment;
 import vn.datn.social.entity.Post;
 import vn.datn.social.entity.User;
+import vn.datn.social.exception.BusinessException;
 import vn.datn.social.repository.CommentRepository;
 import vn.datn.social.repository.PostRepository;
 import vn.datn.social.repository.UserRepository;
@@ -33,10 +36,8 @@ public class CommentService {
     UserRepository userRepository;
 
     PostRepository postRepository;
-
-    public Comment saveComment(Comment comment) {
-        return commentRepository.save(comment);
-    }
+    private final UserService userService;
+    private final PostService postService;
 
     public List<Comment> findCommentsByPost(Post post) {
         return commentRepository.findByPost(post);
@@ -54,25 +55,18 @@ public class CommentService {
         });
     }
 
-    // Phương thức lưu bình luận
-    public Comment save(Comment comment) {
-        return commentRepository.save(comment);
-    }
-
-    public Comment saveComment(Long postId, String username, String content) {
+    public Comment saveComment(Long userId, CreateCommentRequestDTO request) {
         // Tìm bài post theo ID
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postId));
+        Post post = postService.findById(request.postId());
 
         // Tìm người dùng theo tên người dùng
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        User user = userService.findById(userId);
 
         // Tạo một bình luận mới
         Comment comment = new Comment();
         comment.setPost(post);
         comment.setUser(user);
-        comment.setContent(content);
+        comment.setContent(request.content());
         // Chuyển LocalDateTime thành Date
         Date createdAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
         comment.setCreatedAt(createdAt);

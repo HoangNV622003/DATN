@@ -5,16 +5,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import vn.datn.social.constant.NotificationType;
 import vn.datn.social.entity.FriendShip;
 import vn.datn.social.entity.Notification;
 import vn.datn.social.entity.User;
 import vn.datn.social.repository.FriendRepository;
 import vn.datn.social.repository.UserRepository;
+import vn.datn.social.security.CurrentUserId;
+import vn.datn.social.security.IBEUser;
 import vn.datn.social.service.FriendService;
 import vn.datn.social.service.NotificationService;
 import vn.datn.social.service.SearchService;
@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/friend")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FriendShipRestController {
     SearchService service;
@@ -42,11 +42,38 @@ public class FriendShipRestController {
     UserRepository userRepository;
     FriendRepository friendShipRepository;
 
+    @PostMapping("/add_friend")
+    public ResponseEntity<String> addFriend(@RequestParam("username") String friendUsername, @CurrentUserId Long currentUserId) {
+        User sender = userService.findById(currentUserId);
+        User receiver = userService.findByUsername(friendUsername);
+        if (friendShipService.existsBetweenUsers(sender, receiver)) {
+            return ResponseEntity.badRequest().body("Your friendship has already been added.");
+        }
+        // Create a new friendship request
+        FriendShip friendShip = new FriendShip();
+        friendShip.setUser(sender);
+        friendShip.setFriend(receiver);
+        friendShip.setAccepted(false);  // Set as not accepted initially
+        friendShipService.save(friendShip);
 
-    @PostMapping("/accept_friends")
+        // Create a notification for the receiver
+        Notification notification = new Notification();
+        notification.setContentnoti(sender.getUsername() + " đã gửi yêu cầu kết bạn cho bạn.");
+        notification.setType(NotificationType.ADD_FRIEND); // Type of notification
+        notification.setSender(sender);
+        notification.setReceiver(receiver);
+        notification.setStatus("unread");
+        notification.setTimestamp(LocalDateTime.now());
+        notificationService.save(notification);
+
+        // Return response with updated friend request status
+        return ResponseEntity.ok(" Send addFriend request successfully"); // Return updated status in the response
+    }
+
+    @PostMapping("/accept")
     public ResponseEntity<Map<String, Object>> acceptFriend(
-            @RequestParam("username") String friendUsername, Principal principal) {
-        String currentUsername = principal.getName();
+            @RequestParam("username") String friendUsername, @AuthenticationPrincipal IBEUser ibeUser) {
+        String currentUsername = ibeUser.getUsername();
         User receiver = userService.findByUsername(currentUsername);
         User sender = userService.findByUsername(friendUsername);
 
@@ -91,15 +118,15 @@ public class FriendShipRestController {
         return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
     }
 
-    @PostMapping("friendship/cancel/{othername}")
-    public ResponseEntity<Map<String, Object>> cancelFriend(@PathVariable String othername, Principal principal) {
+    @PostMapping("/cancel/{otherName}")
+    public ResponseEntity<Map<String, Object>> cancelFriend(@PathVariable String otherName, Principal principal) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Lấy tên người dùng hiện tại từ Principal
             String currentUsername = principal.getName();
 
             // Tìm FriendShip giữa currentUser và otherUser
-            Optional<FriendShip> optionalFriendShip = friendShipRepository.findFriendShipBetweenUsers(currentUsername, othername);
+            Optional<FriendShip> optionalFriendShip = friendShipRepository.findFriendShipBetweenUsers(currentUsername, otherName);
 
             if (optionalFriendShip.isEmpty()) {
                 response.put("error", "Friendship not found.");
@@ -115,6 +142,4 @@ public class FriendShipRestController {
             return ResponseEntity.status(500).body(response);
         }
     }
-
-
 }

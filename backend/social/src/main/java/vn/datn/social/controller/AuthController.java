@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import vn.datn.social.dto.request.LoginUserRequestDTO;
 import vn.datn.social.dto.response.AuthResponseDTO;
-import vn.datn.social.dto.response.UserResponseDTO;
-import vn.datn.social.security.CurrentUserId;
 import vn.datn.social.service.AuthService;
 import vn.datn.social.service.UserService;
 
@@ -27,16 +28,4 @@ public class AuthController {
     ResponseEntity<AuthResponseDTO> authentication(@Valid @RequestBody LoginUserRequestDTO loginUserRequestDTO) {
         return ResponseEntity.ok(authService.generateToken(loginUserRequestDTO));
     }
-
-//    @GetMapping("/me")
-//    ResponseEntity<UserResponseDTO> getMyInfo(@CurrentUserId Long userId) {
-//        return ResponseEntity.ok(userService.getUser(userId));
-//    }
-
-    @GetMapping("/oauth2/google")
-    ResponseEntity<UserResponseDTO> getGoogleInfo() {
-        return ResponseEntity.ok(new UserResponseDTO());
-    }
-
-
 }

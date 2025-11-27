@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chats")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MessageRestController {
@@ -67,15 +67,16 @@ public class MessageRestController {
             List<MessageDTO> messageDTOList = messagesPage.stream()
                     .map(message -> {
                         String senderUsername = userService.getUsernameById(message.getSender().getId());
-                        return new MessageDTO(
-                                message.getId(),
-                                message.getContent(),
-                                message.getChat().getId(),
-                                message.getTimestamp(),
-                                message.getSender().getId(),
-                                message.getReceiver().getId(),
-                                senderUsername
-                        );
+                        return MessageDTO.builder()
+                                .id(message.getId())
+                                .content(message.getContent())
+                                .chatId(message.getChat().getId())
+                                .timestamp(message.getTimestamp())
+                                .senderId(message.getSender().getId())
+                                .receiverId(message.getReceiver().getId())
+                                .senderUsername(senderUsername)
+                                .receiverUsername(message.getReceiver().getUsername())
+                                .build();
                     })
                     .collect(Collectors.toList());
 
@@ -142,7 +143,7 @@ public class MessageRestController {
 
 
     // API trả về danh sách người dùng với tin nhắn cuối cùng của họ
-    @GetMapping("/messages")
+    @GetMapping
     public ResponseEntity<List<UserWithLastMessageDTO>> getMessagesForUser(Authentication authentication) {
         String username = authentication != null ? authentication.getName() : null;
 

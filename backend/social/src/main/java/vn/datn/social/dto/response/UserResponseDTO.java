@@ -8,10 +8,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDTO {
+    private Long id;
     private String username;
     private String email;
-    private boolean isFriend;
-    private boolean isFriendPending;
-    private String image;
-    private boolean friendRequestReceiver;
+    private boolean isAdmin;
 }

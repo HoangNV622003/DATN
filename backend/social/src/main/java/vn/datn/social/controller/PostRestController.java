@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.datn.social.constant.NotificationType;
 import vn.datn.social.dto.response.CommentDTO;
 import vn.datn.social.dto.response.PostDTO;
@@ -13,15 +16,21 @@ import vn.datn.social.entity.Notification;
 import vn.datn.social.entity.Post;
 import vn.datn.social.entity.User;
 import vn.datn.social.repository.PostRepository;
+import vn.datn.social.security.IBEUser;
 import vn.datn.social.service.*;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
 import java.security.Principal;
+import java.sql.Blob;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostRestController {
 
@@ -32,6 +41,58 @@ public class PostRestController {
     private final PostRepository postRepository;
 
     private final CommentService commentService;
+    // API tạo post mới
+    @PostMapping("/create")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> createPost(@RequestParam("content") String content,
+                                                          @AuthenticationPrincipal IBEUser ibeUser,
+                                                          @RequestParam("file") MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            User currentUser = userService.findById(ibeUser.getId());
+
+            // Kiểm tra nếu có ảnh được upload
+            Blob blob = null;
+            if (!file.isEmpty() && file.getContentType().startsWith("image/")) {
+                byte[] bytes = file.getBytes();
+                blob = new SerialBlob(bytes);
+            }
+
+            // Tạo bài post mới
+            Post post = new Post();
+            post.setContent(content);
+            post.setCreatedAt(new Date(System.currentTimeMillis())); // Lưu thời gian hiện tại
+            post.setUser(currentUser); // Liên kết post với người dùng
+            post.setPng(blob);  // Lưu ảnh (nếu có)
+
+            // Lưu bài post
+            postService.save(post);
+
+            // Phản hồi thành công
+            response.put("success", true);
+            response.put("message", "Post created successfully!");
+            return ResponseEntity.ok(response); // Trả về JSON với thông báo thành công
+
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "Failed to create post");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // Trả về JSON với thông báo lỗi
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long id) {
+        boolean isDeleted = postService.deletePostById(id);
+
+        if (isDeleted) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Post deleted successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "Post not found"));
+        }
+    }
 
     @GetMapping("/all")
     public ResponseEntity<List<PostDTO>> getAllPost(Principal principal) {

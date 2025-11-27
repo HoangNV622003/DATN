@@ -22,11 +22,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReportedPostService {
 
-    private ReportedPostRepository reportedPostRepository;
+    private final ReportedPostRepository reportedPostRepository;
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public boolean reportPost(Long postId, Long reportedById, String reason) {
         try {

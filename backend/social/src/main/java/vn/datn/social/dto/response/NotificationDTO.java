@@ -1,14 +1,12 @@
 package vn.datn.social.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import vn.datn.social.constant.NotificationType;
 
 import java.time.LocalDateTime;
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationDTO {

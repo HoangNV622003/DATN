@@ -13,8 +13,6 @@ public class SearchDTO {
     private boolean friend; // Đã là bạn
     private boolean friendPending; // Đang chờ kết bạn
     private boolean friendRequestReceiver; // Là người nhận lời mời kết bạn
-
     private boolean enabled;
-
     private boolean isAdmin;
 }

@@ -1,6 +1,5 @@
 package vn.datn.social.controller;
 
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,7 +16,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/manage")
+@RequestMapping("/api/manage")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ManageRestController {
 
@@ -73,9 +72,4 @@ public class ManageRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user: " + e.getMessage());
         }
     }
-
-
-
-
-
 }

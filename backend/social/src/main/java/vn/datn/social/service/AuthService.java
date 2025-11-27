@@ -43,7 +43,7 @@ public class AuthService {
         return AuthResponseDTO.builder()
                 .tokenType("Bearer")
                 .expiresIn(expirationTime)
-                //.user(userService.convertToUserResponseDTO(user))
+                .user(userService.convertToUserResponseDTO(user))
                 .accessToken(tokenPair.getToken())
                 .refreshToken(tokenPair.getRefreshToken())
                 .created(Instant.now().getEpochSecond())

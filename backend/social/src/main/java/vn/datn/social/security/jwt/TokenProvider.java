@@ -41,6 +41,7 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String EMAIL_KEY = "email";
     private static final String TOKEN_TYPE = "type";
+    private static final String USERNAME_KEY = "username";
 
     private final long accessTokenValidity;
     private final long refreshTokenValidity;
@@ -122,6 +123,7 @@ public class TokenProvider {
                 .expirationTime(new Date(now.getTime() + validity))
                 .jwtID(UUID.randomUUID().toString())
                 .claim(EMAIL_KEY, user.getEmail())
+                .claim(USERNAME_KEY, user.getUsername())
                 .claim(TOKEN_TYPE, type)
                 .build();
 
@@ -212,9 +214,9 @@ public class TokenProvider {
             String authStr = getClaim(jwt, AUTHORITIES_KEY);
             Collection<GrantedAuthority> authorities = parseAuthorities(authStr);
             Long userId = Long.valueOf(jwt.getJWTClaimsSet().getSubject());
-            String email = getClaim(jwt, EMAIL_KEY);
+            String username = getClaim(jwt, USERNAME_KEY);
 
-            IBEUser principal = new IBEUser(userId, email, "", authorities);
+            IBEUser principal = new IBEUser(userId, username, "", authorities);
             AuthenticationToken auth = new AuthenticationToken(principal, "", authorities, jwtToken.getTokenValue());
             auth.setDetails("pre_auth");
             auth.setUserId(userId);

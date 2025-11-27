@@ -24,7 +24,7 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChartAPI {
 
-    PostRepository postRepository; // Đổi tên cho thống nhất
+    PostRepository postRepository;
 
     CommentRepository commentRepository;
 

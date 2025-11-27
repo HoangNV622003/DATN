@@ -54,7 +54,6 @@ public class ChatService {
                                 .chatId(chat.getId())
                                 .lastMessageContent(lastMessage.getContent())
                                 .lastMessageTimestamp(lastMessage.getTimestamp())
-                                .username(participant.getUsername())
                                 .build();
                         userWithMessages.add(dto);
                     }
